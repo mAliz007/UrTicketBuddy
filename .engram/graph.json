@@ -32,11 +32,14 @@
       "26": "Community 26",
       "27": "Community 27",
       "28": "Community 28",
-      "29": "Community 29"
+      "29": "Community 29",
+      "30": "Community 30",
+      "31": "Community 31",
+      "32": "Community 32"
     },
-    "built_from_commit": "84ebd41564574af343eb0be36b7ed1a9a631e2f4"
+    "built_from_commit": "44e98bcdeac0d272640da74036313375babde00d"
   },
-  "topology_signature": "n=119;e=101;api_jest_config,api_jest_config_config,commitlint_config,config_jest_config,config_jest_config_config,connectedsocket,contracts_jest_config,contracts_jest_config_config,controller,db_jest_config,db_jest_config_config,dto_index,entities_index,eslint_base,eslint_config,gateways_events_gateway,gateways_events_gateway_eventsgateway,gateways_events_gateway_eventsgateway_handlejoinroom,gateways_events_gateway_eventsgateway_handleleaveroom,get,guards_index,health_health_controller,health_health_controller_healthcontroller,health_health_controller_healthcontroller_constructor,health_health_controller_healthcontroller_gethealth,health_health_controller_spec,health_health_module,health_health_module_healthmodule,health_health_service,health_health_service_healthservice,health_health_service_healthservice_checkhealth,health_health_service_healthservice_checktcpport,injectable,messagebody,module,ports_index,ports_index_eventseatcatalogport,ports_index_paymentprovider,ports_index_platformsettingsport,prettier_index,processors_hold_expiry_processor,processors_hold_expiry_processor_holdexpiryprocessor,processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy,processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit,processors_hold_expiry_processor_onmoduledestroy,processors_hold_expiry_processor_onmoduleinit,realtime_jest_config,realtime_jest_config_config,redis_scripts_jest_config,redis_scripts_jest_config_config,src_app,src_app_app,src_app_module,src_app_module_appmodule,src_check,src_check_checkdatabase,src_data_source,src_data_source_appdatasource,src_data_source_env,src_enums,src_enums_seatstate,src_enums_seatstatecolors,src_enums_ticketstatus,src_enums_userrole,src_env,src_env_env,src_env_envschema,src_env_loadenv,src_errors,src_errors_errorcode,src_errors_errorenvelope,src_errors_errorenvelopeschema,src_index,src_index_spec,src_jobs,src_jobs_holdexpiryjob,src_jobs_holdexpiryjobschema,src_jobs_ordernotificationjob,src_jobs_ordernotificationjobschema,src_jobs_searchindexjob,src_jobs_searchindexjobschema,src_jobs_ticketseedrotationjob,src_jobs_ticketseedrotationjobschema,src_layout,src_layout_generatedseat,src_layout_generategridseats,src_layout_generateradialseats,src_layout_gridsectionconfig,src_layout_point,src_layout_radialsectionconfig,src_main,src_main_bootstrap,src_pagination,src_pagination_paginatedresult,src_pagination_paginationquery,src_pagination_paginationqueryschema,src_scripts,src_scripts_redisscriptswrapper,src_scripts_redisscriptswrapper_constructor,src_scripts_redisscriptswrapper_holdseat,src_scripts_seatholdparams,src_scripts_seatholdresult,src_sockets,src_sockets_roomjoinpayload,src_sockets_roomjoinschema,src_sockets_roomleavepayload,src_sockets_roomleaveschema,src_sockets_seatstateevent,src_sockets_seatstateeventschema,subscribemessage,venue_engine_jest_config,venue_engine_jest_config_config,web_postcss_config,web_tailwind_config,web_vite_config,websocketgateway,websocketserver,worker_jest_config,worker_jest_config_config|api_jest_config\tapi_jest_config_config\tcontains;config_jest_config\tconfig_jest_config_config\tcontains;connectedsocket\tgateways_events_gateway_eventsgateway_handlejoinroom\treferences;connectedsocket\tgateways_events_gateway_eventsgateway_handleleaveroom\treferences;contracts_jest_config\tcontracts_jest_config_config\tcontains;controller\thealth_health_controller_healthcontroller\treferences;db_jest_config\tdb_jest_config_config\tcontains;entities_index\tsrc_index\timports_from;gateways_events_gateway\tgateways_events_gateway_eventsgateway\tcontains;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handlejoinroom\tmethod;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handleleaveroom\tmethod;gateways_events_gateway_eventsgateway\twebsocketgateway\treferences;gateways_events_gateway_eventsgateway\twebsocketserver\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tsubscribemessage\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tsubscribemessage\treferences;get\thealth_health_controller_healthcontroller_gethealth\treferences;health_health_controller\thealth_health_controller_healthcontroller\tcontains;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_constructor\tmethod;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_gethealth\tmethod;health_health_module\thealth_health_module_healthmodule\tcontains;health_health_module_healthmodule\tmodule\treferences;health_health_service\thealth_health_service_healthservice\tcontains;health_health_service_healthservice\thealth_health_service_healthservice_checkhealth\tmethod;health_health_service_healthservice\thealth_health_service_healthservice_checktcpport\tmethod;health_health_service_healthservice\tinjectable\treferences;health_health_service_healthservice_checkhealth\thealth_health_service_healthservice_checktcpport\tcalls;injectable\tprocessors_hold_expiry_processor_holdexpiryprocessor\treferences;module\tsrc_app_module_appmodule\treferences;ports_index\tports_index_eventseatcatalogport\tcontains;ports_index\tports_index_paymentprovider\tcontains;ports_index\tports_index_platformsettingsport\tcontains;processors_hold_expiry_processor\tprocessors_hold_expiry_processor_holdexpiryprocessor\tcontains;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduledestroy\timplements;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduleinit\timplements;realtime_jest_config\trealtime_jest_config_config\tcontains;redis_scripts_jest_config\tredis_scripts_jest_config_config\tcontains;src_app\tsrc_app_app\tcontains;src_app\tsrc_main\timports_from;src_app_module\tsrc_app_module_appmodule\tcontains;src_check\tsrc_check_checkdatabase\tcontains;src_check\tsrc_data_source\timports_from;src_check\tsrc_data_source_appdatasource\timports;src_data_source\tsrc_data_source_appdatasource\tcontains;src_data_source\tsrc_data_source_env\tcontains;src_data_source\tsrc_index\timports_from;src_enums\tsrc_enums_seatstate\tcontains;src_enums\tsrc_enums_seatstatecolors\tcontains;src_enums\tsrc_enums_ticketstatus\tcontains;src_enums\tsrc_enums_userrole\tcontains;src_enums\tsrc_index\timports_from;src_enums\tsrc_sockets\timports_from;src_enums_seatstate\tsrc_sockets\timports;src_env\tsrc_env_env\tcontains;src_env\tsrc_env_envschema\tcontains;src_env\tsrc_env_loadenv\tcontains;src_env\tsrc_index\timports_from;src_errors\tsrc_errors_errorcode\tcontains;src_errors\tsrc_errors_errorenvelope\tcontains;src_errors\tsrc_errors_errorenvelopeschema\tcontains;src_errors\tsrc_index\timports_from;src_index\tsrc_index_spec\timports_from;src_index\tsrc_jobs\timports_from;src_index\tsrc_layout\timports_from;src_index\tsrc_pagination\timports_from;src_index\tsrc_scripts\timports_from;src_index\tsrc_sockets\timports_from;src_jobs\tsrc_jobs_holdexpiryjob\tcontains;src_jobs\tsrc_jobs_holdexpiryjobschema\tcontains;src_jobs\tsrc_jobs_ordernotificationjob\tcontains;src_jobs\tsrc_jobs_ordernotificationjobschema\tcontains;src_jobs\tsrc_jobs_searchindexjob\tcontains;src_jobs\tsrc_jobs_searchindexjobschema\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjob\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjobschema\tcontains;src_layout\tsrc_layout_generatedseat\tcontains;src_layout\tsrc_layout_generategridseats\tcontains;src_layout\tsrc_layout_generateradialseats\tcontains;src_layout\tsrc_layout_gridsectionconfig\tcontains;src_layout\tsrc_layout_point\tcontains;src_layout\tsrc_layout_radialsectionconfig\tcontains;src_main\tsrc_main_bootstrap\tcontains;src_pagination\tsrc_pagination_paginatedresult\tcontains;src_pagination\tsrc_pagination_paginationquery\tcontains;src_pagination\tsrc_pagination_paginationqueryschema\tcontains;src_scripts\tsrc_scripts_redisscriptswrapper\tcontains;src_scripts\tsrc_scripts_seatholdparams\tcontains;src_scripts\tsrc_scripts_seatholdresult\tcontains;src_scripts_redisscriptswrapper\tsrc_scripts_redisscriptswrapper_constructor\tmethod;src_scripts_redisscriptswrapper\tsrc_scripts_redisscriptswrapper_holdseat\tmethod;src_sockets\tsrc_sockets_roomjoinpayload\tcontains;src_sockets\tsrc_sockets_roomjoinschema\tcontains;src_sockets\tsrc_sockets_roomleavepayload\tcontains;src_sockets\tsrc_sockets_roomleaveschema\tcontains;src_sockets\tsrc_sockets_seatstateevent\tcontains;src_sockets\tsrc_sockets_seatstateeventschema\tcontains;venue_engine_jest_config\tvenue_engine_jest_config_config\tcontains;worker_jest_config\tworker_jest_config_config\tcontains",
+  "topology_signature": "n=170;e=169;api_jest_config,api_jest_config_config,commitlint_config,config_jest_config,config_jest_config_config,connectedsocket,contracts_jest_config,contracts_jest_config_config,controller,db_jest_config,db_jest_config_config,dto_index,entities_index,eslint_base,eslint_config,gateways_events_gateway,gateways_events_gateway_eventsgateway,gateways_events_gateway_eventsgateway_handlejoinroom,gateways_events_gateway_eventsgateway_handleleaveroom,generators_arc,generators_arc_generatearc,generators_arc_generatearcparams,generators_grid,generators_grid_generategrid,generators_grid_generategridparams,generators_table,generators_table_generatetablecluster,generators_table_generatetableclusterparams,generators_table_tableclustergroup,generators_table_tableclustertransform,get,guards_index,health_health_controller,health_health_controller_healthcontroller,health_health_controller_healthcontroller_constructor,health_health_controller_healthcontroller_gethealth,health_health_controller_spec,health_health_module,health_health_module_healthmodule,health_health_service,health_health_service_healthservice,health_health_service_healthservice_checkhealth,health_health_service_healthservice_checktcpport,injectable,messagebody,module,ports_index,ports_index_eventseatcatalogport,ports_index_paymentprovider,ports_index_platformsettingsport,prettier_index,processors_hold_expiry_processor,processors_hold_expiry_processor_holdexpiryprocessor,processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy,processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit,processors_hold_expiry_processor_onmoduledestroy,processors_hold_expiry_processor_onmoduleinit,realtime_jest_config,realtime_jest_config_config,redis_scripts_jest_config,redis_scripts_jest_config_config,src_app,src_app_app,src_app_module,src_app_module_appmodule,src_check,src_check_checkdatabase,src_data_source,src_data_source_appdatasource,src_data_source_env,src_enums,src_enums_seatstate,src_enums_seatstatecolors,src_enums_ticketstatus,src_enums_userrole,src_env,src_env_env,src_env_envschema,src_env_loadenv,src_errors,src_errors_errorcode,src_errors_errorenvelope,src_errors_errorenvelopeschema,src_index,src_index_spec,src_jobs,src_jobs_holdexpiryjob,src_jobs_holdexpiryjobschema,src_jobs_ordernotificationjob,src_jobs_ordernotificationjobschema,src_jobs_searchindexjob,src_jobs_searchindexjobschema,src_jobs_ticketseedrotationjob,src_jobs_ticketseedrotationjobschema,src_layout,src_layout_generatedseat,src_layout_generategridseats,src_layout_generateradialseats,src_layout_gridsectionconfig,src_layout_point,src_layout_radialsectionconfig,src_main,src_main_bootstrap,src_pagination,src_pagination_paginatedresult,src_pagination_paginationquery,src_pagination_paginationqueryschema,src_scripts,src_scripts_redisscriptswrapper,src_scripts_redisscriptswrapper_constructor,src_scripts_redisscriptswrapper_holdseat,src_scripts_seatholdparams,src_scripts_seatholdresult,src_sockets,src_sockets_roomjoinpayload,src_sockets_roomjoinschema,src_sockets_roomleavepayload,src_sockets_roomleaveschema,src_sockets_seatstateevent,src_sockets_seatstateeventschema,src_venue,src_venue_arcsectionconfig,src_venue_arcsectionconfigschema,src_venue_degtorad,src_venue_gridsectionconfig,src_venue_gridsectionconfigschema,src_venue_point,src_venue_pointschema,src_venue_radtodeg,src_venue_seatnode,src_venue_seatnodeschema,src_venue_sectionconfig,src_venue_sectionconfigschema,src_venue_tableclusterconfig,src_venue_tableclusterconfigschema,src_venue_venuelayout,src_venue_venuelayoutschema,subscribemessage,tests_generators_spec,tests_performance_spec,tests_property_spec,tests_utils_spec,utils_aggregates,utils_aggregates_convexhull,utils_aggregates_crossproduct,utils_aggregates_sectionaggregate,utils_aggregates_sectionaggregates,utils_bounding_box,utils_bounding_box_boundingbox,utils_ids,utils_ids_buildseatid,utils_ids_parseseatid,utils_ids_rowtolabel,utils_parser,utils_parser_internalseatnode,utils_parser_internalvenuelayout,utils_parser_invalidlayouterror,utils_parser_invalidlayouterror_constructor,utils_parser_parselayout,utils_parser_serializelayout,utils_parser_validatesectionconstraints,venue_engine_jest_config,venue_engine_jest_config_config,web_postcss_config,web_tailwind_config,web_vite_config,websocketgateway,websocketserver,worker_jest_config,worker_jest_config_config|api_jest_config\tapi_jest_config_config\tcontains;config_jest_config\tconfig_jest_config_config\tcontains;connectedsocket\tgateways_events_gateway_eventsgateway_handlejoinroom\treferences;connectedsocket\tgateways_events_gateway_eventsgateway_handleleaveroom\treferences;contracts_jest_config\tcontracts_jest_config_config\tcontains;controller\thealth_health_controller_healthcontroller\treferences;db_jest_config\tdb_jest_config_config\tcontains;entities_index\tsrc_index\timports_from;gateways_events_gateway\tgateways_events_gateway_eventsgateway\tcontains;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handlejoinroom\tmethod;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handleleaveroom\tmethod;gateways_events_gateway_eventsgateway\twebsocketgateway\treferences;gateways_events_gateway_eventsgateway\twebsocketserver\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tsubscribemessage\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tsubscribemessage\treferences;generators_arc\tgenerators_arc_generatearc\tcontains;generators_arc\tgenerators_arc_generatearcparams\tcontains;generators_arc\tsrc_index\timports_from;generators_arc\tutils_ids\timports_from;generators_arc\tutils_ids_buildseatid\timports;generators_arc\tutils_ids_rowtolabel\timports;generators_grid\tgenerators_grid_generategrid\tcontains;generators_grid\tgenerators_grid_generategridparams\tcontains;generators_grid\tsrc_index\timports_from;generators_grid\tutils_ids\timports_from;generators_grid\tutils_ids_buildseatid\timports;generators_grid\tutils_ids_rowtolabel\timports;generators_table\tgenerators_table_generatetablecluster\tcontains;generators_table\tgenerators_table_generatetableclusterparams\tcontains;generators_table\tgenerators_table_tableclustergroup\tcontains;generators_table\tgenerators_table_tableclustertransform\tcontains;generators_table\tsrc_index\timports_from;generators_table\tutils_ids\timports_from;generators_table\tutils_ids_buildseatid\timports;get\thealth_health_controller_healthcontroller_gethealth\treferences;health_health_controller\thealth_health_controller_healthcontroller\tcontains;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_constructor\tmethod;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_gethealth\tmethod;health_health_module\thealth_health_module_healthmodule\tcontains;health_health_module_healthmodule\tmodule\treferences;health_health_service\thealth_health_service_healthservice\tcontains;health_health_service_healthservice\thealth_health_service_healthservice_checkhealth\tmethod;health_health_service_healthservice\thealth_health_service_healthservice_checktcpport\tmethod;health_health_service_healthservice\tinjectable\treferences;health_health_service_healthservice_checkhealth\thealth_health_service_healthservice_checktcpport\tcalls;injectable\tprocessors_hold_expiry_processor_holdexpiryprocessor\treferences;module\tsrc_app_module_appmodule\treferences;ports_index\tports_index_eventseatcatalogport\tcontains;ports_index\tports_index_paymentprovider\tcontains;ports_index\tports_index_platformsettingsport\tcontains;processors_hold_expiry_processor\tprocessors_hold_expiry_processor_holdexpiryprocessor\tcontains;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduledestroy\timplements;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduleinit\timplements;realtime_jest_config\trealtime_jest_config_config\tcontains;redis_scripts_jest_config\tredis_scripts_jest_config_config\tcontains;src_app\tsrc_app_app\tcontains;src_app\tsrc_main\timports_from;src_app_module\tsrc_app_module_appmodule\tcontains;src_check\tsrc_check_checkdatabase\tcontains;src_check\tsrc_data_source\timports_from;src_check\tsrc_data_source_appdatasource\timports;src_data_source\tsrc_data_source_appdatasource\tcontains;src_data_source\tsrc_data_source_env\tcontains;src_data_source\tsrc_index\timports_from;src_enums\tsrc_enums_seatstate\tcontains;src_enums\tsrc_enums_seatstatecolors\tcontains;src_enums\tsrc_enums_ticketstatus\tcontains;src_enums\tsrc_enums_userrole\tcontains;src_enums\tsrc_index\timports_from;src_enums\tsrc_sockets\timports_from;src_enums_seatstate\tsrc_sockets\timports;src_env\tsrc_env_env\tcontains;src_env\tsrc_env_envschema\tcontains;src_env\tsrc_env_loadenv\tcontains;src_env\tsrc_index\timports_from;src_errors\tsrc_errors_errorcode\tcontains;src_errors\tsrc_errors_errorenvelope\tcontains;src_errors\tsrc_errors_errorenvelopeschema\tcontains;src_errors\tsrc_index\timports_from;src_index\tsrc_index_spec\timports_from;src_index\tsrc_jobs\timports_from;src_index\tsrc_layout\timports_from;src_index\tsrc_pagination\timports_from;src_index\tsrc_scripts\timports_from;src_index\tsrc_sockets\timports_from;src_index\tsrc_venue\timports_from;src_index\ttests_generators_spec\timports_from;src_index\ttests_performance_spec\timports_from;src_index\ttests_property_spec\timports_from;src_index\ttests_utils_spec\timports_from;src_index\tutils_aggregates\timports_from;src_index\tutils_bounding_box\timports_from;src_index\tutils_ids\timports_from;src_index\tutils_parser\timports_from;src_jobs\tsrc_jobs_holdexpiryjob\tcontains;src_jobs\tsrc_jobs_holdexpiryjobschema\tcontains;src_jobs\tsrc_jobs_ordernotificationjob\tcontains;src_jobs\tsrc_jobs_ordernotificationjobschema\tcontains;src_jobs\tsrc_jobs_searchindexjob\tcontains;src_jobs\tsrc_jobs_searchindexjobschema\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjob\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjobschema\tcontains;src_layout\tsrc_layout_generatedseat\tcontains;src_layout\tsrc_layout_generategridseats\tcontains;src_layout\tsrc_layout_generateradialseats\tcontains;src_layout\tsrc_layout_gridsectionconfig\tcontains;src_layout\tsrc_layout_point\tcontains;src_layout\tsrc_layout_radialsectionconfig\tcontains;src_main\tsrc_main_bootstrap\tcontains;src_pagination\tsrc_pagination_paginatedresult\tcontains;src_pagination\tsrc_pagination_paginationquery\tcontains;src_pagination\tsrc_pagination_paginationqueryschema\tcontains;src_scripts\tsrc_scripts_redisscriptswrapper\tcontains;src_scripts\tsrc_scripts_seatholdparams\tcontains;src_scripts\tsrc_scripts_seatholdresult\tcontains;src_scripts_redisscriptswrapper\tsrc_scripts_redisscriptswrapper_constructor\tmethod;src_scripts_redisscriptswrapper\tsrc_scripts_redisscriptswrapper_holdseat\tmethod;src_sockets\tsrc_sockets_roomjoinpayload\tcontains;src_sockets\tsrc_sockets_roomjoinschema\tcontains;src_sockets\tsrc_sockets_roomleavepayload\tcontains;src_sockets\tsrc_sockets_roomleaveschema\tcontains;src_sockets\tsrc_sockets_seatstateevent\tcontains;src_sockets\tsrc_sockets_seatstateeventschema\tcontains;src_venue\tsrc_venue_arcsectionconfig\tcontains;src_venue\tsrc_venue_arcsectionconfigschema\tcontains;src_venue\tsrc_venue_degtorad\tcontains;src_venue\tsrc_venue_gridsectionconfig\tcontains;src_venue\tsrc_venue_gridsectionconfigschema\tcontains;src_venue\tsrc_venue_point\tcontains;src_venue\tsrc_venue_pointschema\tcontains;src_venue\tsrc_venue_radtodeg\tcontains;src_venue\tsrc_venue_seatnode\tcontains;src_venue\tsrc_venue_seatnodeschema\tcontains;src_venue\tsrc_venue_sectionconfig\tcontains;src_venue\tsrc_venue_sectionconfigschema\tcontains;src_venue\tsrc_venue_tableclusterconfig\tcontains;src_venue\tsrc_venue_tableclusterconfigschema\tcontains;src_venue\tsrc_venue_venuelayout\tcontains;src_venue\tsrc_venue_venuelayoutschema\tcontains;utils_aggregates\tutils_aggregates_convexhull\tcontains;utils_aggregates\tutils_aggregates_crossproduct\tcontains;utils_aggregates\tutils_aggregates_sectionaggregate\tcontains;utils_aggregates\tutils_aggregates_sectionaggregates\tcontains;utils_aggregates\tutils_bounding_box\timports_from;utils_aggregates\tutils_bounding_box_boundingbox\timports;utils_aggregates_convexhull\tutils_aggregates_crossproduct\tcalls;utils_aggregates_convexhull\tutils_aggregates_sectionaggregates\tcalls;utils_bounding_box\tutils_bounding_box_boundingbox\tcontains;utils_ids\tutils_ids_buildseatid\tcontains;utils_ids\tutils_ids_parseseatid\tcontains;utils_ids\tutils_ids_rowtolabel\tcontains;utils_ids_buildseatid\tutils_ids_rowtolabel\tcalls;utils_parser\tutils_parser_internalseatnode\tcontains;utils_parser\tutils_parser_internalvenuelayout\tcontains;utils_parser\tutils_parser_invalidlayouterror\tcontains;utils_parser\tutils_parser_parselayout\tcontains;utils_parser\tutils_parser_serializelayout\tcontains;utils_parser\tutils_parser_validatesectionconstraints\tcontains;utils_parser_invalidlayouterror\tutils_parser_invalidlayouterror_constructor\tmethod;utils_parser_invalidlayouterror\tutils_parser_parselayout\tcalls;utils_parser_invalidlayouterror\tutils_parser_serializelayout\tcalls;utils_parser_invalidlayouterror\tutils_parser_validatesectionconstraints\tcalls;utils_parser_parselayout\tutils_parser_validatesectionconstraints\tcalls;venue_engine_jest_config\tvenue_engine_jest_config_config\tcontains;worker_jest_config\tworker_jest_config_config\tcontains",
   "nodes": [
     {
       "id": "api_jest_config",
@@ -44,8 +47,8 @@
       "file_type": "code",
       "source_file": "apps/api/jest.config.ts",
       "source_location": "L1",
-      "community": 12,
-      "community_name": "Community 12"
+      "community": 15,
+      "community_name": "Community 15"
     },
     {
       "id": "api_jest_config_config",
@@ -53,8 +56,8 @@
       "file_type": "code",
       "source_file": "apps/api/jest.config.ts",
       "source_location": "L3",
-      "community": 12,
-      "community_name": "Community 12"
+      "community": 15,
+      "community_name": "Community 15"
     },
     {
       "id": "src_app_module",
@@ -62,8 +65,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/app.module.ts",
       "source_location": "L1",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "src_app_module_appmodule",
@@ -71,8 +74,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/app.module.ts",
       "source_location": "L9",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "module",
@@ -80,8 +83,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "dto_index",
@@ -89,8 +92,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/dto/index.ts",
       "source_location": "L1",
-      "community": 21,
-      "community_name": "Community 21"
+      "community": 24,
+      "community_name": "Community 24"
     },
     {
       "id": "guards_index",
@@ -98,8 +101,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/guards/index.ts",
       "source_location": "L1",
-      "community": 24,
-      "community_name": "Community 24"
+      "community": 27,
+      "community_name": "Community 27"
     },
     {
       "id": "ports_index",
@@ -107,8 +110,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L1",
-      "community": 10,
-      "community_name": "Community 10"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "ports_index_eventseatcatalogport",
@@ -116,8 +119,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L1",
-      "community": 10,
-      "community_name": "Community 10"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "ports_index_platformsettingsport",
@@ -125,8 +128,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L8",
-      "community": 10,
-      "community_name": "Community 10"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "ports_index_paymentprovider",
@@ -134,8 +137,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L12",
-      "community": 10,
-      "community_name": "Community 10"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "src_main",
@@ -143,8 +146,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/main.ts",
       "source_location": "L1",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 14,
+      "community_name": "Community 14"
     },
     {
       "id": "src_main_bootstrap",
@@ -152,8 +155,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/main.ts",
       "source_location": "L6",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 14,
+      "community_name": "Community 14"
     },
     {
       "id": "health_health_controller_spec",
@@ -161,8 +164,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.spec.ts",
       "source_location": "L1",
-      "community": 25,
-      "community_name": "Community 25"
+      "community": 28,
+      "community_name": "Community 28"
     },
     {
       "id": "health_health_controller",
@@ -170,8 +173,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L1",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "health_health_controller_healthcontroller",
@@ -179,8 +182,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L5",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "controller",
@@ -188,8 +191,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "get",
@@ -197,8 +200,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "health_health_controller_healthcontroller_constructor",
@@ -206,8 +209,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L6",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "health_health_controller_healthcontroller_gethealth",
@@ -215,8 +218,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L9",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "health_health_module",
@@ -224,8 +227,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.module.ts",
       "source_location": "L1",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "health_health_module_healthmodule",
@@ -233,8 +236,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.module.ts",
       "source_location": "L10",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "health_health_service",
@@ -242,8 +245,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.service.ts",
       "source_location": "L1",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "health_health_service_healthservice",
@@ -251,8 +254,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.service.ts",
       "source_location": "L6",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "injectable",
@@ -260,8 +263,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "health_health_service_healthservice_checktcpport",
@@ -269,8 +272,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/modules/health/health.service.ts",
       "source_location": "L11",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "health_health_service_healthservice_checkhealth",
@@ -278,8 +281,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.service.ts",
       "source_location": "L9",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "realtime_jest_config",
@@ -287,8 +290,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/jest.config.ts",
       "source_location": "L1",
-      "community": 16,
-      "community_name": "Community 16"
+      "community": 19,
+      "community_name": "Community 19"
     },
     {
       "id": "realtime_jest_config_config",
@@ -296,8 +299,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/jest.config.ts",
       "source_location": "L3",
-      "community": 16,
-      "community_name": "Community 16"
+      "community": 19,
+      "community_name": "Community 19"
     },
     {
       "id": "gateways_events_gateway",
@@ -305,8 +308,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L1",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "gateways_events_gateway_eventsgateway",
@@ -314,8 +317,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L17",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "websocketgateway",
@@ -323,8 +326,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "websocketserver",
@@ -332,8 +335,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "subscribemessage",
@@ -341,8 +344,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "connectedsocket",
@@ -350,8 +353,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "messagebody",
@@ -359,8 +362,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "gateways_events_gateway_eventsgateway_handlejoinroom",
@@ -368,8 +371,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L24",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "gateways_events_gateway_eventsgateway_handleleaveroom",
@@ -377,8 +380,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L35",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "web_postcss_config",
@@ -386,8 +389,8 @@
       "file_type": "code",
       "source_file": "apps/web/postcss.config.js",
       "source_location": "L1",
-      "community": 27,
-      "community_name": "Community 27"
+      "community": 30,
+      "community_name": "Community 30"
     },
     {
       "id": "src_app",
@@ -395,8 +398,8 @@
       "file_type": "code",
       "source_file": "apps/web/src/App.tsx",
       "source_location": "L1",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 14,
+      "community_name": "Community 14"
     },
     {
       "id": "src_app_app",
@@ -404,8 +407,8 @@
       "file_type": "code",
       "source_file": "apps/web/src/App.tsx",
       "source_location": "L3",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 14,
+      "community_name": "Community 14"
     },
     {
       "id": "web_tailwind_config",
@@ -413,8 +416,8 @@
       "file_type": "code",
       "source_file": "apps/web/tailwind.config.js",
       "source_location": "L1",
-      "community": 28,
-      "community_name": "Community 28"
+      "community": 31,
+      "community_name": "Community 31"
     },
     {
       "id": "web_vite_config",
@@ -422,8 +425,8 @@
       "file_type": "code",
       "source_file": "apps/web/vite.config.ts",
       "source_location": "L1",
-      "community": 29,
-      "community_name": "Community 29"
+      "community": 32,
+      "community_name": "Community 32"
     },
     {
       "id": "worker_jest_config",
@@ -431,8 +434,8 @@
       "file_type": "code",
       "source_file": "apps/worker/jest.config.ts",
       "source_location": "L1",
-      "community": 19,
-      "community_name": "Community 19"
+      "community": 22,
+      "community_name": "Community 22"
     },
     {
       "id": "worker_jest_config_config",
@@ -440,8 +443,8 @@
       "file_type": "code",
       "source_file": "apps/worker/jest.config.ts",
       "source_location": "L3",
-      "community": 19,
-      "community_name": "Community 19"
+      "community": 22,
+      "community_name": "Community 22"
     },
     {
       "id": "processors_hold_expiry_processor",
@@ -449,8 +452,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L1",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "processors_hold_expiry_processor_holdexpiryprocessor",
@@ -458,8 +461,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L12",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "processors_hold_expiry_processor_onmoduleinit",
@@ -467,8 +470,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "processors_hold_expiry_processor_onmoduledestroy",
@@ -476,8 +479,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit",
@@ -485,8 +488,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L16",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy",
@@ -494,8 +497,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L43",
-      "community": 2,
-      "community_name": "Community 2"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "commitlint_config",
@@ -503,8 +506,8 @@
       "file_type": "code",
       "source_file": "commitlint.config.js",
       "source_location": "L1",
-      "community": 20,
-      "community_name": "Community 20"
+      "community": 23,
+      "community_name": "Community 23"
     },
     {
       "id": "eslint_config",
@@ -512,8 +515,8 @@
       "file_type": "code",
       "source_file": "eslint.config.mjs",
       "source_location": "L1",
-      "community": 23,
-      "community_name": "Community 23"
+      "community": 26,
+      "community_name": "Community 26"
     },
     {
       "id": "eslint_base",
@@ -521,8 +524,8 @@
       "file_type": "code",
       "source_file": "packages/config/eslint/base.js",
       "source_location": "L1",
-      "community": 22,
-      "community_name": "Community 22"
+      "community": 25,
+      "community_name": "Community 25"
     },
     {
       "id": "config_jest_config",
@@ -530,8 +533,8 @@
       "file_type": "code",
       "source_file": "packages/config/jest.config.ts",
       "source_location": "L1",
-      "community": 13,
-      "community_name": "Community 13"
+      "community": 16,
+      "community_name": "Community 16"
     },
     {
       "id": "config_jest_config_config",
@@ -539,8 +542,8 @@
       "file_type": "code",
       "source_file": "packages/config/jest.config.ts",
       "source_location": "L3",
-      "community": 13,
-      "community_name": "Community 13"
+      "community": 16,
+      "community_name": "Community 16"
     },
     {
       "id": "prettier_index",
@@ -548,8 +551,8 @@
       "file_type": "code",
       "source_file": "packages/config/prettier/index.js",
       "source_location": "L1",
-      "community": 26,
-      "community_name": "Community 26"
+      "community": 29,
+      "community_name": "Community 29"
     },
     {
       "id": "src_env",
@@ -611,8 +614,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/jest.config.ts",
       "source_location": "L1",
-      "community": 14,
-      "community_name": "Community 14"
+      "community": 17,
+      "community_name": "Community 17"
     },
     {
       "id": "contracts_jest_config_config",
@@ -620,8 +623,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/jest.config.ts",
       "source_location": "L3",
-      "community": 14,
-      "community_name": "Community 14"
+      "community": 17,
+      "community_name": "Community 17"
     },
     {
       "id": "src_enums",
@@ -629,8 +632,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L1",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_enums_ticketstatus",
@@ -638,8 +641,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L1",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_enums_seatstate",
@@ -647,8 +650,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L8",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_enums_seatstatecolors",
@@ -656,8 +659,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L15",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_enums_userrole",
@@ -665,8 +668,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L22",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_errors",
@@ -710,8 +713,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L1",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_holdexpiryjobschema",
@@ -719,8 +722,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L3",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_holdexpiryjob",
@@ -728,8 +731,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L9",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_searchindexjobschema",
@@ -737,8 +740,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L11",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_searchindexjob",
@@ -746,8 +749,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L17",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_ordernotificationjobschema",
@@ -755,8 +758,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L19",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_ordernotificationjob",
@@ -764,8 +767,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L25",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_ticketseedrotationjobschema",
@@ -773,8 +776,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L27",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_jobs_ticketseedrotationjob",
@@ -782,8 +785,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L32",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "src_pagination",
@@ -827,8 +830,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L1",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_sockets_seatstateeventschema",
@@ -836,8 +839,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L4",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_sockets_seatstateevent",
@@ -845,8 +848,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L12",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_sockets_roomjoinschema",
@@ -854,8 +857,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L14",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_sockets_roomjoinpayload",
@@ -863,8 +866,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L18",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_sockets_roomleaveschema",
@@ -872,8 +875,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L20",
-      "community": 1,
-      "community_name": "Community 1"
+      "community": 3,
+      "community_name": "Community 3"
     },
     {
       "id": "src_sockets_roomleavepayload",
@@ -881,6 +884,159 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L24",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_venue",
+      "label": "venue.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L1",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_degtorad",
+      "label": "degToRad()",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L6",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_radtodeg",
+      "label": "radToDeg()",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L10",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_pointschema",
+      "label": "PointSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L17",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_point",
+      "label": "Point",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L23",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_seatnodeschema",
+      "label": "SeatNodeSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L29",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_seatnode",
+      "label": "SeatNode",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L42",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_gridsectionconfigschema",
+      "label": "GridSectionConfigSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L47",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_gridsectionconfig",
+      "label": "GridSectionConfig",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L64",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_arcsectionconfigschema",
+      "label": "ArcSectionConfigSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L70",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_arcsectionconfig",
+      "label": "ArcSectionConfig",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L86",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_tableclusterconfigschema",
+      "label": "TableClusterConfigSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L91",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_tableclusterconfig",
+      "label": "TableClusterConfig",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L104",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_sectionconfigschema",
+      "label": "SectionConfigSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L109",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_sectionconfig",
+      "label": "SectionConfig",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L114",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_venuelayoutschema",
+      "label": "VenueLayoutSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L119",
+      "community": 1,
+      "community_name": "Community 1"
+    },
+    {
+      "id": "src_venue_venuelayout",
+      "label": "VenueLayout",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L136",
       "community": 1,
       "community_name": "Community 1"
     },
@@ -890,8 +1046,8 @@
       "file_type": "code",
       "source_file": "packages/db/jest.config.ts",
       "source_location": "L1",
-      "community": 15,
-      "community_name": "Community 15"
+      "community": 18,
+      "community_name": "Community 18"
     },
     {
       "id": "db_jest_config_config",
@@ -899,8 +1055,8 @@
       "file_type": "code",
       "source_file": "packages/db/jest.config.ts",
       "source_location": "L3",
-      "community": 15,
-      "community_name": "Community 15"
+      "community": 18,
+      "community_name": "Community 18"
     },
     {
       "id": "src_check",
@@ -908,8 +1064,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/check.ts",
       "source_location": "L1",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "src_check_checkdatabase",
@@ -917,8 +1073,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/check.ts",
       "source_location": "L3",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "src_data_source",
@@ -926,8 +1082,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/data-source.ts",
       "source_location": "L1",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "src_data_source_env",
@@ -935,8 +1091,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/data-source.ts",
       "source_location": "L5",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "src_data_source_appdatasource",
@@ -944,8 +1100,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/data-source.ts",
       "source_location": "L7",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "entities_index",
@@ -962,8 +1118,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/jest.config.ts",
       "source_location": "L1",
-      "community": 17,
-      "community_name": "Community 17"
+      "community": 20,
+      "community_name": "Community 20"
     },
     {
       "id": "redis_scripts_jest_config_config",
@@ -971,8 +1127,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/jest.config.ts",
       "source_location": "L3",
-      "community": 17,
-      "community_name": "Community 17"
+      "community": 20,
+      "community_name": "Community 20"
     },
     {
       "id": "src_scripts",
@@ -980,8 +1136,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/src/scripts.ts",
       "source_location": "L1",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "src_scripts_seatholdparams",
@@ -989,8 +1145,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/src/scripts.ts",
       "source_location": "L3",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "src_scripts_seatholdresult",
@@ -998,8 +1154,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/src/scripts.ts",
       "source_location": "L10",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "src_scripts_redisscriptswrapper",
@@ -1007,8 +1163,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/src/scripts.ts",
       "source_location": "L28",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "src_scripts_redisscriptswrapper_constructor",
@@ -1016,8 +1172,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/src/scripts.ts",
       "source_location": "L29",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "src_scripts_redisscriptswrapper_holdseat",
@@ -1025,8 +1181,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/src/scripts.ts",
       "source_location": "L36",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "venue_engine_jest_config",
@@ -1034,8 +1190,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/jest.config.ts",
       "source_location": "L1",
-      "community": 18,
-      "community_name": "Community 18"
+      "community": 21,
+      "community_name": "Community 21"
     },
     {
       "id": "venue_engine_jest_config_config",
@@ -1043,8 +1199,143 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/jest.config.ts",
       "source_location": "L3",
-      "community": 18,
-      "community_name": "Community 18"
+      "community": 21,
+      "community_name": "Community 21"
+    },
+    {
+      "id": "tests_generators_spec",
+      "label": "generators.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/__tests__/generators.spec.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "tests_performance_spec",
+      "label": "performance.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/__tests__/performance.spec.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "tests_property_spec",
+      "label": "property.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/__tests__/property.spec.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "tests_utils_spec",
+      "label": "utils.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/__tests__/utils.spec.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "generators_arc",
+      "label": "arc.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L1",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_arc_generatearcparams",
+      "label": "GenerateArcParams",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L4",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_arc_generatearc",
+      "label": "generateArc()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L23",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_grid",
+      "label": "grid.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L1",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_grid_generategridparams",
+      "label": "GenerateGridParams",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L4",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_grid_generategrid",
+      "label": "generateGrid()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L23",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_table",
+      "label": "table.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L1",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_table_generatetableclusterparams",
+      "label": "GenerateTableClusterParams",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L4",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_table_tableclustertransform",
+      "label": "TableClusterTransform",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L16",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_table_tableclustergroup",
+      "label": "TableClusterGroup",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L21",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "generators_table_generatetablecluster",
+      "label": "generateTableCluster()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L36",
+      "community": 2,
+      "community_name": "Community 2"
     },
     {
       "id": "src_layout",
@@ -1052,8 +1343,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L1",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "src_layout_point",
@@ -1061,8 +1352,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L1",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "src_layout_gridsectionconfig",
@@ -1070,8 +1361,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L6",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "src_layout_generatedseat",
@@ -1079,8 +1370,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L16",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "src_layout_generategridseats",
@@ -1088,8 +1379,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L25",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "src_layout_radialsectionconfig",
@@ -1097,8 +1388,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L57",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "src_layout_generateradialseats",
@@ -1106,8 +1397,179 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L69",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 8,
+      "community_name": "Community 8"
+    },
+    {
+      "id": "utils_aggregates",
+      "label": "aggregates.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "utils_aggregates_sectionaggregate",
+      "label": "SectionAggregate",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L4",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "utils_aggregates_crossproduct",
+      "label": "crossProduct()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L15",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "utils_aggregates_convexhull",
+      "label": "convexHull()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L23",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "utils_aggregates_sectionaggregates",
+      "label": "sectionAggregates()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L83",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "utils_bounding_box",
+      "label": "bounding-box.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/bounding-box.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "utils_bounding_box_boundingbox",
+      "label": "BoundingBox",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/bounding-box.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "utils_ids",
+      "label": "ids.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L1",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "utils_ids_rowtolabel",
+      "label": "rowToLabel()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L5",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "utils_ids_buildseatid",
+      "label": "buildSeatId()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L21",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "utils_ids_parseseatid",
+      "label": "parseSeatId()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L34",
+      "community": 2,
+      "community_name": "Community 2"
+    },
+    {
+      "id": "utils_parser",
+      "label": "parser.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L1",
+      "community": 7,
+      "community_name": "Community 7"
+    },
+    {
+      "id": "utils_parser_invalidlayouterror",
+      "label": "InvalidLayoutError",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L13",
+      "community": 7,
+      "community_name": "Community 7"
+    },
+    {
+      "id": "utils_parser_invalidlayouterror_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L14",
+      "community": 7,
+      "community_name": "Community 7"
+    },
+    {
+      "id": "utils_parser_internalseatnode",
+      "label": "InternalSeatNode",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L26",
+      "community": 7,
+      "community_name": "Community 7"
+    },
+    {
+      "id": "utils_parser_internalvenuelayout",
+      "label": "InternalVenueLayout",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L33",
+      "community": 7,
+      "community_name": "Community 7"
+    },
+    {
+      "id": "utils_parser_validatesectionconstraints",
+      "label": "validateSectionConstraints()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L40",
+      "community": 7,
+      "community_name": "Community 7"
+    },
+    {
+      "id": "utils_parser_parselayout",
+      "label": "parseLayout()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L108",
+      "community": 7,
+      "community_name": "Community 7"
+    },
+    {
+      "id": "utils_parser_serializelayout",
+      "label": "serializeLayout()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L147",
+      "community": 7,
+      "community_name": "Community 7"
     }
   ],
   "links": [
@@ -1297,6 +1759,198 @@
       "context": "decorator",
       "_src": "gateways_events_gateway_eventsgateway_handleleaveroom",
       "_tgt": "subscribemessage",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_arc",
+      "target": "generators_arc_generatearc",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L23",
+      "weight": 1,
+      "_src": "generators_arc",
+      "_tgt": "generators_arc_generatearc",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_arc",
+      "target": "generators_arc_generatearcparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "_src": "generators_arc",
+      "_tgt": "generators_arc_generatearcparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_arc",
+      "target": "utils_ids",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_arc",
+      "_tgt": "utils_ids",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_arc",
+      "target": "utils_ids_buildseatid",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_arc",
+      "_tgt": "utils_ids_buildseatid",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_arc",
+      "target": "utils_ids_rowtolabel",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/arc.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_arc",
+      "_tgt": "utils_ids_rowtolabel",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_grid",
+      "target": "generators_grid_generategrid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L23",
+      "weight": 1,
+      "_src": "generators_grid",
+      "_tgt": "generators_grid_generategrid",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_grid",
+      "target": "generators_grid_generategridparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "_src": "generators_grid",
+      "_tgt": "generators_grid_generategridparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_grid",
+      "target": "utils_ids",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_grid",
+      "_tgt": "utils_ids",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_grid",
+      "target": "utils_ids_buildseatid",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_grid",
+      "_tgt": "utils_ids_buildseatid",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_grid",
+      "target": "utils_ids_rowtolabel",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/grid.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_grid",
+      "_tgt": "utils_ids_rowtolabel",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_table",
+      "target": "generators_table_generatetablecluster",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L36",
+      "weight": 1,
+      "_src": "generators_table",
+      "_tgt": "generators_table_generatetablecluster",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_table",
+      "target": "generators_table_generatetableclusterparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "_src": "generators_table",
+      "_tgt": "generators_table_generatetableclusterparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_table",
+      "target": "generators_table_tableclustergroup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L21",
+      "weight": 1,
+      "_src": "generators_table",
+      "_tgt": "generators_table_tableclustergroup",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_table",
+      "target": "generators_table_tableclustertransform",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L16",
+      "weight": 1,
+      "_src": "generators_table",
+      "_tgt": "generators_table_tableclustertransform",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_table",
+      "target": "utils_ids",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_table",
+      "_tgt": "utils_ids",
+      "confidence_score": 1
+    },
+    {
+      "source": "generators_table",
+      "target": "utils_ids_buildseatid",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/generators/table.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "generators_table",
+      "_tgt": "utils_ids_buildseatid",
       "confidence_score": 1
     },
     {
@@ -1812,6 +2466,45 @@
     },
     {
       "source": "src_index",
+      "target": "generators_arc",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "generators_arc",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "generators_grid",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "generators_grid",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "generators_table",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L3",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "generators_table",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
       "target": "src_data_source",
       "relation": "imports_from",
       "confidence": "EXTRACTED",
@@ -1881,7 +2574,7 @@
       "relation": "imports_from",
       "confidence": "EXTRACTED",
       "source_file": "packages/venue-engine/src/index.ts",
-      "source_location": "L1",
+      "source_location": "L8",
       "weight": 1,
       "context": "re-export",
       "_src": "src_index",
@@ -1925,6 +2618,71 @@
       "context": "re-export",
       "_src": "src_index",
       "_tgt": "src_sockets",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_venue",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L6",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "src_venue",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "utils_aggregates",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L6",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "utils_aggregates",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "utils_bounding_box",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "utils_bounding_box",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "utils_ids",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "utils_ids",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "utils_parser",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L7",
+      "weight": 1,
+      "context": "re-export",
+      "_src": "src_index",
+      "_tgt": "utils_parser",
       "confidence_score": 1
     },
     {
@@ -2321,6 +3079,534 @@
       "weight": 1,
       "_src": "src_sockets",
       "_tgt": "src_sockets_seatstateeventschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_arcsectionconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L86",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_arcsectionconfig",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_arcsectionconfigschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L70",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_arcsectionconfigschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_degtorad",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L6",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_degtorad",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_gridsectionconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L64",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_gridsectionconfig",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_gridsectionconfigschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L47",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_gridsectionconfigschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_point",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L23",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_point",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_pointschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L17",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_pointschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_radtodeg",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L10",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_radtodeg",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_seatnode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L42",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_seatnode",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_seatnodeschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L29",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_seatnodeschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_sectionconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L114",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_sectionconfig",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_sectionconfigschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L109",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_sectionconfigschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_tableclusterconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L104",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_tableclusterconfig",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_tableclusterconfigschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L91",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_tableclusterconfigschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_venuelayout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L136",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_venuelayout",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_venue",
+      "target": "src_venue_venuelayoutschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/venue.ts",
+      "source_location": "L119",
+      "weight": 1,
+      "_src": "src_venue",
+      "_tgt": "src_venue_venuelayoutschema",
+      "confidence_score": 1
+    },
+    {
+      "source": "tests_generators_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/__tests__/generators.spec.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "_src": "tests_generators_spec",
+      "_tgt": "src_index",
+      "confidence_score": 1
+    },
+    {
+      "source": "tests_performance_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/__tests__/performance.spec.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "_src": "tests_performance_spec",
+      "_tgt": "src_index",
+      "confidence_score": 1
+    },
+    {
+      "source": "tests_property_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/__tests__/property.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "tests_property_spec",
+      "_tgt": "src_index",
+      "confidence_score": 1
+    },
+    {
+      "source": "tests_utils_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/__tests__/utils.spec.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "_src": "tests_utils_spec",
+      "_tgt": "src_index",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates",
+      "target": "utils_aggregates_convexhull",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L23",
+      "weight": 1,
+      "_src": "utils_aggregates",
+      "_tgt": "utils_aggregates_convexhull",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates",
+      "target": "utils_aggregates_crossproduct",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L15",
+      "weight": 1,
+      "_src": "utils_aggregates",
+      "_tgt": "utils_aggregates_crossproduct",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates",
+      "target": "utils_aggregates_sectionaggregate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "_src": "utils_aggregates",
+      "_tgt": "utils_aggregates_sectionaggregate",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates",
+      "target": "utils_aggregates_sectionaggregates",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L83",
+      "weight": 1,
+      "_src": "utils_aggregates",
+      "_tgt": "utils_aggregates_sectionaggregates",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates",
+      "target": "utils_bounding_box",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "utils_aggregates",
+      "_tgt": "utils_bounding_box",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates",
+      "target": "utils_bounding_box_boundingbox",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "utils_aggregates",
+      "_tgt": "utils_bounding_box_boundingbox",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates_convexhull",
+      "target": "utils_aggregates_crossproduct",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L54",
+      "weight": 1,
+      "_src": "utils_aggregates_convexhull",
+      "_tgt": "utils_aggregates_crossproduct",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_aggregates_sectionaggregates",
+      "target": "utils_aggregates_convexhull",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/aggregates.ts",
+      "source_location": "L111",
+      "weight": 1,
+      "_src": "utils_aggregates_sectionaggregates",
+      "_tgt": "utils_aggregates_convexhull",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_bounding_box",
+      "target": "utils_bounding_box_boundingbox",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/bounding-box.ts",
+      "source_location": "L13",
+      "weight": 1,
+      "_src": "utils_bounding_box",
+      "_tgt": "utils_bounding_box_boundingbox",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_ids",
+      "target": "utils_ids_buildseatid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L21",
+      "weight": 1,
+      "_src": "utils_ids",
+      "_tgt": "utils_ids_buildseatid",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_ids",
+      "target": "utils_ids_parseseatid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L34",
+      "weight": 1,
+      "_src": "utils_ids",
+      "_tgt": "utils_ids_parseseatid",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_ids",
+      "target": "utils_ids_rowtolabel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "_src": "utils_ids",
+      "_tgt": "utils_ids_rowtolabel",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_ids_buildseatid",
+      "target": "utils_ids_rowtolabel",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/ids.ts",
+      "source_location": "L26",
+      "weight": 1,
+      "_src": "utils_ids_buildseatid",
+      "_tgt": "utils_ids_rowtolabel",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser",
+      "target": "utils_parser_internalseatnode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L26",
+      "weight": 1,
+      "_src": "utils_parser",
+      "_tgt": "utils_parser_internalseatnode",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser",
+      "target": "utils_parser_internalvenuelayout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L33",
+      "weight": 1,
+      "_src": "utils_parser",
+      "_tgt": "utils_parser_internalvenuelayout",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser",
+      "target": "utils_parser_invalidlayouterror",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L13",
+      "weight": 1,
+      "_src": "utils_parser",
+      "_tgt": "utils_parser_invalidlayouterror",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser",
+      "target": "utils_parser_parselayout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L108",
+      "weight": 1,
+      "_src": "utils_parser",
+      "_tgt": "utils_parser_parselayout",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser",
+      "target": "utils_parser_serializelayout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L147",
+      "weight": 1,
+      "_src": "utils_parser",
+      "_tgt": "utils_parser_serializelayout",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser",
+      "target": "utils_parser_validatesectionconstraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L40",
+      "weight": 1,
+      "_src": "utils_parser",
+      "_tgt": "utils_parser_validatesectionconstraints",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser_invalidlayouterror",
+      "target": "utils_parser_invalidlayouterror_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L14",
+      "weight": 1,
+      "_src": "utils_parser_invalidlayouterror",
+      "_tgt": "utils_parser_invalidlayouterror_constructor",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser_parselayout",
+      "target": "utils_parser_invalidlayouterror",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L114",
+      "weight": 1,
+      "_src": "utils_parser_parselayout",
+      "_tgt": "utils_parser_invalidlayouterror",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser_parselayout",
+      "target": "utils_parser_validatesectionconstraints",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L129",
+      "weight": 1,
+      "_src": "utils_parser_parselayout",
+      "_tgt": "utils_parser_validatesectionconstraints",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser_serializelayout",
+      "target": "utils_parser_invalidlayouterror",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L167",
+      "weight": 1,
+      "_src": "utils_parser_serializelayout",
+      "_tgt": "utils_parser_invalidlayouterror",
+      "confidence_score": 1
+    },
+    {
+      "source": "utils_parser_validatesectionconstraints",
+      "target": "utils_parser_invalidlayouterror",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/utils/parser.ts",
+      "source_location": "L44",
+      "weight": 1,
+      "_src": "utils_parser_validatesectionconstraints",
+      "_tgt": "utils_parser_invalidlayouterror",
       "confidence_score": 1
     },
     {

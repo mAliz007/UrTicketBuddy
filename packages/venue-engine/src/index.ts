@@ -6,3 +6,4 @@ export * from "./utils/bounding-box";
 export * from "./utils/aggregates";
 export * from "./utils/parser";
 export * from "./layout";
+export { degToRad, radToDeg } from "@urticketbuddy/contracts";
