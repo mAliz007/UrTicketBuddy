@@ -4,6 +4,8 @@ packages:
 
 allowBuilds:
   "@sentropic/engram": true
+  esbuild: true
+  msgpackr-extract: true
   protobufjs: true
   tesseract.js: true
   tree-sitter-c: true
