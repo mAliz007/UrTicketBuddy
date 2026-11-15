@@ -20,7 +20,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `16fcf9a`
+- Built from Git commit: `84ebd41`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
