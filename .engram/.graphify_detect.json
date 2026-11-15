@@ -89,14 +89,14 @@
     "video": []
   },
   "total_files": 80,
-  "total_words": 26268,
+  "total_words": 29868,
   "needs_graph": false,
-  "warning": "Corpus is ~26,268 words - fits in a single context window. You may not need a graph.",
+  "warning": "Corpus is ~29,868 words - fits in a single context window. You may not need a graph.",
   "skipped_sensitive": [],
   "graphifyignore_patterns": 3,
   "git": {
     "source_owner": "git",
-    "source_hash": "44e98bcdeac0d272640da74036313375babde00d",
+    "source_hash": "53827ee63d772b01c461dea1e825391519dcaa3f",
     "branches": [
       "chore/UTB-1-monorepo-scaffold",
       "chore/UTB-1-monorepo-scaffold-apps",
@@ -118,7 +118,7 @@
     "source": "configured-default",
     "root": ".",
     "git_root": ".",
-    "head": "44e98bcdeac0d272640da74036313375babde00d",
+    "head": "53827ee63d772b01c461dea1e825391519dcaa3f",
     "candidate_count": null,
     "included_count": 80,
     "excluded_untracked_count": 0,

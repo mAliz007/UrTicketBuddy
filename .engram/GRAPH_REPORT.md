@@ -2,7 +2,7 @@
 
 ## Corpus Check
 
-- Corpus is ~26,268 words - fits in a single context window. You may not need a graph.
+- Corpus is ~29,868 words - fits in a single context window. You may not need a graph.
 
 ## Summary
 
@@ -20,7 +20,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `44e98bc`
+- Built from Git commit: `53827ee`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
