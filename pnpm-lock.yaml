@@ -607,6 +607,10 @@ importers:
         version: 5.9.3
 
   packages/venue-engine:
+    dependencies:
+      "@urticketbuddy/contracts":
+        specifier: workspace:*
+        version: link:../contracts
     devDependencies:
       "@types/jest":
         specifier: ^29.5.14
