@@ -1,0 +1,973 @@
+{
+  "schema": "engram_search_index_v1",
+  "graph_signature": "8123f0772738f02eb9e7ef4e63bdc96756615f4c64a14e3988860153af7a8720",
+  "grounding_signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "docs": [
+    { "nodeId": "api_jest_config", "label": "jest.config.ts", "community": 12 },
+    { "nodeId": "api_jest_config_config", "label": "config", "community": 12 },
+    {
+      "nodeId": "commitlint_config",
+      "label": "commitlint.config.js",
+      "community": 20
+    },
+    {
+      "nodeId": "config_jest_config",
+      "label": "jest.config.ts",
+      "community": 13
+    },
+    {
+      "nodeId": "config_jest_config_config",
+      "label": "config",
+      "community": 13
+    },
+    { "nodeId": "connectedsocket", "label": "ConnectedSocket", "community": 3 },
+    {
+      "nodeId": "contracts_jest_config",
+      "label": "jest.config.ts",
+      "community": 14
+    },
+    {
+      "nodeId": "contracts_jest_config_config",
+      "label": "config",
+      "community": 14
+    },
+    { "nodeId": "controller", "label": "Controller", "community": 6 },
+    { "nodeId": "db_jest_config", "label": "jest.config.ts", "community": 15 },
+    { "nodeId": "db_jest_config_config", "label": "config", "community": 15 },
+    { "nodeId": "dto_index", "label": "index.ts", "community": 21 },
+    { "nodeId": "entities_index", "label": "index.ts", "community": 0 },
+    { "nodeId": "eslint_base", "label": "base.js", "community": 22 },
+    {
+      "nodeId": "eslint_config",
+      "label": "eslint.config.mjs",
+      "community": 23
+    },
+    {
+      "nodeId": "gateways_events_gateway",
+      "label": "events.gateway.ts",
+      "community": 3
+    },
+    {
+      "nodeId": "gateways_events_gateway_eventsgateway",
+      "label": "EventsGateway",
+      "community": 3
+    },
+    {
+      "nodeId": "gateways_events_gateway_eventsgateway_handlejoinroom",
+      "label": ".handleJoinRoom()",
+      "community": 3
+    },
+    {
+      "nodeId": "gateways_events_gateway_eventsgateway_handleleaveroom",
+      "label": ".handleLeaveRoom()",
+      "community": 3
+    },
+    { "nodeId": "get", "label": "Get", "community": 6 },
+    { "nodeId": "guards_index", "label": "index.ts", "community": 24 },
+    {
+      "nodeId": "health_health_controller",
+      "label": "health.controller.ts",
+      "community": 6
+    },
+    {
+      "nodeId": "health_health_controller_healthcontroller",
+      "label": "HealthController",
+      "community": 6
+    },
+    {
+      "nodeId": "health_health_controller_healthcontroller_constructor",
+      "label": ".constructor()",
+      "community": 6
+    },
+    {
+      "nodeId": "health_health_controller_healthcontroller_gethealth",
+      "label": ".getHealth()",
+      "community": 6
+    },
+    {
+      "nodeId": "health_health_controller_spec",
+      "label": "health.controller.spec.ts",
+      "community": 25
+    },
+    {
+      "nodeId": "health_health_module",
+      "label": "health.module.ts",
+      "community": 8
+    },
+    {
+      "nodeId": "health_health_module_healthmodule",
+      "label": "HealthModule",
+      "community": 8
+    },
+    {
+      "nodeId": "health_health_service",
+      "label": "health.service.ts",
+      "community": 2
+    },
+    {
+      "nodeId": "health_health_service_healthservice",
+      "label": "HealthService",
+      "community": 2
+    },
+    {
+      "nodeId": "health_health_service_healthservice_checkhealth",
+      "label": ".checkHealth()",
+      "community": 2
+    },
+    {
+      "nodeId": "health_health_service_healthservice_checktcpport",
+      "label": ".checkTcpPort()",
+      "community": 2
+    },
+    { "nodeId": "injectable", "label": "Injectable", "community": 2 },
+    { "nodeId": "messagebody", "label": "MessageBody", "community": 3 },
+    { "nodeId": "module", "label": "Module", "community": 8 },
+    { "nodeId": "ports_index", "label": "index.ts", "community": 10 },
+    {
+      "nodeId": "ports_index_eventseatcatalogport",
+      "label": "EventSeatCatalogPort",
+      "community": 10
+    },
+    {
+      "nodeId": "ports_index_paymentprovider",
+      "label": "PaymentProvider",
+      "community": 10
+    },
+    {
+      "nodeId": "ports_index_platformsettingsport",
+      "label": "PlatformSettingsPort",
+      "community": 10
+    },
+    { "nodeId": "prettier_index", "label": "index.js", "community": 26 },
+    {
+      "nodeId": "processors_hold_expiry_processor",
+      "label": "hold-expiry.processor.ts",
+      "community": 2
+    },
+    {
+      "nodeId": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "label": "HoldExpiryProcessor",
+      "community": 2
+    },
+    {
+      "nodeId": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy",
+      "label": ".onModuleDestroy()",
+      "community": 2
+    },
+    {
+      "nodeId": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit",
+      "label": ".onModuleInit()",
+      "community": 2
+    },
+    {
+      "nodeId": "processors_hold_expiry_processor_onmoduledestroy",
+      "label": "OnModuleDestroy",
+      "community": 2
+    },
+    {
+      "nodeId": "processors_hold_expiry_processor_onmoduleinit",
+      "label": "OnModuleInit",
+      "community": 2
+    },
+    {
+      "nodeId": "realtime_jest_config",
+      "label": "jest.config.ts",
+      "community": 16
+    },
+    {
+      "nodeId": "realtime_jest_config_config",
+      "label": "config",
+      "community": 16
+    },
+    {
+      "nodeId": "redis_scripts_jest_config",
+      "label": "jest.config.ts",
+      "community": 17
+    },
+    {
+      "nodeId": "redis_scripts_jest_config_config",
+      "label": "config",
+      "community": 17
+    },
+    { "nodeId": "src_app", "label": "App.tsx", "community": 11 },
+    { "nodeId": "src_app_app", "label": "App()", "community": 11 },
+    { "nodeId": "src_app_module", "label": "app.module.ts", "community": 8 },
+    {
+      "nodeId": "src_app_module_appmodule",
+      "label": "AppModule",
+      "community": 8
+    },
+    { "nodeId": "src_check", "label": "check.ts", "community": 9 },
+    {
+      "nodeId": "src_check_checkdatabase",
+      "label": "checkDatabase()",
+      "community": 9
+    },
+    { "nodeId": "src_data_source", "label": "data-source.ts", "community": 9 },
+    {
+      "nodeId": "src_data_source_appdatasource",
+      "label": "AppDataSource",
+      "community": 9
+    },
+    { "nodeId": "src_data_source_env", "label": "env", "community": 9 },
+    { "nodeId": "src_enums", "label": "enums.ts", "community": 1 },
+    { "nodeId": "src_enums_seatstate", "label": "SeatState", "community": 1 },
+    {
+      "nodeId": "src_enums_seatstatecolors",
+      "label": "SeatStateColors",
+      "community": 1
+    },
+    {
+      "nodeId": "src_enums_ticketstatus",
+      "label": "TicketStatus",
+      "community": 1
+    },
+    { "nodeId": "src_enums_userrole", "label": "UserRole", "community": 1 },
+    { "nodeId": "src_env", "label": "env.ts", "community": 0 },
+    { "nodeId": "src_env_env", "label": "Env", "community": 0 },
+    { "nodeId": "src_env_envschema", "label": "envSchema", "community": 0 },
+    { "nodeId": "src_env_loadenv", "label": "loadEnv()", "community": 0 },
+    { "nodeId": "src_errors", "label": "errors.ts", "community": 0 },
+    { "nodeId": "src_errors_errorcode", "label": "ErrorCode", "community": 0 },
+    {
+      "nodeId": "src_errors_errorenvelope",
+      "label": "ErrorEnvelope",
+      "community": 0
+    },
+    {
+      "nodeId": "src_errors_errorenvelopeschema",
+      "label": "ErrorEnvelopeSchema",
+      "community": 0
+    },
+    { "nodeId": "src_index", "label": "index.ts", "community": 0 },
+    { "nodeId": "src_index_spec", "label": "index.spec.ts", "community": 0 },
+    { "nodeId": "src_jobs", "label": "jobs.ts", "community": 4 },
+    {
+      "nodeId": "src_jobs_holdexpiryjob",
+      "label": "HoldExpiryJob",
+      "community": 4
+    },
+    {
+      "nodeId": "src_jobs_holdexpiryjobschema",
+      "label": "HoldExpiryJobSchema",
+      "community": 4
+    },
+    {
+      "nodeId": "src_jobs_ordernotificationjob",
+      "label": "OrderNotificationJob",
+      "community": 4
+    },
+    {
+      "nodeId": "src_jobs_ordernotificationjobschema",
+      "label": "OrderNotificationJobSchema",
+      "community": 4
+    },
+    {
+      "nodeId": "src_jobs_searchindexjob",
+      "label": "SearchIndexJob",
+      "community": 4
+    },
+    {
+      "nodeId": "src_jobs_searchindexjobschema",
+      "label": "SearchIndexJobSchema",
+      "community": 4
+    },
+    {
+      "nodeId": "src_jobs_ticketseedrotationjob",
+      "label": "TicketSeedRotationJob",
+      "community": 4
+    },
+    {
+      "nodeId": "src_jobs_ticketseedrotationjobschema",
+      "label": "TicketSeedRotationJobSchema",
+      "community": 4
+    },
+    { "nodeId": "src_layout", "label": "layout.ts", "community": 5 },
+    {
+      "nodeId": "src_layout_generatedseat",
+      "label": "GeneratedSeat",
+      "community": 5
+    },
+    {
+      "nodeId": "src_layout_generategridseats",
+      "label": "generateGridSeats()",
+      "community": 5
+    },
+    {
+      "nodeId": "src_layout_generateradialseats",
+      "label": "generateRadialSeats()",
+      "community": 5
+    },
+    {
+      "nodeId": "src_layout_gridsectionconfig",
+      "label": "GridSectionConfig",
+      "community": 5
+    },
+    { "nodeId": "src_layout_point", "label": "Point", "community": 5 },
+    {
+      "nodeId": "src_layout_radialsectionconfig",
+      "label": "RadialSectionConfig",
+      "community": 5
+    },
+    { "nodeId": "src_main", "label": "main.ts", "community": 11 },
+    { "nodeId": "src_main_bootstrap", "label": "bootstrap()", "community": 11 },
+    { "nodeId": "src_pagination", "label": "pagination.ts", "community": 0 },
+    {
+      "nodeId": "src_pagination_paginatedresult",
+      "label": "PaginatedResult",
+      "community": 0
+    },
+    {
+      "nodeId": "src_pagination_paginationquery",
+      "label": "PaginationQuery",
+      "community": 0
+    },
+    {
+      "nodeId": "src_pagination_paginationqueryschema",
+      "label": "PaginationQuerySchema",
+      "community": 0
+    },
+    { "nodeId": "src_scripts", "label": "scripts.ts", "community": 7 },
+    {
+      "nodeId": "src_scripts_redisscriptswrapper",
+      "label": "RedisScriptsWrapper",
+      "community": 7
+    },
+    {
+      "nodeId": "src_scripts_redisscriptswrapper_constructor",
+      "label": ".constructor()",
+      "community": 7
+    },
+    {
+      "nodeId": "src_scripts_redisscriptswrapper_holdseat",
+      "label": ".holdSeat()",
+      "community": 7
+    },
+    {
+      "nodeId": "src_scripts_seatholdparams",
+      "label": "SeatHoldParams",
+      "community": 7
+    },
+    {
+      "nodeId": "src_scripts_seatholdresult",
+      "label": "SeatHoldResult",
+      "community": 7
+    },
+    { "nodeId": "src_sockets", "label": "sockets.ts", "community": 1 },
+    {
+      "nodeId": "src_sockets_roomjoinpayload",
+      "label": "RoomJoinPayload",
+      "community": 1
+    },
+    {
+      "nodeId": "src_sockets_roomjoinschema",
+      "label": "RoomJoinSchema",
+      "community": 1
+    },
+    {
+      "nodeId": "src_sockets_roomleavepayload",
+      "label": "RoomLeavePayload",
+      "community": 1
+    },
+    {
+      "nodeId": "src_sockets_roomleaveschema",
+      "label": "RoomLeaveSchema",
+      "community": 1
+    },
+    {
+      "nodeId": "src_sockets_seatstateevent",
+      "label": "SeatStateEvent",
+      "community": 1
+    },
+    {
+      "nodeId": "src_sockets_seatstateeventschema",
+      "label": "SeatStateEventSchema",
+      "community": 1
+    },
+    {
+      "nodeId": "subscribemessage",
+      "label": "SubscribeMessage",
+      "community": 3
+    },
+    {
+      "nodeId": "venue_engine_jest_config",
+      "label": "jest.config.ts",
+      "community": 18
+    },
+    {
+      "nodeId": "venue_engine_jest_config_config",
+      "label": "config",
+      "community": 18
+    },
+    {
+      "nodeId": "web_postcss_config",
+      "label": "postcss.config.js",
+      "community": 27
+    },
+    {
+      "nodeId": "web_tailwind_config",
+      "label": "tailwind.config.js",
+      "community": 28
+    },
+    { "nodeId": "web_vite_config", "label": "vite.config.ts", "community": 29 },
+    {
+      "nodeId": "websocketgateway",
+      "label": "WebSocketGateway",
+      "community": 3
+    },
+    { "nodeId": "websocketserver", "label": "WebSocketServer", "community": 3 },
+    {
+      "nodeId": "worker_jest_config",
+      "label": "jest.config.ts",
+      "community": 19
+    },
+    {
+      "nodeId": "worker_jest_config_config",
+      "label": "config",
+      "community": 19
+    }
+  ],
+  "bm25": {
+    "N": 119,
+    "postings": {
+      "jest": [
+        { "d": 0, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 3, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 6, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 9, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 46, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 48, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 110, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 117, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "config": [
+        { "d": 0, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 1, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 2, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 3, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 4, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 6, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 7, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 9, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 10, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 14, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 46, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 47, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 48, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 49, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 110, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 111, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 112, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 113, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 114, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 117, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 118, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "commitlint": [
+        { "d": 2, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "connectedsocket": [
+        { "d": 5, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "controller": [
+        { "d": 8, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 21, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 25, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "index": [
+        { "d": 11, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 12, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 20, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 35, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 39, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 72, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 73, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "base": [{ "d": 13, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "eslint": [
+        { "d": 14, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "mjs": [{ "d": 14, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "events": [
+        { "d": 15, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "gateway": [
+        { "d": 15, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "eventsgateway": [
+        { "d": 16, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "handlejoinroom": [
+        { "d": 17, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "handleleaveroom": [
+        { "d": 18, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "get": [{ "d": 19, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "health": [
+        { "d": 21, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 25, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 26, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 28, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "healthcontroller": [
+        { "d": 22, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "constructor": [
+        { "d": 23, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 98, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "gethealth": [
+        { "d": 24, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "spec": [
+        { "d": 25, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 73, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "module": [
+        { "d": 26, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 34, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 52, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "healthmodule": [
+        { "d": 27, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "service": [
+        { "d": 28, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "healthservice": [
+        { "d": 29, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "checkhealth": [
+        { "d": 30, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "checktcpport": [
+        { "d": 31, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "injectable": [
+        { "d": 32, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "messagebody": [
+        { "d": 33, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "eventseatcatalogport": [
+        { "d": 36, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "paymentprovider": [
+        { "d": 37, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "platformsettingsport": [
+        { "d": 38, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "hold": [{ "d": 40, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "expiry": [
+        { "d": 40, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "processor": [
+        { "d": 40, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "holdexpiryprocessor": [
+        { "d": 41, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "onmoduledestroy": [
+        { "d": 42, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 44, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "onmoduleinit": [
+        { "d": 43, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 45, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "app": [
+        { "d": 50, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 51, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 52, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "tsx": [{ "d": 50, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "appmodule": [
+        { "d": 53, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "check": [
+        { "d": 54, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "checkdatabase": [
+        { "d": 55, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "data": [{ "d": 56, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "source": [
+        { "d": 56, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "appdatasource": [
+        { "d": 57, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "env": [
+        { "d": 58, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 64, "tf": { "label": 1, "description": 0, "quote": 0 } },
+        { "d": 65, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "enums": [
+        { "d": 59, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "seatstate": [
+        { "d": 60, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "seatstatecolors": [
+        { "d": 61, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "ticketstatus": [
+        { "d": 62, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "userrole": [
+        { "d": 63, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "envschema": [
+        { "d": 66, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "loadenv": [
+        { "d": 67, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "errors": [
+        { "d": 68, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "errorcode": [
+        { "d": 69, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "errorenvelope": [
+        { "d": 70, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "errorenvelopeschema": [
+        { "d": 71, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "jobs": [{ "d": 74, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "holdexpiryjob": [
+        { "d": 75, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "holdexpiryjobschema": [
+        { "d": 76, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "ordernotificationjob": [
+        { "d": 77, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "ordernotificationjobschema": [
+        { "d": 78, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "searchindexjob": [
+        { "d": 79, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "searchindexjobschema": [
+        { "d": 80, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "ticketseedrotationjob": [
+        { "d": 81, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "ticketseedrotationjobschema": [
+        { "d": 82, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "layout": [
+        { "d": 83, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "generatedseat": [
+        { "d": 84, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "generategridseats": [
+        { "d": 85, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "generateradialseats": [
+        { "d": 86, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "gridsectionconfig": [
+        { "d": 87, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "point": [
+        { "d": 88, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "radialsectionconfig": [
+        { "d": 89, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "main": [{ "d": 90, "tf": { "label": 1, "description": 0, "quote": 0 } }],
+      "bootstrap": [
+        { "d": 91, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "pagination": [
+        { "d": 92, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "paginatedresult": [
+        { "d": 93, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "paginationquery": [
+        { "d": 94, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "paginationqueryschema": [
+        { "d": 95, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "scripts": [
+        { "d": 96, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "redisscriptswrapper": [
+        { "d": 97, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "holdseat": [
+        { "d": 99, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "seatholdparams": [
+        { "d": 100, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "seatholdresult": [
+        { "d": 101, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "sockets": [
+        { "d": 102, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "roomjoinpayload": [
+        { "d": 103, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "roomjoinschema": [
+        { "d": 104, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "roomleavepayload": [
+        { "d": 105, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "roomleaveschema": [
+        { "d": 106, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "seatstateevent": [
+        { "d": 107, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "seatstateeventschema": [
+        { "d": 108, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "subscribemessage": [
+        { "d": 109, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "postcss": [
+        { "d": 112, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "tailwind": [
+        { "d": 113, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "vite": [
+        { "d": 114, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "websocketgateway": [
+        { "d": 115, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ],
+      "websocketserver": [
+        { "d": 116, "tf": { "label": 1, "description": 0, "quote": 0 } }
+      ]
+    },
+    "fieldLengths": [
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 3, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 3, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 3, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 },
+      { "label": 2, "description": 0, "quote": 0 },
+      { "label": 1, "description": 0, "quote": 0 }
+    ],
+    "avgFieldLength": {
+      "label": 1.218487394957983,
+      "description": 0,
+      "quote": 0
+    },
+    "params": {
+      "k1": 1.2,
+      "b": 0.75,
+      "fieldWeights": { "label": 3, "description": 1.5, "quote": 1.5 }
+    }
+  },
+  "adjacency": {
+    "node_ptr": [
+      0, 1, 2, 2, 3, 4, 6, 7, 8, 9, 10, 11, 11, 12, 12, 12, 13, 18, 22, 26, 27,
+      27, 28, 32, 33, 35, 35, 36, 38, 39, 43, 45, 47, 49, 51, 53, 56, 57, 58,
+      59, 59, 60, 66, 67, 68, 69, 70, 71, 72, 73, 74, 76, 77, 78, 80, 83, 84,
+      88, 90, 91, 97, 99, 100, 101, 102, 106, 107, 108, 109, 113, 114, 115, 116,
+      127, 128, 137, 138, 139, 140, 141, 142, 143, 144, 145, 152, 153, 154, 155,
+      156, 157, 158, 160, 161, 165, 166, 167, 168, 172, 175, 176, 177, 178, 179,
+      188, 189, 190, 191, 192, 193, 194, 196, 197, 198, 198, 198, 198, 199, 200,
+      201, 202
+    ],
+    "neighbors": [
+      1, 0, 4, 3, 17, 18, 7, 6, 22, 10, 9, 72, 16, 15, 17, 18, 115, 116, 5, 16,
+      33, 109, 5, 16, 33, 109, 24, 22, 8, 21, 23, 24, 22, 19, 22, 27, 26, 34,
+      29, 28, 30, 31, 32, 29, 31, 29, 30, 29, 41, 17, 18, 27, 53, 36, 37, 38,
+      35, 35, 35, 41, 32, 40, 42, 43, 44, 45, 41, 41, 41, 41, 47, 46, 49, 48,
+      51, 90, 50, 53, 34, 52, 55, 56, 57, 54, 54, 57, 58, 72, 54, 56, 56, 60,
+      61, 62, 63, 72, 102, 59, 102, 59, 59, 59, 65, 66, 67, 72, 64, 64, 64, 69,
+      70, 71, 72, 68, 68, 68, 12, 56, 59, 64, 68, 73, 74, 83, 92, 96, 102, 72,
+      72, 75, 76, 77, 78, 79, 80, 81, 82, 74, 74, 74, 74, 74, 74, 74, 74, 72,
+      84, 85, 86, 87, 88, 89, 83, 83, 83, 83, 83, 83, 50, 91, 90, 72, 93, 94,
+      95, 92, 92, 92, 72, 97, 100, 101, 96, 98, 99, 97, 97, 96, 96, 59, 60, 72,
+      103, 104, 105, 106, 107, 108, 102, 102, 102, 102, 102, 102, 17, 18, 111,
+      110, 16, 16, 118, 117
+    ],
+    "edge_weights": [
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1
+    ]
+  },
+  "community": [
+    12, 12, 20, 13, 13, 3, 14, 14, 6, 15, 15, 21, 0, 22, 23, 3, 3, 3, 3, 6, 24,
+    6, 6, 6, 6, 25, 8, 8, 2, 2, 2, 2, 2, 3, 8, 10, 10, 10, 10, 26, 2, 2, 2, 2,
+    2, 2, 16, 16, 17, 17, 11, 11, 8, 8, 9, 9, 9, 9, 9, 1, 1, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 11, 11,
+    0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 1, 1, 1, 1, 1, 1, 1, 3, 18, 18, 27, 28, 29, 3,
+    3, 19, 19
+  ],
+  "community_meta": {
+    "0": { "label": "Community 0", "salient": false },
+    "1": { "label": "Community 1", "salient": false },
+    "2": { "label": "Community 2", "salient": false },
+    "3": { "label": "Community 3", "salient": false },
+    "4": { "label": "Community 4", "salient": false },
+    "5": { "label": "Community 5", "salient": false },
+    "6": { "label": "Community 6", "salient": false },
+    "7": { "label": "Community 7", "salient": false },
+    "8": { "label": "Community 8", "salient": false },
+    "9": { "label": "Community 9", "salient": false },
+    "10": { "label": "Community 10", "salient": false },
+    "11": { "label": "Community 11", "salient": false },
+    "12": { "label": "Community 12", "salient": false },
+    "13": { "label": "Community 13", "salient": false },
+    "14": { "label": "Community 14", "salient": false },
+    "15": { "label": "Community 15", "salient": false },
+    "16": { "label": "Community 16", "salient": false },
+    "17": { "label": "Community 17", "salient": false },
+    "18": { "label": "Community 18", "salient": false },
+    "19": { "label": "Community 19", "salient": false },
+    "20": { "label": "Community 20", "salient": false },
+    "21": { "label": "Community 21", "salient": false },
+    "22": { "label": "Community 22", "salient": false },
+    "23": { "label": "Community 23", "salient": false },
+    "24": { "label": "Community 24", "salient": false },
+    "25": { "label": "Community 25", "salient": false },
+    "26": { "label": "Community 26", "salient": false },
+    "27": { "label": "Community 27", "salient": false },
+    "28": { "label": "Community 28", "salient": false },
+    "29": { "label": "Community 29", "salient": false }
+  },
+  "indexParams": {
+    "k1": 1.2,
+    "b": 0.75,
+    "fieldWeights": { "label": 3, "description": 1.5, "quote": 1.5 },
+    "mappedConfidence": { "EXTRACTED": 1, "INFERRED": 0.6, "AMBIGUOUS": 0.3 },
+    "rrfK": 60
+  }
+}

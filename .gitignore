@@ -36,3 +36,7 @@ Thumbs.db
 
 # Docker data & volumes
 data/
+
+# Graphify / Engram cache
+.engram/cache/
+.engram/scratch/

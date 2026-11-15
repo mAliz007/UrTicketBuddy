@@ -6,7 +6,7 @@ async function checkDatabase() {
     await AppDataSource.initialize();
     console.log("Database connection initialized successfully.");
     const hasPending = await AppDataSource.showMigrations();
-    console.log("Migrations check complete.");
+    console.log("Migrations check complete. Pending:", hasPending);
     await AppDataSource.destroy();
     process.exit(0);
   } catch (error) {

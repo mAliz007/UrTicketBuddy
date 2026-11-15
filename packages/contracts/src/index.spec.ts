@@ -15,6 +15,10 @@ describe("packages/contracts", () => {
     expect(TicketStatus.REVOKED).toBe("REVOKED");
   });
 
+  it("should export ErrorCode enum", () => {
+    expect(ErrorCode.UNAUTHORIZED).toBe("UNAUTHORIZED");
+  });
+
   it("should map seat state colors as defined in AGENTS.md section 7", () => {
     expect(SeatStateColors[SeatState.AVAILABLE]).toBe("green");
     expect(SeatStateColors[SeatState.HELD]).toBe("yellow");

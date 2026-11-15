@@ -6,7 +6,7 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
-    "lint": "eslint \"src/**/*.ts\"",
+    "lint": "eslint --config ../../eslint.config.mjs \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },

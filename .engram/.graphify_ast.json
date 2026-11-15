@@ -1,0 +1,3550 @@
+{
+  "nodes": [
+    {
+      "id": "api_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "apps/api/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "api_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "apps/api/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_app_module",
+      "label": "app.module.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_module_appmodule",
+      "label": "AppModule",
+      "file_type": "code",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "module",
+      "label": "Module",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "dto_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/common/dto/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "guards_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/common/guards/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ports_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/common/ports/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ports_index_eventseatcatalogport",
+      "label": "EventSeatCatalogPort",
+      "file_type": "code",
+      "source_file": "apps/api/src/common/ports/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ports_index_platformsettingsport",
+      "label": "PlatformSettingsPort",
+      "file_type": "code",
+      "source_file": "apps/api/src/common/ports/index.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "ports_index_paymentprovider",
+      "label": "PaymentProvider",
+      "file_type": "code",
+      "source_file": "apps/api/src/common/ports/index.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_main",
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_main_bootstrap",
+      "label": "bootstrap()",
+      "file_type": "code",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "health_health_controller_spec",
+      "label": "health.controller.spec.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.controller.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_controller",
+      "label": "health.controller.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_controller_healthcontroller",
+      "label": "HealthController",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "controller",
+      "label": "Controller",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "get",
+      "label": "Get",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_controller_healthcontroller_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "health_health_controller_healthcontroller_gethealth",
+      "label": ".getHealth()",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "health_health_module",
+      "label": "health.module.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_module_healthmodule",
+      "label": "HealthModule",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "module",
+      "label": "Module",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_service",
+      "label": "health.service.ts",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_service_healthservice",
+      "label": "HealthService",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "injectable",
+      "label": "Injectable",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_service_healthservice_checktcpport",
+      "label": ".checkTcpPort()",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "health_health_service_healthservice_checkhealth",
+      "label": ".checkHealth()",
+      "file_type": "code",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L35"
+    },
+    {
+      "id": "realtime_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "realtime_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "apps/realtime/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_app_module",
+      "label": "app.module.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_module_appmodule",
+      "label": "AppModule",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "module",
+      "label": "Module",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "gateways_events_gateway",
+      "label": "events.gateway.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "gateways_events_gateway_eventsgateway",
+      "label": "EventsGateway",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "websocketgateway",
+      "label": "WebSocketGateway",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "websocketserver",
+      "label": "WebSocketServer",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "subscribemessage",
+      "label": "SubscribeMessage",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "connectedsocket",
+      "label": "ConnectedSocket",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "messagebody",
+      "label": "MessageBody",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "gateways_events_gateway_eventsgateway_handlejoinroom",
+      "label": ".handleJoinRoom()",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "gateways_events_gateway_eventsgateway_handleleaveroom",
+      "label": ".handleLeaveRoom()",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L35"
+    },
+    {
+      "id": "health_health_controller_spec",
+      "label": "health.controller.spec.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.controller.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_controller",
+      "label": "health.controller.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_controller_healthcontroller",
+      "label": "HealthController",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "controller",
+      "label": "Controller",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "get",
+      "label": "Get",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_controller_healthcontroller_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "health_health_controller_healthcontroller_gethealth",
+      "label": ".getHealth()",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "health_health_module",
+      "label": "health.module.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_module_healthmodule",
+      "label": "HealthModule",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "module",
+      "label": "Module",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_service",
+      "label": "health.service.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_service_healthservice",
+      "label": "HealthService",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "injectable",
+      "label": "Injectable",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_service_healthservice_checkhealth",
+      "label": ".checkHealth()",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_main",
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_main_bootstrap",
+      "label": "bootstrap()",
+      "file_type": "code",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "web_postcss_config",
+      "label": "postcss.config.js",
+      "file_type": "code",
+      "source_file": "apps/web/postcss.config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app",
+      "label": "App.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_app",
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_main",
+      "label": "main.tsx",
+      "file_type": "code",
+      "source_file": "apps/web/src/main.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "web_tailwind_config",
+      "label": "tailwind.config.js",
+      "file_type": "code",
+      "source_file": "apps/web/tailwind.config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "web_vite_config",
+      "label": "vite.config.ts",
+      "file_type": "code",
+      "source_file": "apps/web/vite.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "apps/worker/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_app_module",
+      "label": "app.module.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_module_appmodule",
+      "label": "AppModule",
+      "file_type": "code",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "module",
+      "label": "Module",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_controller_spec",
+      "label": "health.controller.spec.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.controller.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_controller",
+      "label": "health.controller.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_controller_healthcontroller",
+      "label": "HealthController",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "controller",
+      "label": "Controller",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "get",
+      "label": "Get",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_controller_healthcontroller_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "health_health_controller_healthcontroller_gethealth",
+      "label": ".getHealth()",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "health_health_module",
+      "label": "health.module.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_module_healthmodule",
+      "label": "HealthModule",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "module",
+      "label": "Module",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_service",
+      "label": "health.service.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "health_health_service_healthservice",
+      "label": "HealthService",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "injectable",
+      "label": "Injectable",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "health_health_service_healthservice_checkhealth",
+      "label": ".checkHealth()",
+      "file_type": "code",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_main",
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_main_bootstrap",
+      "label": "bootstrap()",
+      "file_type": "code",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "processors_hold_expiry_processor",
+      "label": "hold-expiry.processor.ts",
+      "file_type": "code",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "label": "HoldExpiryProcessor",
+      "file_type": "code",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "injectable",
+      "label": "Injectable",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "processors_hold_expiry_processor_onmoduleinit",
+      "label": "OnModuleInit",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "processors_hold_expiry_processor_onmoduledestroy",
+      "label": "OnModuleDestroy",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit",
+      "label": ".onModuleInit()",
+      "file_type": "code",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy",
+      "label": ".onModuleDestroy()",
+      "file_type": "code",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "commitlint_config",
+      "label": "commitlint.config.js",
+      "file_type": "code",
+      "source_file": "commitlint.config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "eslint_config",
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "eslint_base",
+      "label": "base.js",
+      "file_type": "code",
+      "source_file": "packages/config/eslint/base.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "config_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "packages/config/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "config_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "packages/config/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "prettier_index",
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "packages/config/prettier/index.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_env",
+      "label": "env.ts",
+      "file_type": "code",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_env_envschema",
+      "label": "envSchema",
+      "file_type": "code",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_env_env",
+      "label": "Env",
+      "file_type": "code",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L54"
+    },
+    {
+      "id": "src_env_loadenv",
+      "label": "loadEnv()",
+      "file_type": "code",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L58"
+    },
+    {
+      "id": "src_index_spec",
+      "label": "index.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/config/src/index.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "packages/config/src/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "contracts_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "contracts_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "packages/contracts/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_enums",
+      "label": "enums.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_enums_ticketstatus",
+      "label": "TicketStatus",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_enums_seatstate",
+      "label": "SeatState",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_enums_seatstatecolors",
+      "label": "SeatStateColors",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_enums_userrole",
+      "label": "UserRole",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "src_errors",
+      "label": "errors.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_errors_errorcode",
+      "label": "ErrorCode",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_errors_errorenvelopeschema",
+      "label": "ErrorEnvelopeSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_errors_errorenvelope",
+      "label": "ErrorEnvelope",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_index_spec",
+      "label": "index.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_jobs",
+      "label": "jobs.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_jobs_holdexpiryjobschema",
+      "label": "HoldExpiryJobSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_jobs_holdexpiryjob",
+      "label": "HoldExpiryJob",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_jobs_searchindexjobschema",
+      "label": "SearchIndexJobSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_jobs_searchindexjob",
+      "label": "SearchIndexJob",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_jobs_ordernotificationjobschema",
+      "label": "OrderNotificationJobSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_jobs_ordernotificationjob",
+      "label": "OrderNotificationJob",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_jobs_ticketseedrotationjobschema",
+      "label": "TicketSeedRotationJobSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_jobs_ticketseedrotationjob",
+      "label": "TicketSeedRotationJob",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_pagination",
+      "label": "pagination.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pagination_paginationqueryschema",
+      "label": "PaginationQuerySchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_pagination_paginationquery",
+      "label": "PaginationQuery",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_pagination_paginatedresult",
+      "label": "PaginatedResult",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_sockets",
+      "label": "sockets.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_sockets_seatstateeventschema",
+      "label": "SeatStateEventSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_sockets_seatstateevent",
+      "label": "SeatStateEvent",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_sockets_roomjoinschema",
+      "label": "RoomJoinSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_sockets_roomjoinpayload",
+      "label": "RoomJoinPayload",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_sockets_roomleaveschema",
+      "label": "RoomLeaveSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_sockets_roomleavepayload",
+      "label": "RoomLeavePayload",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "db_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "packages/db/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "db_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "packages/db/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_check",
+      "label": "check.ts",
+      "file_type": "code",
+      "source_file": "packages/db/src/check.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_check_checkdatabase",
+      "label": "checkDatabase()",
+      "file_type": "code",
+      "source_file": "packages/db/src/check.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_data_source",
+      "label": "data-source.ts",
+      "file_type": "code",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_data_source_env",
+      "label": "env",
+      "file_type": "code",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_data_source_appdatasource",
+      "label": "AppDataSource",
+      "file_type": "code",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "entities_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "packages/db/src/entities/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_index_spec",
+      "label": "index.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/db/src/index.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "packages/db/src/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "redis_scripts_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "redis_scripts_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_index_spec",
+      "label": "index.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_scripts",
+      "label": "scripts.ts",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_scripts_seatholdparams",
+      "label": "SeatHoldParams",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_scripts_seatholdresult",
+      "label": "SeatHoldResult",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_scripts_redisscriptswrapper",
+      "label": "RedisScriptsWrapper",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L28"
+    },
+    {
+      "id": "src_scripts_redisscriptswrapper_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "src_scripts_redisscriptswrapper_holdseat",
+      "label": ".holdSeat()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L36"
+    },
+    {
+      "id": "venue_engine_jest_config",
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/jest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "venue_engine_jest_config_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/jest.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_index_spec",
+      "label": "index.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/index.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_layout",
+      "label": "layout.ts",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_layout_point",
+      "label": "Point",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_layout_gridsectionconfig",
+      "label": "GridSectionConfig",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_layout_generatedseat",
+      "label": "GeneratedSeat",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_layout_generategridseats",
+      "label": "generateGridSeats()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_layout_radialsectionconfig",
+      "label": "RadialSectionConfig",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L57"
+    },
+    {
+      "id": "src_layout_generateradialseats",
+      "label": "generateRadialSeats()",
+      "file_type": "code",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L69"
+    }
+  ],
+  "edges": [
+    {
+      "source": "api_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "api_jest_config",
+      "target": "api_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_api_src_modules_health_health_module",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "health_health_healthmodule",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "src_app_module_appmodule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module_appmodule",
+      "target": "module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "ports_index",
+      "target": "ports_index_eventseatcatalogport",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/common/ports/index.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "ports_index",
+      "target": "ports_index_platformsettingsport",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/common/ports/index.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "ports_index",
+      "target": "ports_index_paymentprovider",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/common/ports/index.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_nestjs_core",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_api_src_app_module",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "src_app_appmodule",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "src_main_bootstrap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "ref_nestjs_testing",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_api_src_modules_health_health_controller",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "health_health_healthcontroller",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_api_src_modules_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.spec.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.spec.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_api_src_modules_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "health_health_controller_healthcontroller",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "controller",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_controller_healthcontroller_gethealth",
+      "target": "get",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L8",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_gethealth",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.controller.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_api_src_modules_health_health_controller",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_healthcontroller",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_api_src_modules_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_module_healthmodule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module_healthmodule",
+      "target": "module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.module.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_ioredis",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_net",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "health_health_service_healthservice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service_healthservice",
+      "target": "injectable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L6",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_service_healthservice",
+      "target": "health_health_service_healthservice_checktcpport",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service_healthservice",
+      "target": "health_health_service_healthservice_checkhealth",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L35",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service_healthservice_checkhealth",
+      "target": "health_health_service_healthservice_checktcpport",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/api/src/modules/health/health.service.ts",
+      "source_location": "L44",
+      "weight": 1
+    },
+    {
+      "source": "realtime_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "realtime_jest_config",
+      "target": "realtime_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_health_health_module",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "health_health_healthmodule",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_gateways_events_gateway",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "gateways_events_eventsgateway",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "src_app_module_appmodule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module_appmodule",
+      "target": "module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/app.module.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway",
+      "target": "ref_nestjs_websockets",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "gateways_events_gateway",
+      "target": "ref_socket_io",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "gateways_events_gateway",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "gateways_events_gateway",
+      "target": "ref_urticketbuddy_contracts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "gateways_events_gateway",
+      "target": "gateways_events_gateway_eventsgateway",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L17",
+      "weight": 1
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway",
+      "target": "websocketgateway",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L12",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway",
+      "target": "websocketserver",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L18",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway_handlejoinroom",
+      "target": "subscribemessage",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L23",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway_handlejoinroom",
+      "target": "connectedsocket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L25",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway_handlejoinroom",
+      "target": "messagebody",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L26",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway_handleleaveroom",
+      "target": "subscribemessage",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L34",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway_handleleaveroom",
+      "target": "connectedsocket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L36",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway_handleleaveroom",
+      "target": "messagebody",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L37",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway",
+      "target": "gateways_events_gateway_eventsgateway_handlejoinroom",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L24",
+      "weight": 1
+    },
+    {
+      "source": "gateways_events_gateway_eventsgateway",
+      "target": "gateways_events_gateway_eventsgateway_handleleaveroom",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/gateways/events.gateway.ts",
+      "source_location": "L35",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "ref_nestjs_testing",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_health_health_controller",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "health_health_healthcontroller",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.spec.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.spec.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "health_health_controller_healthcontroller",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "controller",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_controller_healthcontroller_gethealth",
+      "target": "get",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L8",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_gethealth",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.controller.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_health_health_controller",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_healthcontroller",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_module_healthmodule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module_healthmodule",
+      "target": "module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.module.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_ioredis",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "health_health_service_healthservice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service_healthservice",
+      "target": "injectable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_service_healthservice",
+      "target": "health_health_service_healthservice_checkhealth",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/health/health.service.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_nestjs_core",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_realtime_src_app_module",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "src_app_appmodule",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "src_main_bootstrap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/realtime/src/main.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "src_app",
+      "target": "ref_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_app",
+      "target": "src_app_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/App.tsx",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/main.tsx",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_react_dom_client",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/main.tsx",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "src_app",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/main.tsx",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_web_src_index_css",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/src/main.tsx",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "web_vite_config",
+      "target": "ref_vite",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/vite.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "web_vite_config",
+      "target": "ref_vitejs_plugin_react",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/vite.config.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "web_vite_config",
+      "target": "ref_node_url",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/vite.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "worker_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "worker_jest_config",
+      "target": "worker_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_health_health_module",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "health_health_healthmodule",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_processors_hold_expiry_processor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "processors_hold_expiry_holdexpiryprocessor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module",
+      "target": "src_app_module_appmodule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "src_app_module_appmodule",
+      "target": "module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/app.module.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "ref_nestjs_testing",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_health_health_controller",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "health_health_healthcontroller",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.spec.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_spec",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.spec.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller",
+      "target": "health_health_controller_healthcontroller",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "controller",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_controller_healthcontroller_gethealth",
+      "target": "get",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L8",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_gethealth",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.controller.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_health_health_controller",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_healthcontroller",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_health_health_service",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_healthservice",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module",
+      "target": "health_health_module_healthmodule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "health_health_module_healthmodule",
+      "target": "module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.module.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "ref_ioredis",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service",
+      "target": "health_health_service_healthservice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "health_health_service_healthservice",
+      "target": "injectable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "health_health_service_healthservice",
+      "target": "health_health_service_healthservice_checkhealth",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/health/health.service.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_nestjs_core",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "c_users_ncs_desktop_urticketbuddy_apps_worker_src_app_module",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "src_app_appmodule",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "src_main",
+      "target": "src_main_bootstrap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/main.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor",
+      "target": "ref_nestjs_common",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor",
+      "target": "ref_bullmq",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor",
+      "target": "ref_urticketbuddy_contracts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor",
+      "target": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "target": "injectable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L11",
+      "weight": 1,
+      "context": "decorator"
+    },
+    {
+      "source": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "target": "processors_hold_expiry_processor_onmoduleinit",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "target": "processors_hold_expiry_processor_onmoduledestroy",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "target": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L16",
+      "weight": 1
+    },
+    {
+      "source": "processors_hold_expiry_processor_holdexpiryprocessor",
+      "target": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
+      "source_location": "L43",
+      "weight": 1
+    },
+    {
+      "source": "eslint_config",
+      "target": "ref_typescript_eslint_parser",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "eslint_config",
+      "target": "ref_typescript_eslint_eslint_plugin",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "eslint_config",
+      "target": "ref_eslint_config_prettier",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "config_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "config_jest_config",
+      "target": "config_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_env",
+      "target": "ref_zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_env",
+      "target": "ref_dotenv",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_env",
+      "target": "ref_path",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_env",
+      "target": "src_env_envschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "src_env",
+      "target": "src_env_env",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L54",
+      "weight": 1
+    },
+    {
+      "source": "src_env",
+      "target": "src_env_loadenv",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/env.ts",
+      "source_location": "L58",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_envschema",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_loadenv",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_env",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/config/src/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "contracts_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "contracts_jest_config",
+      "target": "contracts_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_enums",
+      "target": "src_enums_ticketstatus",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_enums",
+      "target": "src_enums_seatstate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "src_enums",
+      "target": "src_enums_seatstatecolors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L15",
+      "weight": 1
+    },
+    {
+      "source": "src_enums",
+      "target": "src_enums_userrole",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/enums.ts",
+      "source_location": "L22",
+      "weight": 1
+    },
+    {
+      "source": "src_errors",
+      "target": "ref_zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_errors",
+      "target": "src_errors_errorcode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_errors",
+      "target": "src_errors_errorenvelopeschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L17",
+      "weight": 1
+    },
+    {
+      "source": "src_errors",
+      "target": "src_errors_errorenvelope",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/errors.ts",
+      "source_location": "L26",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_ticketstatus",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_seatstate",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_seatstatecolors",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_errorcode",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_paginationqueryschema",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_seatstateeventschema",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_enums",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_index",
+      "target": "src_errors",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_index",
+      "target": "src_pagination",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L3",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_index",
+      "target": "src_sockets",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L4",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_index",
+      "target": "src_jobs",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_jobs",
+      "target": "ref_zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_holdexpiryjobschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_holdexpiryjob",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_searchindexjobschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_searchindexjob",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L17",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_ordernotificationjobschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L19",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_ordernotificationjob",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L25",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_ticketseedrotationjobschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L27",
+      "weight": 1
+    },
+    {
+      "source": "src_jobs",
+      "target": "src_jobs_ticketseedrotationjob",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/jobs.ts",
+      "source_location": "L32",
+      "weight": 1
+    },
+    {
+      "source": "src_pagination",
+      "target": "ref_zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_pagination",
+      "target": "src_pagination_paginationqueryschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_pagination",
+      "target": "src_pagination_paginationquery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "src_pagination",
+      "target": "src_pagination_paginatedresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/pagination.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "ref_zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_enums",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_enums_seatstate",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_sockets_seatstateeventschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_sockets_seatstateevent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_sockets_roomjoinschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_sockets_roomjoinpayload",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L18",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_sockets_roomleaveschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L20",
+      "weight": 1
+    },
+    {
+      "source": "src_sockets",
+      "target": "src_sockets_roomleavepayload",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/sockets.ts",
+      "source_location": "L24",
+      "weight": 1
+    },
+    {
+      "source": "db_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "db_jest_config",
+      "target": "db_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_check",
+      "target": "src_data_source",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/check.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_check",
+      "target": "src_data_source_appdatasource",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/check.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_check",
+      "target": "src_check_checkdatabase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/check.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_data_source",
+      "target": "ref_reflect_metadata",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_data_source",
+      "target": "ref_typeorm",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_data_source",
+      "target": "ref_urticketbuddy_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_data_source",
+      "target": "src_data_source_env",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "src_data_source",
+      "target": "src_data_source_appdatasource",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/data-source.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_appdatasource",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_data_source",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_index",
+      "target": "entities_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/db/src/index.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "redis_scripts_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "redis_scripts_jest_config",
+      "target": "redis_scripts_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "ref_ioredis",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_seat_hold_lua",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_redisscriptswrapper",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_scripts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_scripts",
+      "target": "ref_ioredis",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_scripts",
+      "target": "src_scripts_seatholdparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_scripts",
+      "target": "src_scripts_seatholdresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "src_scripts",
+      "target": "src_scripts_redisscriptswrapper",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L28",
+      "weight": 1
+    },
+    {
+      "source": "src_scripts_redisscriptswrapper",
+      "target": "src_scripts_redisscriptswrapper_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L29",
+      "weight": 1
+    },
+    {
+      "source": "src_scripts_redisscriptswrapper",
+      "target": "src_scripts_redisscriptswrapper_holdseat",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_location": "L36",
+      "weight": 1
+    },
+    {
+      "source": "venue_engine_jest_config",
+      "target": "ref_jest",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/jest.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "venue_engine_jest_config",
+      "target": "venue_engine_jest_config_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/jest.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_generategridseats",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_generateradialseats",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.spec.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_layout",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "src_layout",
+      "target": "src_layout_point",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "src_layout",
+      "target": "src_layout_gridsectionconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "src_layout",
+      "target": "src_layout_generatedseat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L16",
+      "weight": 1
+    },
+    {
+      "source": "src_layout",
+      "target": "src_layout_generategridseats",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L25",
+      "weight": 1
+    },
+    {
+      "source": "src_layout",
+      "target": "src_layout_radialsectionconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L57",
+      "weight": 1
+    },
+    {
+      "source": "src_layout",
+      "target": "src_layout_generateradialseats",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/venue-engine/src/layout.ts",
+      "source_location": "L69",
+      "weight": 1
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "hyperedges": []
+}
