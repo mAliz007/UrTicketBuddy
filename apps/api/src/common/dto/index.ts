@@ -1,0 +1,2 @@
+// Common DTOs placeholder
+export {};

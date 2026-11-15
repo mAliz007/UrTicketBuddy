@@ -1,0 +1,41 @@
+# CODEOWNERS for UrTicketBuddy
+# Refer to AGENTS.md Section 3 for ownership definitions
+
+# Member A Ownership
+infra/                                                 @MemberA
+.github/                                               @MemberA
+packages/config/                                       @MemberA
+packages/db/                                           @MemberA
+apps/api/src/modules/auth/                             @MemberA
+apps/api/src/modules/users/                            @MemberA
+apps/api/src/modules/admin/                            @MemberA
+apps/api/src/modules/analytics/                        @MemberA
+apps/api/src/modules/search/                           @MemberA
+apps/web/src/features/auth/                            @MemberA
+apps/web/src/features/admin/                           @MemberA
+apps/web/src/features/search/                          @MemberA
+
+# Member B Ownership
+apps/web/                                              @MemberB
+apps/web/src/features/marketing/                       @MemberB
+apps/web/src/features/events/                          @MemberB
+apps/web/src/features/seat-map/                        @MemberB
+apps/web/src/features/organizer-builder/                @MemberB
+packages/venue-engine/                                 @MemberB
+apps/api/src/modules/venues/                           @MemberB
+apps/api/src/modules/events/                           @MemberB
+
+# Member C Ownership
+packages/redis-scripts/                                @MemberC
+apps/realtime/                                         @MemberC
+apps/worker/                                           @MemberC
+apps/api/src/modules/seats/                            @MemberC
+apps/api/src/modules/checkout/                         @MemberC
+apps/api/src/modules/tickets/                          @MemberC
+apps/api/src/modules/gate/                             @MemberC
+apps/api/src/modules/resale/                           @MemberC
+apps/web/src/features/checkout/                        @MemberC
+apps/web/src/features/wallet/                          @MemberC
+apps/web/src/features/gate/                            @MemberC
+apps/web/src/features/resale/                          @MemberC
+infra/loadtests/                                       @MemberC
