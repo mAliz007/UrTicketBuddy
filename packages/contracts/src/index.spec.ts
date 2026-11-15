@@ -5,6 +5,10 @@ import {
   ErrorCode,
   PaginationQuerySchema,
   SeatStateEventSchema,
+  SeatNodeSchema,
+  VenueLayoutSchema,
+  degToRad,
+  radToDeg,
 } from "./index";
 
 describe("packages/contracts", () => {
@@ -40,5 +44,47 @@ describe("packages/contracts", () => {
     };
     const parsed = SeatStateEventSchema.safeParse(payload);
     expect(parsed.success).toBe(true);
+  });
+
+  it("should validate VenueLayoutSchema and SeatNodeSchema", () => {
+    const seat = {
+      id: "SEC1-A-1",
+      x: 100,
+      y: 200,
+      rotation: 45,
+      sectionId: "SEC1",
+      row: "A",
+      number: "1",
+      tierId: "VIP",
+      state: "DISABLED" as const,
+    };
+    const validSeat = SeatNodeSchema.safeParse(seat);
+    expect(validSeat.success).toBe(true);
+
+    const layout = {
+      schemaVersion: 1,
+      name: "Grand Arena",
+      dimensions: { width: 1000, height: 800 },
+      sections: [
+        {
+          type: "grid" as const,
+          id: "SEC1",
+          origin: { x: 50, y: 50 },
+          rows: 5,
+          columns: 10,
+          seatWidth: 20,
+          gapX: 5,
+          gapY: 5,
+        },
+      ],
+      seats: [seat],
+    };
+    const validLayout = VenueLayoutSchema.safeParse(layout);
+    expect(validLayout.success).toBe(true);
+  });
+
+  it("should properly convert degrees and radians", () => {
+    expect(degToRad(180)).toBeCloseTo(Math.PI);
+    expect(radToDeg(Math.PI)).toBeCloseTo(180);
   });
 });
