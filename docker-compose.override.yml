@@ -1,0 +1,15 @@
+services:
+  # Additional scale profile configuration for realtime service
+  realtime-replica:
+    image: redis:alpine # placeholder image or build
+    profiles:
+      - scale
+    restart: unless-stopped
+    networks:
+      - urticketbuddy_network
+
+  # Expose RedisInsight UI for local development inspection
+  redis:
+    ports:
+      - "6379:6379"
+      - "8001:8001"
