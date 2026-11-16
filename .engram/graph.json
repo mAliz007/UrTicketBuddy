@@ -35,11 +35,16 @@
       "29": "Community 29",
       "30": "Community 30",
       "31": "Community 31",
-      "32": "Community 32"
+      "32": "Community 32",
+      "33": "Community 33",
+      "34": "Community 34",
+      "35": "Community 35",
+      "36": "Community 36",
+      "37": "Community 37"
     },
-    "built_from_commit": "53827ee63d772b01c461dea1e825391519dcaa3f"
+    "built_from_commit": "cb7e359a344f869c96cbfc297638d4587475d0b0"
   },
-  "topology_signature": "n=170;e=169;api_jest_config,api_jest_config_config,commitlint_config,config_jest_config,config_jest_config_config,connectedsocket,contracts_jest_config,contracts_jest_config_config,controller,db_jest_config,db_jest_config_config,dto_index,entities_index,eslint_base,eslint_config,gateways_events_gateway,gateways_events_gateway_eventsgateway,gateways_events_gateway_eventsgateway_handlejoinroom,gateways_events_gateway_eventsgateway_handleleaveroom,generators_arc,generators_arc_generatearc,generators_arc_generatearcparams,generators_grid,generators_grid_generategrid,generators_grid_generategridparams,generators_table,generators_table_generatetablecluster,generators_table_generatetableclusterparams,generators_table_tableclustergroup,generators_table_tableclustertransform,get,guards_index,health_health_controller,health_health_controller_healthcontroller,health_health_controller_healthcontroller_constructor,health_health_controller_healthcontroller_gethealth,health_health_controller_spec,health_health_module,health_health_module_healthmodule,health_health_service,health_health_service_healthservice,health_health_service_healthservice_checkhealth,health_health_service_healthservice_checktcpport,injectable,messagebody,module,ports_index,ports_index_eventseatcatalogport,ports_index_paymentprovider,ports_index_platformsettingsport,prettier_index,processors_hold_expiry_processor,processors_hold_expiry_processor_holdexpiryprocessor,processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy,processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit,processors_hold_expiry_processor_onmoduledestroy,processors_hold_expiry_processor_onmoduleinit,realtime_jest_config,realtime_jest_config_config,redis_scripts_jest_config,redis_scripts_jest_config_config,src_app,src_app_app,src_app_module,src_app_module_appmodule,src_check,src_check_checkdatabase,src_data_source,src_data_source_appdatasource,src_data_source_env,src_enums,src_enums_seatstate,src_enums_seatstatecolors,src_enums_ticketstatus,src_enums_userrole,src_env,src_env_env,src_env_envschema,src_env_loadenv,src_errors,src_errors_errorcode,src_errors_errorenvelope,src_errors_errorenvelopeschema,src_index,src_index_spec,src_jobs,src_jobs_holdexpiryjob,src_jobs_holdexpiryjobschema,src_jobs_ordernotificationjob,src_jobs_ordernotificationjobschema,src_jobs_searchindexjob,src_jobs_searchindexjobschema,src_jobs_ticketseedrotationjob,src_jobs_ticketseedrotationjobschema,src_layout,src_layout_generatedseat,src_layout_generategridseats,src_layout_generateradialseats,src_layout_gridsectionconfig,src_layout_point,src_layout_radialsectionconfig,src_main,src_main_bootstrap,src_pagination,src_pagination_paginatedresult,src_pagination_paginationquery,src_pagination_paginationqueryschema,src_scripts,src_scripts_redisscriptswrapper,src_scripts_redisscriptswrapper_constructor,src_scripts_redisscriptswrapper_holdseat,src_scripts_seatholdparams,src_scripts_seatholdresult,src_sockets,src_sockets_roomjoinpayload,src_sockets_roomjoinschema,src_sockets_roomleavepayload,src_sockets_roomleaveschema,src_sockets_seatstateevent,src_sockets_seatstateeventschema,src_venue,src_venue_arcsectionconfig,src_venue_arcsectionconfigschema,src_venue_degtorad,src_venue_gridsectionconfig,src_venue_gridsectionconfigschema,src_venue_point,src_venue_pointschema,src_venue_radtodeg,src_venue_seatnode,src_venue_seatnodeschema,src_venue_sectionconfig,src_venue_sectionconfigschema,src_venue_tableclusterconfig,src_venue_tableclusterconfigschema,src_venue_venuelayout,src_venue_venuelayoutschema,subscribemessage,tests_generators_spec,tests_performance_spec,tests_property_spec,tests_utils_spec,utils_aggregates,utils_aggregates_convexhull,utils_aggregates_crossproduct,utils_aggregates_sectionaggregate,utils_aggregates_sectionaggregates,utils_bounding_box,utils_bounding_box_boundingbox,utils_ids,utils_ids_buildseatid,utils_ids_parseseatid,utils_ids_rowtolabel,utils_parser,utils_parser_internalseatnode,utils_parser_internalvenuelayout,utils_parser_invalidlayouterror,utils_parser_invalidlayouterror_constructor,utils_parser_parselayout,utils_parser_serializelayout,utils_parser_validatesectionconstraints,venue_engine_jest_config,venue_engine_jest_config_config,web_postcss_config,web_tailwind_config,web_vite_config,websocketgateway,websocketserver,worker_jest_config,worker_jest_config_config|api_jest_config\tapi_jest_config_config\tcontains;config_jest_config\tconfig_jest_config_config\tcontains;connectedsocket\tgateways_events_gateway_eventsgateway_handlejoinroom\treferences;connectedsocket\tgateways_events_gateway_eventsgateway_handleleaveroom\treferences;contracts_jest_config\tcontracts_jest_config_config\tcontains;controller\thealth_health_controller_healthcontroller\treferences;db_jest_config\tdb_jest_config_config\tcontains;entities_index\tsrc_index\timports_from;gateways_events_gateway\tgateways_events_gateway_eventsgateway\tcontains;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handlejoinroom\tmethod;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handleleaveroom\tmethod;gateways_events_gateway_eventsgateway\twebsocketgateway\treferences;gateways_events_gateway_eventsgateway\twebsocketserver\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tsubscribemessage\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tsubscribemessage\treferences;generators_arc\tgenerators_arc_generatearc\tcontains;generators_arc\tgenerators_arc_generatearcparams\tcontains;generators_arc\tsrc_index\timports_from;generators_arc\tutils_ids\timports_from;generators_arc\tutils_ids_buildseatid\timports;generators_arc\tutils_ids_rowtolabel\timports;generators_grid\tgenerators_grid_generategrid\tcontains;generators_grid\tgenerators_grid_generategridparams\tcontains;generators_grid\tsrc_index\timports_from;generators_grid\tutils_ids\timports_from;generators_grid\tutils_ids_buildseatid\timports;generators_grid\tutils_ids_rowtolabel\timports;generators_table\tgenerators_table_generatetablecluster\tcontains;generators_table\tgenerators_table_generatetableclusterparams\tcontains;generators_table\tgenerators_table_tableclustergroup\tcontains;generators_table\tgenerators_table_tableclustertransform\tcontains;generators_table\tsrc_index\timports_from;generators_table\tutils_ids\timports_from;generators_table\tutils_ids_buildseatid\timports;get\thealth_health_controller_healthcontroller_gethealth\treferences;health_health_controller\thealth_health_controller_healthcontroller\tcontains;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_constructor\tmethod;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_gethealth\tmethod;health_health_module\thealth_health_module_healthmodule\tcontains;health_health_module_healthmodule\tmodule\treferences;health_health_service\thealth_health_service_healthservice\tcontains;health_health_service_healthservice\thealth_health_service_healthservice_checkhealth\tmethod;health_health_service_healthservice\thealth_health_service_healthservice_checktcpport\tmethod;health_health_service_healthservice\tinjectable\treferences;health_health_service_healthservice_checkhealth\thealth_health_service_healthservice_checktcpport\tcalls;injectable\tprocessors_hold_expiry_processor_holdexpiryprocessor\treferences;module\tsrc_app_module_appmodule\treferences;ports_index\tports_index_eventseatcatalogport\tcontains;ports_index\tports_index_paymentprovider\tcontains;ports_index\tports_index_platformsettingsport\tcontains;processors_hold_expiry_processor\tprocessors_hold_expiry_processor_holdexpiryprocessor\tcontains;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduledestroy\timplements;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduleinit\timplements;realtime_jest_config\trealtime_jest_config_config\tcontains;redis_scripts_jest_config\tredis_scripts_jest_config_config\tcontains;src_app\tsrc_app_app\tcontains;src_app\tsrc_main\timports_from;src_app_module\tsrc_app_module_appmodule\tcontains;src_check\tsrc_check_checkdatabase\tcontains;src_check\tsrc_data_source\timports_from;src_check\tsrc_data_source_appdatasource\timports;src_data_source\tsrc_data_source_appdatasource\tcontains;src_data_source\tsrc_data_source_env\tcontains;src_data_source\tsrc_index\timports_from;src_enums\tsrc_enums_seatstate\tcontains;src_enums\tsrc_enums_seatstatecolors\tcontains;src_enums\tsrc_enums_ticketstatus\tcontains;src_enums\tsrc_enums_userrole\tcontains;src_enums\tsrc_index\timports_from;src_enums\tsrc_sockets\timports_from;src_enums_seatstate\tsrc_sockets\timports;src_env\tsrc_env_env\tcontains;src_env\tsrc_env_envschema\tcontains;src_env\tsrc_env_loadenv\tcontains;src_env\tsrc_index\timports_from;src_errors\tsrc_errors_errorcode\tcontains;src_errors\tsrc_errors_errorenvelope\tcontains;src_errors\tsrc_errors_errorenvelopeschema\tcontains;src_errors\tsrc_index\timports_from;src_index\tsrc_index_spec\timports_from;src_index\tsrc_jobs\timports_from;src_index\tsrc_layout\timports_from;src_index\tsrc_pagination\timports_from;src_index\tsrc_scripts\timports_from;src_index\tsrc_sockets\timports_from;src_index\tsrc_venue\timports_from;src_index\ttests_generators_spec\timports_from;src_index\ttests_performance_spec\timports_from;src_index\ttests_property_spec\timports_from;src_index\ttests_utils_spec\timports_from;src_index\tutils_aggregates\timports_from;src_index\tutils_bounding_box\timports_from;src_index\tutils_ids\timports_from;src_index\tutils_parser\timports_from;src_jobs\tsrc_jobs_holdexpiryjob\tcontains;src_jobs\tsrc_jobs_holdexpiryjobschema\tcontains;src_jobs\tsrc_jobs_ordernotificationjob\tcontains;src_jobs\tsrc_jobs_ordernotificationjobschema\tcontains;src_jobs\tsrc_jobs_searchindexjob\tcontains;src_jobs\tsrc_jobs_searchindexjobschema\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjob\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjobschema\tcontains;src_layout\tsrc_layout_generatedseat\tcontains;src_layout\tsrc_layout_generategridseats\tcontains;src_layout\tsrc_layout_generateradialseats\tcontains;src_layout\tsrc_layout_gridsectionconfig\tcontains;src_layout\tsrc_layout_point\tcontains;src_layout\tsrc_layout_radialsectionconfig\tcontains;src_main\tsrc_main_bootstrap\tcontains;src_pagination\tsrc_pagination_paginatedresult\tcontains;src_pagination\tsrc_pagination_paginationquery\tcontains;src_pagination\tsrc_pagination_paginationqueryschema\tcontains;src_scripts\tsrc_scripts_redisscriptswrapper\tcontains;src_scripts\tsrc_scripts_seatholdparams\tcontains;src_scripts\tsrc_scripts_seatholdresult\tcontains;src_scripts_redisscriptswrapper\tsrc_scripts_redisscriptswrapper_constructor\tmethod;src_scripts_redisscriptswrapper\tsrc_scripts_redisscriptswrapper_holdseat\tmethod;src_sockets\tsrc_sockets_roomjoinpayload\tcontains;src_sockets\tsrc_sockets_roomjoinschema\tcontains;src_sockets\tsrc_sockets_roomleavepayload\tcontains;src_sockets\tsrc_sockets_roomleaveschema\tcontains;src_sockets\tsrc_sockets_seatstateevent\tcontains;src_sockets\tsrc_sockets_seatstateeventschema\tcontains;src_venue\tsrc_venue_arcsectionconfig\tcontains;src_venue\tsrc_venue_arcsectionconfigschema\tcontains;src_venue\tsrc_venue_degtorad\tcontains;src_venue\tsrc_venue_gridsectionconfig\tcontains;src_venue\tsrc_venue_gridsectionconfigschema\tcontains;src_venue\tsrc_venue_point\tcontains;src_venue\tsrc_venue_pointschema\tcontains;src_venue\tsrc_venue_radtodeg\tcontains;src_venue\tsrc_venue_seatnode\tcontains;src_venue\tsrc_venue_seatnodeschema\tcontains;src_venue\tsrc_venue_sectionconfig\tcontains;src_venue\tsrc_venue_sectionconfigschema\tcontains;src_venue\tsrc_venue_tableclusterconfig\tcontains;src_venue\tsrc_venue_tableclusterconfigschema\tcontains;src_venue\tsrc_venue_venuelayout\tcontains;src_venue\tsrc_venue_venuelayoutschema\tcontains;utils_aggregates\tutils_aggregates_convexhull\tcontains;utils_aggregates\tutils_aggregates_crossproduct\tcontains;utils_aggregates\tutils_aggregates_sectionaggregate\tcontains;utils_aggregates\tutils_aggregates_sectionaggregates\tcontains;utils_aggregates\tutils_bounding_box\timports_from;utils_aggregates\tutils_bounding_box_boundingbox\timports;utils_aggregates_convexhull\tutils_aggregates_crossproduct\tcalls;utils_aggregates_convexhull\tutils_aggregates_sectionaggregates\tcalls;utils_bounding_box\tutils_bounding_box_boundingbox\tcontains;utils_ids\tutils_ids_buildseatid\tcontains;utils_ids\tutils_ids_parseseatid\tcontains;utils_ids\tutils_ids_rowtolabel\tcontains;utils_ids_buildseatid\tutils_ids_rowtolabel\tcalls;utils_parser\tutils_parser_internalseatnode\tcontains;utils_parser\tutils_parser_internalvenuelayout\tcontains;utils_parser\tutils_parser_invalidlayouterror\tcontains;utils_parser\tutils_parser_parselayout\tcontains;utils_parser\tutils_parser_serializelayout\tcontains;utils_parser\tutils_parser_validatesectionconstraints\tcontains;utils_parser_invalidlayouterror\tutils_parser_invalidlayouterror_constructor\tmethod;utils_parser_invalidlayouterror\tutils_parser_parselayout\tcalls;utils_parser_invalidlayouterror\tutils_parser_serializelayout\tcalls;utils_parser_invalidlayouterror\tutils_parser_validatesectionconstraints\tcalls;utils_parser_parselayout\tutils_parser_validatesectionconstraints\tcalls;venue_engine_jest_config\tvenue_engine_jest_config_config\tcontains;worker_jest_config\tworker_jest_config_config\tcontains",
+  "topology_signature": "n=215;e=229;api_jest_config,api_jest_config_config,commitlint_config,config_jest_config,config_jest_config_config,connectedsocket,contracts_jest_config,contracts_jest_config_config,controller,db_jest_config,db_jest_config_config,dto_index,entities_index,eslint_base,eslint_config,gateways_events_gateway,gateways_events_gateway_eventsgateway,gateways_events_gateway_eventsgateway_handlejoinroom,gateways_events_gateway_eventsgateway_handleleaveroom,generators_arc,generators_arc_generatearc,generators_arc_generatearcparams,generators_grid,generators_grid_generategrid,generators_grid_generategridparams,generators_table,generators_table_generatetablecluster,generators_table_generatetableclusterparams,generators_table_tableclustergroup,generators_table_tableclustertransform,get,guards_index,health_health_controller,health_health_controller_healthcontroller,health_health_controller_healthcontroller_constructor,health_health_controller_healthcontroller_gethealth,health_health_controller_spec,health_health_module,health_health_module_healthmodule,health_health_service,health_health_service_healthservice,health_health_service_healthservice_checkhealth,health_health_service_healthservice_checktcpport,injectable,messagebody,module,ports_index,ports_index_eventseatcatalogport,ports_index_paymentprovider,ports_index_platformsettingsport,prettier_index,processors_hold_expiry_processor,processors_hold_expiry_processor_holdexpiryprocessor,processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy,processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit,processors_hold_expiry_processor_onmoduledestroy,processors_hold_expiry_processor_onmoduleinit,realtime_jest_config,realtime_jest_config_config,redis_scripts_jest_config,redis_scripts_jest_config_config,src_app,src_app_app,src_app_module,src_app_module_appmodule,src_check,src_check_checkdatabase,src_data_source,src_data_source_appdatasource,src_data_source_env,src_enums,src_enums_seatstate,src_enums_seatstatecolors,src_enums_ticketstatus,src_enums_userrole,src_env,src_env_env,src_env_envschema,src_env_loadenv,src_errors,src_errors_errorcode,src_errors_errorenvelope,src_errors_errorenvelopeschema,src_index,src_index_confirm_sold_lua,src_index_confirmsoldparams,src_index_confirmsoldresult,src_index_createseatlockclient,src_index_expire_due_lua,src_index_extend_hold_lua,src_index_extendholdparams,src_index_extendholdresult,src_index_getcounts,src_index_getsnapshot,src_index_hold_seats_lua,src_index_holdseatsparams,src_index_holdseatsresult,src_index_ioredis,src_index_loadluascript,src_index_lua_dir,src_index_luaextendrawtuple,src_index_luaholdrawtuple,src_index_luastatusrawtuple,src_index_rediscommander,src_index_rediskeys,src_index_redisscriptswrapper,src_index_redisscriptswrapper_confirmsold,src_index_redisscriptswrapper_constructor,src_index_redisscriptswrapper_expiredue,src_index_redisscriptswrapper_extendhold,src_index_redisscriptswrapper_getcounts,src_index_redisscriptswrapper_getsnapshot,src_index_redisscriptswrapper_holdseat,src_index_redisscriptswrapper_holdseats,src_index_redisscriptswrapper_releaseseats,src_index_redisscriptswrapper_unsellseats,src_index_registeredclients,src_index_registerredisscripts,src_index_release_seats_lua,src_index_releaseseatsparams,src_index_releaseseatsresult,src_index_seatcounts,src_index_seatholdparams,src_index_seatholdresult,src_index_seatsnapshot,src_index_spec,src_index_unsell_seats_lua,src_index_unsellseatsparams,src_index_unsellseatsresult,src_integration_spec,src_jobs,src_jobs_holdexpiryjob,src_jobs_holdexpiryjobschema,src_jobs_ordernotificationjob,src_jobs_ordernotificationjobschema,src_jobs_searchindexjob,src_jobs_searchindexjobschema,src_jobs_ticketseedrotationjob,src_jobs_ticketseedrotationjobschema,src_layout,src_layout_generatedseat,src_layout_generategridseats,src_layout_generateradialseats,src_layout_gridsectionconfig,src_layout_point,src_layout_radialsectionconfig,src_main,src_main_bootstrap,src_pagination,src_pagination_paginatedresult,src_pagination_paginationquery,src_pagination_paginationqueryschema,src_scripts,src_seats,src_seats_holdrequest,src_seats_holdrequestschema,src_seats_holdresponse,src_seats_holdresponseschema,src_sockets,src_sockets_roomjoinpayload,src_sockets_roomjoinschema,src_sockets_roomleavepayload,src_sockets_roomleaveschema,src_sockets_seatstateevent,src_sockets_seatstateeventschema,src_venue,src_venue_arcsectionconfig,src_venue_arcsectionconfigschema,src_venue_degtorad,src_venue_gridsectionconfig,src_venue_gridsectionconfigschema,src_venue_point,src_venue_pointschema,src_venue_radtodeg,src_venue_seatnode,src_venue_seatnodeschema,src_venue_sectionconfig,src_venue_sectionconfigschema,src_venue_tableclusterconfig,src_venue_tableclusterconfigschema,src_venue_venuelayout,src_venue_venuelayoutschema,subscribemessage,tests_generators_spec,tests_performance_spec,tests_property_spec,tests_utils_spec,utils_aggregates,utils_aggregates_convexhull,utils_aggregates_crossproduct,utils_aggregates_sectionaggregate,utils_aggregates_sectionaggregates,utils_bounding_box,utils_bounding_box_boundingbox,utils_ids,utils_ids_buildseatid,utils_ids_parseseatid,utils_ids_rowtolabel,utils_parser,utils_parser_internalseatnode,utils_parser_internalvenuelayout,utils_parser_invalidlayouterror,utils_parser_invalidlayouterror_constructor,utils_parser_parselayout,utils_parser_serializelayout,utils_parser_validatesectionconstraints,venue_engine_jest_config,venue_engine_jest_config_config,web_postcss_config,web_tailwind_config,web_vite_config,websocketgateway,websocketserver,worker_jest_config,worker_jest_config_config|api_jest_config\tapi_jest_config_config\tcontains;config_jest_config\tconfig_jest_config_config\tcontains;connectedsocket\tgateways_events_gateway_eventsgateway_handlejoinroom\treferences;connectedsocket\tgateways_events_gateway_eventsgateway_handleleaveroom\treferences;contracts_jest_config\tcontracts_jest_config_config\tcontains;controller\thealth_health_controller_healthcontroller\treferences;db_jest_config\tdb_jest_config_config\tcontains;entities_index\tsrc_index\timports_from;gateways_events_gateway\tgateways_events_gateway_eventsgateway\tcontains;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handlejoinroom\tmethod;gateways_events_gateway_eventsgateway\tgateways_events_gateway_eventsgateway_handleleaveroom\tmethod;gateways_events_gateway_eventsgateway\twebsocketgateway\treferences;gateways_events_gateway_eventsgateway\twebsocketserver\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handlejoinroom\tsubscribemessage\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tmessagebody\treferences;gateways_events_gateway_eventsgateway_handleleaveroom\tsubscribemessage\treferences;generators_arc\tgenerators_arc_generatearc\tcontains;generators_arc\tgenerators_arc_generatearcparams\tcontains;generators_arc\tsrc_index\timports_from;generators_arc\tutils_ids\timports_from;generators_arc\tutils_ids_buildseatid\timports;generators_arc\tutils_ids_rowtolabel\timports;generators_grid\tgenerators_grid_generategrid\tcontains;generators_grid\tgenerators_grid_generategridparams\tcontains;generators_grid\tsrc_index\timports_from;generators_grid\tutils_ids\timports_from;generators_grid\tutils_ids_buildseatid\timports;generators_grid\tutils_ids_rowtolabel\timports;generators_table\tgenerators_table_generatetablecluster\tcontains;generators_table\tgenerators_table_generatetableclusterparams\tcontains;generators_table\tgenerators_table_tableclustergroup\tcontains;generators_table\tgenerators_table_tableclustertransform\tcontains;generators_table\tsrc_index\timports_from;generators_table\tutils_ids\timports_from;generators_table\tutils_ids_buildseatid\timports;get\thealth_health_controller_healthcontroller_gethealth\treferences;health_health_controller\thealth_health_controller_healthcontroller\tcontains;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_constructor\tmethod;health_health_controller_healthcontroller\thealth_health_controller_healthcontroller_gethealth\tmethod;health_health_module\thealth_health_module_healthmodule\tcontains;health_health_module_healthmodule\tmodule\treferences;health_health_service\thealth_health_service_healthservice\tcontains;health_health_service_healthservice\thealth_health_service_healthservice_checkhealth\tmethod;health_health_service_healthservice\thealth_health_service_healthservice_checktcpport\tmethod;health_health_service_healthservice\tinjectable\treferences;health_health_service_healthservice_checkhealth\thealth_health_service_healthservice_checktcpport\tcalls;injectable\tprocessors_hold_expiry_processor_holdexpiryprocessor\treferences;module\tsrc_app_module_appmodule\treferences;ports_index\tports_index_eventseatcatalogport\tcontains;ports_index\tports_index_paymentprovider\tcontains;ports_index\tports_index_platformsettingsport\tcontains;processors_hold_expiry_processor\tprocessors_hold_expiry_processor_holdexpiryprocessor\tcontains;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit\tmethod;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduledestroy\timplements;processors_hold_expiry_processor_holdexpiryprocessor\tprocessors_hold_expiry_processor_onmoduleinit\timplements;realtime_jest_config\trealtime_jest_config_config\tcontains;redis_scripts_jest_config\tredis_scripts_jest_config_config\tcontains;src_app\tsrc_app_app\tcontains;src_app\tsrc_main\timports_from;src_app_module\tsrc_app_module_appmodule\tcontains;src_check\tsrc_check_checkdatabase\tcontains;src_check\tsrc_data_source\timports_from;src_check\tsrc_data_source_appdatasource\timports;src_data_source\tsrc_data_source_appdatasource\tcontains;src_data_source\tsrc_data_source_env\tcontains;src_data_source\tsrc_index\timports_from;src_enums\tsrc_enums_seatstate\tcontains;src_enums\tsrc_enums_seatstatecolors\tcontains;src_enums\tsrc_enums_ticketstatus\tcontains;src_enums\tsrc_enums_userrole\tcontains;src_enums\tsrc_index\timports_from;src_enums\tsrc_sockets\timports_from;src_enums_seatstate\tsrc_sockets\timports;src_env\tsrc_env_env\tcontains;src_env\tsrc_env_envschema\tcontains;src_env\tsrc_env_loadenv\tcontains;src_env\tsrc_index\timports_from;src_errors\tsrc_errors_errorcode\tcontains;src_errors\tsrc_errors_errorenvelope\tcontains;src_errors\tsrc_errors_errorenvelopeschema\tcontains;src_errors\tsrc_index\timports_from;src_index\tsrc_index_confirm_sold_lua\tcontains;src_index\tsrc_index_confirmsoldparams\tcontains;src_index\tsrc_index_confirmsoldresult\tcontains;src_index\tsrc_index_createseatlockclient\tcontains;src_index\tsrc_index_expire_due_lua\tcontains;src_index\tsrc_index_extend_hold_lua\tcontains;src_index\tsrc_index_extendholdparams\tcontains;src_index\tsrc_index_extendholdresult\tcontains;src_index\tsrc_index_getcounts\tcontains;src_index\tsrc_index_getsnapshot\tcontains;src_index\tsrc_index_hold_seats_lua\tcontains;src_index\tsrc_index_holdseatsparams\tcontains;src_index\tsrc_index_holdseatsresult\tcontains;src_index\tsrc_index_ioredis\tcontains;src_index\tsrc_index_loadluascript\tcontains;src_index\tsrc_index_lua_dir\tcontains;src_index\tsrc_index_luaextendrawtuple\tcontains;src_index\tsrc_index_luaholdrawtuple\tcontains;src_index\tsrc_index_luastatusrawtuple\tcontains;src_index\tsrc_index_rediscommander\tcontains;src_index\tsrc_index_rediskeys\tcontains;src_index\tsrc_index_redisscriptswrapper\tcontains;src_index\tsrc_index_registeredclients\tcontains;src_index\tsrc_index_registerredisscripts\tcontains;src_index\tsrc_index_release_seats_lua\tcontains;src_index\tsrc_index_releaseseatsparams\tcontains;src_index\tsrc_index_releaseseatsresult\tcontains;src_index\tsrc_index_seatcounts\tcontains;src_index\tsrc_index_seatholdparams\tcontains;src_index\tsrc_index_seatholdresult\tcontains;src_index\tsrc_index_seatsnapshot\tcontains;src_index\tsrc_index_spec\timports_from;src_index\tsrc_index_unsell_seats_lua\tcontains;src_index\tsrc_index_unsellseatsparams\tcontains;src_index\tsrc_index_unsellseatsresult\tcontains;src_index\tsrc_integration_spec\timports_from;src_index\tsrc_jobs\timports_from;src_index\tsrc_layout\timports_from;src_index\tsrc_pagination\timports_from;src_index\tsrc_scripts\timports_from;src_index\tsrc_seats\timports_from;src_index\tsrc_sockets\timports_from;src_index\tsrc_venue\timports_from;src_index\ttests_generators_spec\timports_from;src_index\ttests_performance_spec\timports_from;src_index\ttests_property_spec\timports_from;src_index\ttests_utils_spec\timports_from;src_index\tutils_aggregates\timports_from;src_index\tutils_bounding_box\timports_from;src_index\tutils_ids\timports_from;src_index\tutils_parser\timports_from;src_index_confirm_sold_lua\tsrc_index_spec\timports;src_index_createseatlockclient\tsrc_index_redisscriptswrapper\tcalls;src_index_expire_due_lua\tsrc_index_spec\timports;src_index_extend_hold_lua\tsrc_index_spec\timports;src_index_getcounts\tsrc_index_redisscriptswrapper\tcalls;src_index_getsnapshot\tsrc_index_redisscriptswrapper\tcalls;src_index_hold_seats_lua\tsrc_index_spec\timports;src_index_rediskeys\tsrc_index_spec\timports;src_index_rediskeys\tsrc_integration_spec\timports;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_confirmsold\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_constructor\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_expiredue\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_extendhold\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_getcounts\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_getsnapshot\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_holdseat\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_holdseats\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_releaseseats\tmethod;src_index_redisscriptswrapper\tsrc_index_redisscriptswrapper_unsellseats\tmethod;src_index_redisscriptswrapper\tsrc_index_spec\timports;src_index_redisscriptswrapper\tsrc_integration_spec\timports;src_index_redisscriptswrapper_constructor\tsrc_index_registerredisscripts\tcalls;src_index_redisscriptswrapper_holdseat\tsrc_index_redisscriptswrapper_holdseats\tcalls;src_index_release_seats_lua\tsrc_index_spec\timports;src_index_spec\tsrc_index_unsell_seats_lua\timports;src_jobs\tsrc_jobs_holdexpiryjob\tcontains;src_jobs\tsrc_jobs_holdexpiryjobschema\tcontains;src_jobs\tsrc_jobs_ordernotificationjob\tcontains;src_jobs\tsrc_jobs_ordernotificationjobschema\tcontains;src_jobs\tsrc_jobs_searchindexjob\tcontains;src_jobs\tsrc_jobs_searchindexjobschema\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjob\tcontains;src_jobs\tsrc_jobs_ticketseedrotationjobschema\tcontains;src_layout\tsrc_layout_generatedseat\tcontains;src_layout\tsrc_layout_generategridseats\tcontains;src_layout\tsrc_layout_generateradialseats\tcontains;src_layout\tsrc_layout_gridsectionconfig\tcontains;src_layout\tsrc_layout_point\tcontains;src_layout\tsrc_layout_radialsectionconfig\tcontains;src_main\tsrc_main_bootstrap\tcontains;src_pagination\tsrc_pagination_paginatedresult\tcontains;src_pagination\tsrc_pagination_paginationquery\tcontains;src_pagination\tsrc_pagination_paginationqueryschema\tcontains;src_seats\tsrc_seats_holdrequest\tcontains;src_seats\tsrc_seats_holdrequestschema\tcontains;src_seats\tsrc_seats_holdresponse\tcontains;src_seats\tsrc_seats_holdresponseschema\tcontains;src_sockets\tsrc_sockets_roomjoinpayload\tcontains;src_sockets\tsrc_sockets_roomjoinschema\tcontains;src_sockets\tsrc_sockets_roomleavepayload\tcontains;src_sockets\tsrc_sockets_roomleaveschema\tcontains;src_sockets\tsrc_sockets_seatstateevent\tcontains;src_sockets\tsrc_sockets_seatstateeventschema\tcontains;src_venue\tsrc_venue_arcsectionconfig\tcontains;src_venue\tsrc_venue_arcsectionconfigschema\tcontains;src_venue\tsrc_venue_degtorad\tcontains;src_venue\tsrc_venue_gridsectionconfig\tcontains;src_venue\tsrc_venue_gridsectionconfigschema\tcontains;src_venue\tsrc_venue_point\tcontains;src_venue\tsrc_venue_pointschema\tcontains;src_venue\tsrc_venue_radtodeg\tcontains;src_venue\tsrc_venue_seatnode\tcontains;src_venue\tsrc_venue_seatnodeschema\tcontains;src_venue\tsrc_venue_sectionconfig\tcontains;src_venue\tsrc_venue_sectionconfigschema\tcontains;src_venue\tsrc_venue_tableclusterconfig\tcontains;src_venue\tsrc_venue_tableclusterconfigschema\tcontains;src_venue\tsrc_venue_venuelayout\tcontains;src_venue\tsrc_venue_venuelayoutschema\tcontains;utils_aggregates\tutils_aggregates_convexhull\tcontains;utils_aggregates\tutils_aggregates_crossproduct\tcontains;utils_aggregates\tutils_aggregates_sectionaggregate\tcontains;utils_aggregates\tutils_aggregates_sectionaggregates\tcontains;utils_aggregates\tutils_bounding_box\timports_from;utils_aggregates\tutils_bounding_box_boundingbox\timports;utils_aggregates_convexhull\tutils_aggregates_crossproduct\tcalls;utils_aggregates_convexhull\tutils_aggregates_sectionaggregates\tcalls;utils_bounding_box\tutils_bounding_box_boundingbox\tcontains;utils_ids\tutils_ids_buildseatid\tcontains;utils_ids\tutils_ids_parseseatid\tcontains;utils_ids\tutils_ids_rowtolabel\tcontains;utils_ids_buildseatid\tutils_ids_rowtolabel\tcalls;utils_parser\tutils_parser_internalseatnode\tcontains;utils_parser\tutils_parser_internalvenuelayout\tcontains;utils_parser\tutils_parser_invalidlayouterror\tcontains;utils_parser\tutils_parser_parselayout\tcontains;utils_parser\tutils_parser_serializelayout\tcontains;utils_parser\tutils_parser_validatesectionconstraints\tcontains;utils_parser_invalidlayouterror\tutils_parser_invalidlayouterror_constructor\tmethod;utils_parser_invalidlayouterror\tutils_parser_parselayout\tcalls;utils_parser_invalidlayouterror\tutils_parser_serializelayout\tcalls;utils_parser_invalidlayouterror\tutils_parser_validatesectionconstraints\tcalls;utils_parser_parselayout\tutils_parser_validatesectionconstraints\tcalls;venue_engine_jest_config\tvenue_engine_jest_config_config\tcontains;worker_jest_config\tworker_jest_config_config\tcontains",
   "nodes": [
     {
       "id": "api_jest_config",
@@ -47,8 +52,8 @@
       "file_type": "code",
       "source_file": "apps/api/jest.config.ts",
       "source_location": "L1",
-      "community": 15,
-      "community_name": "Community 15"
+      "community": 20,
+      "community_name": "Community 20"
     },
     {
       "id": "api_jest_config_config",
@@ -56,8 +61,8 @@
       "file_type": "code",
       "source_file": "apps/api/jest.config.ts",
       "source_location": "L3",
-      "community": 15,
-      "community_name": "Community 15"
+      "community": 20,
+      "community_name": "Community 20"
     },
     {
       "id": "src_app_module",
@@ -65,8 +70,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/app.module.ts",
       "source_location": "L1",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "src_app_module_appmodule",
@@ -74,8 +79,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/app.module.ts",
       "source_location": "L9",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "module",
@@ -83,8 +88,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "dto_index",
@@ -92,8 +97,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/dto/index.ts",
       "source_location": "L1",
-      "community": 24,
-      "community_name": "Community 24"
+      "community": 29,
+      "community_name": "Community 29"
     },
     {
       "id": "guards_index",
@@ -101,8 +106,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/guards/index.ts",
       "source_location": "L1",
-      "community": 27,
-      "community_name": "Community 27"
+      "community": 32,
+      "community_name": "Community 32"
     },
     {
       "id": "ports_index",
@@ -110,8 +115,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L1",
-      "community": 13,
-      "community_name": "Community 13"
+      "community": 15,
+      "community_name": "Community 15"
     },
     {
       "id": "ports_index_eventseatcatalogport",
@@ -119,8 +124,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L1",
-      "community": 13,
-      "community_name": "Community 13"
+      "community": 15,
+      "community_name": "Community 15"
     },
     {
       "id": "ports_index_platformsettingsport",
@@ -128,8 +133,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L8",
-      "community": 13,
-      "community_name": "Community 13"
+      "community": 15,
+      "community_name": "Community 15"
     },
     {
       "id": "ports_index_paymentprovider",
@@ -137,8 +142,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/common/ports/index.ts",
       "source_location": "L12",
-      "community": 13,
-      "community_name": "Community 13"
+      "community": 15,
+      "community_name": "Community 15"
     },
     {
       "id": "src_main",
@@ -146,8 +151,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/main.ts",
       "source_location": "L1",
-      "community": 14,
-      "community_name": "Community 14"
+      "community": 16,
+      "community_name": "Community 16"
     },
     {
       "id": "src_main_bootstrap",
@@ -155,8 +160,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/main.ts",
       "source_location": "L6",
-      "community": 14,
-      "community_name": "Community 14"
+      "community": 16,
+      "community_name": "Community 16"
     },
     {
       "id": "health_health_controller_spec",
@@ -164,8 +169,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.spec.ts",
       "source_location": "L1",
-      "community": 28,
-      "community_name": "Community 28"
+      "community": 33,
+      "community_name": "Community 33"
     },
     {
       "id": "health_health_controller",
@@ -173,8 +178,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L1",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "health_health_controller_healthcontroller",
@@ -182,8 +187,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L5",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "controller",
@@ -191,8 +196,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "get",
@@ -200,8 +205,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "health_health_controller_healthcontroller_constructor",
@@ -209,8 +214,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L6",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "health_health_controller_healthcontroller_gethealth",
@@ -218,8 +223,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.controller.ts",
       "source_location": "L9",
-      "community": 9,
-      "community_name": "Community 9"
+      "community": 11,
+      "community_name": "Community 11"
     },
     {
       "id": "health_health_module",
@@ -227,8 +232,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.module.ts",
       "source_location": "L1",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "health_health_module_healthmodule",
@@ -236,8 +241,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.module.ts",
       "source_location": "L10",
-      "community": 11,
-      "community_name": "Community 11"
+      "community": 12,
+      "community_name": "Community 12"
     },
     {
       "id": "health_health_service",
@@ -245,8 +250,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.service.ts",
       "source_location": "L1",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "health_health_service_healthservice",
@@ -254,8 +259,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.service.ts",
       "source_location": "L6",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "injectable",
@@ -263,8 +268,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "health_health_service_healthservice_checktcpport",
@@ -272,8 +277,8 @@
       "file_type": "code",
       "source_file": "apps/api/src/modules/health/health.service.ts",
       "source_location": "L11",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "health_health_service_healthservice_checkhealth",
@@ -281,8 +286,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/health/health.service.ts",
       "source_location": "L9",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "realtime_jest_config",
@@ -290,8 +295,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/jest.config.ts",
       "source_location": "L1",
-      "community": 19,
-      "community_name": "Community 19"
+      "community": 24,
+      "community_name": "Community 24"
     },
     {
       "id": "realtime_jest_config_config",
@@ -299,8 +304,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/jest.config.ts",
       "source_location": "L3",
-      "community": 19,
-      "community_name": "Community 19"
+      "community": 24,
+      "community_name": "Community 24"
     },
     {
       "id": "gateways_events_gateway",
@@ -308,8 +313,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L1",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "gateways_events_gateway_eventsgateway",
@@ -317,8 +322,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L17",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "websocketgateway",
@@ -326,8 +331,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "websocketserver",
@@ -335,8 +340,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "subscribemessage",
@@ -344,8 +349,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "connectedsocket",
@@ -353,8 +358,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "messagebody",
@@ -362,8 +367,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "gateways_events_gateway_eventsgateway_handlejoinroom",
@@ -371,8 +376,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L24",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "gateways_events_gateway_eventsgateway_handleleaveroom",
@@ -380,8 +385,8 @@
       "file_type": "code",
       "source_file": "apps/realtime/src/gateways/events.gateway.ts",
       "source_location": "L35",
-      "community": 5,
-      "community_name": "Community 5"
+      "community": 6,
+      "community_name": "Community 6"
     },
     {
       "id": "web_postcss_config",
@@ -389,8 +394,8 @@
       "file_type": "code",
       "source_file": "apps/web/postcss.config.js",
       "source_location": "L1",
-      "community": 30,
-      "community_name": "Community 30"
+      "community": 35,
+      "community_name": "Community 35"
     },
     {
       "id": "src_app",
@@ -398,8 +403,8 @@
       "file_type": "code",
       "source_file": "apps/web/src/App.tsx",
       "source_location": "L1",
-      "community": 14,
-      "community_name": "Community 14"
+      "community": 16,
+      "community_name": "Community 16"
     },
     {
       "id": "src_app_app",
@@ -407,8 +412,8 @@
       "file_type": "code",
       "source_file": "apps/web/src/App.tsx",
       "source_location": "L3",
-      "community": 14,
-      "community_name": "Community 14"
+      "community": 16,
+      "community_name": "Community 16"
     },
     {
       "id": "web_tailwind_config",
@@ -416,8 +421,8 @@
       "file_type": "code",
       "source_file": "apps/web/tailwind.config.js",
       "source_location": "L1",
-      "community": 31,
-      "community_name": "Community 31"
+      "community": 36,
+      "community_name": "Community 36"
     },
     {
       "id": "web_vite_config",
@@ -425,8 +430,8 @@
       "file_type": "code",
       "source_file": "apps/web/vite.config.ts",
       "source_location": "L1",
-      "community": 32,
-      "community_name": "Community 32"
+      "community": 37,
+      "community_name": "Community 37"
     },
     {
       "id": "worker_jest_config",
@@ -434,8 +439,8 @@
       "file_type": "code",
       "source_file": "apps/worker/jest.config.ts",
       "source_location": "L1",
-      "community": 22,
-      "community_name": "Community 22"
+      "community": 27,
+      "community_name": "Community 27"
     },
     {
       "id": "worker_jest_config_config",
@@ -443,8 +448,8 @@
       "file_type": "code",
       "source_file": "apps/worker/jest.config.ts",
       "source_location": "L3",
-      "community": 22,
-      "community_name": "Community 22"
+      "community": 27,
+      "community_name": "Community 27"
     },
     {
       "id": "processors_hold_expiry_processor",
@@ -452,8 +457,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L1",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "processors_hold_expiry_processor_holdexpiryprocessor",
@@ -461,8 +466,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L12",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "processors_hold_expiry_processor_onmoduleinit",
@@ -470,8 +475,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "processors_hold_expiry_processor_onmoduledestroy",
@@ -479,8 +484,8 @@
       "file_type": "code",
       "source_file": "",
       "source_location": "",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduleinit",
@@ -488,8 +493,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L16",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "processors_hold_expiry_processor_holdexpiryprocessor_onmoduledestroy",
@@ -497,8 +502,8 @@
       "file_type": "code",
       "source_file": "apps/worker/src/processors/hold-expiry.processor.ts",
       "source_location": "L43",
-      "community": 4,
-      "community_name": "Community 4"
+      "community": 5,
+      "community_name": "Community 5"
     },
     {
       "id": "commitlint_config",
@@ -506,8 +511,8 @@
       "file_type": "code",
       "source_file": "commitlint.config.js",
       "source_location": "L1",
-      "community": 23,
-      "community_name": "Community 23"
+      "community": 28,
+      "community_name": "Community 28"
     },
     {
       "id": "eslint_config",
@@ -515,8 +520,8 @@
       "file_type": "code",
       "source_file": "eslint.config.mjs",
       "source_location": "L1",
-      "community": 26,
-      "community_name": "Community 26"
+      "community": 31,
+      "community_name": "Community 31"
     },
     {
       "id": "eslint_base",
@@ -524,8 +529,8 @@
       "file_type": "code",
       "source_file": "packages/config/eslint/base.js",
       "source_location": "L1",
-      "community": 25,
-      "community_name": "Community 25"
+      "community": 30,
+      "community_name": "Community 30"
     },
     {
       "id": "config_jest_config",
@@ -533,8 +538,8 @@
       "file_type": "code",
       "source_file": "packages/config/jest.config.ts",
       "source_location": "L1",
-      "community": 16,
-      "community_name": "Community 16"
+      "community": 21,
+      "community_name": "Community 21"
     },
     {
       "id": "config_jest_config_config",
@@ -542,8 +547,8 @@
       "file_type": "code",
       "source_file": "packages/config/jest.config.ts",
       "source_location": "L3",
-      "community": 16,
-      "community_name": "Community 16"
+      "community": 21,
+      "community_name": "Community 21"
     },
     {
       "id": "prettier_index",
@@ -551,8 +556,8 @@
       "file_type": "code",
       "source_file": "packages/config/prettier/index.js",
       "source_location": "L1",
-      "community": 29,
-      "community_name": "Community 29"
+      "community": 34,
+      "community_name": "Community 34"
     },
     {
       "id": "src_env",
@@ -560,8 +565,8 @@
       "file_type": "code",
       "source_file": "packages/config/src/env.ts",
       "source_location": "L1",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 17,
+      "community_name": "Community 17"
     },
     {
       "id": "src_env_envschema",
@@ -569,8 +574,8 @@
       "file_type": "code",
       "source_file": "packages/config/src/env.ts",
       "source_location": "L5",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 17,
+      "community_name": "Community 17"
     },
     {
       "id": "src_env_env",
@@ -578,8 +583,8 @@
       "file_type": "code",
       "source_file": "packages/config/src/env.ts",
       "source_location": "L54",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 17,
+      "community_name": "Community 17"
     },
     {
       "id": "src_env_loadenv",
@@ -587,8 +592,8 @@
       "file_type": "code",
       "source_file": "packages/config/src/env.ts",
       "source_location": "L58",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 17,
+      "community_name": "Community 17"
     },
     {
       "id": "src_index_spec",
@@ -614,8 +619,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/jest.config.ts",
       "source_location": "L1",
-      "community": 17,
-      "community_name": "Community 17"
+      "community": 22,
+      "community_name": "Community 22"
     },
     {
       "id": "contracts_jest_config_config",
@@ -623,8 +628,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/jest.config.ts",
       "source_location": "L3",
-      "community": 17,
-      "community_name": "Community 17"
+      "community": 22,
+      "community_name": "Community 22"
     },
     {
       "id": "src_enums",
@@ -632,8 +637,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L1",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_enums_ticketstatus",
@@ -641,8 +646,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L1",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_enums_seatstate",
@@ -650,8 +655,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L8",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_enums_seatstatecolors",
@@ -659,8 +664,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L15",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_enums_userrole",
@@ -668,8 +673,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/enums.ts",
       "source_location": "L22",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_errors",
@@ -677,8 +682,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/errors.ts",
       "source_location": "L1",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 18,
+      "community_name": "Community 18"
     },
     {
       "id": "src_errors_errorcode",
@@ -686,26 +691,26 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/errors.ts",
       "source_location": "L3",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 18,
+      "community_name": "Community 18"
     },
     {
       "id": "src_errors_errorenvelopeschema",
       "label": "ErrorEnvelopeSchema",
       "file_type": "code",
       "source_file": "packages/contracts/src/errors.ts",
-      "source_location": "L17",
-      "community": 0,
-      "community_name": "Community 0"
+      "source_location": "L19",
+      "community": 18,
+      "community_name": "Community 18"
     },
     {
       "id": "src_errors_errorenvelope",
       "label": "ErrorEnvelope",
       "file_type": "code",
       "source_file": "packages/contracts/src/errors.ts",
-      "source_location": "L26",
-      "community": 0,
-      "community_name": "Community 0"
+      "source_location": "L28",
+      "community": 18,
+      "community_name": "Community 18"
     },
     {
       "id": "src_jobs",
@@ -713,8 +718,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L1",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_holdexpiryjobschema",
@@ -722,8 +727,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L3",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_holdexpiryjob",
@@ -731,8 +736,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L9",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_searchindexjobschema",
@@ -740,8 +745,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L11",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_searchindexjob",
@@ -749,8 +754,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L17",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_ordernotificationjobschema",
@@ -758,8 +763,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L19",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_ordernotificationjob",
@@ -767,8 +772,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L25",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_ticketseedrotationjobschema",
@@ -776,8 +781,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L27",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_jobs_ticketseedrotationjob",
@@ -785,8 +790,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/jobs.ts",
       "source_location": "L32",
-      "community": 6,
-      "community_name": "Community 6"
+      "community": 7,
+      "community_name": "Community 7"
     },
     {
       "id": "src_pagination",
@@ -794,8 +799,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/pagination.ts",
       "source_location": "L1",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 19,
+      "community_name": "Community 19"
     },
     {
       "id": "src_pagination_paginationqueryschema",
@@ -803,8 +808,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/pagination.ts",
       "source_location": "L3",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 19,
+      "community_name": "Community 19"
     },
     {
       "id": "src_pagination_paginationquery",
@@ -812,8 +817,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/pagination.ts",
       "source_location": "L8",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 19,
+      "community_name": "Community 19"
     },
     {
       "id": "src_pagination_paginatedresult",
@@ -821,8 +826,53 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/pagination.ts",
       "source_location": "L10",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 19,
+      "community_name": "Community 19"
+    },
+    {
+      "id": "src_seats",
+      "label": "seats.ts",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L1",
+      "community": 14,
+      "community_name": "Community 14"
+    },
+    {
+      "id": "src_seats_holdrequestschema",
+      "label": "HoldRequestSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L3",
+      "community": 14,
+      "community_name": "Community 14"
+    },
+    {
+      "id": "src_seats_holdrequest",
+      "label": "HoldRequest",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L13",
+      "community": 14,
+      "community_name": "Community 14"
+    },
+    {
+      "id": "src_seats_holdresponseschema",
+      "label": "HoldResponseSchema",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L15",
+      "community": 14,
+      "community_name": "Community 14"
+    },
+    {
+      "id": "src_seats_holdresponse",
+      "label": "HoldResponse",
+      "file_type": "code",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L24",
+      "community": 14,
+      "community_name": "Community 14"
     },
     {
       "id": "src_sockets",
@@ -830,8 +880,8 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L1",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_sockets_seatstateeventschema",
@@ -839,53 +889,53 @@
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
       "source_location": "L4",
-      "community": 3,
-      "community_name": "Community 3"
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_sockets_seatstateevent",
       "label": "SeatStateEvent",
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L12",
-      "community": 3,
-      "community_name": "Community 3"
+      "source_location": "L14",
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_sockets_roomjoinschema",
       "label": "RoomJoinSchema",
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L14",
-      "community": 3,
-      "community_name": "Community 3"
+      "source_location": "L16",
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_sockets_roomjoinpayload",
       "label": "RoomJoinPayload",
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L18",
-      "community": 3,
-      "community_name": "Community 3"
+      "source_location": "L22",
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_sockets_roomleaveschema",
       "label": "RoomLeaveSchema",
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L20",
-      "community": 3,
-      "community_name": "Community 3"
+      "source_location": "L24",
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_sockets_roomleavepayload",
       "label": "RoomLeavePayload",
       "file_type": "code",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L24",
-      "community": 3,
-      "community_name": "Community 3"
+      "source_location": "L30",
+      "community": 4,
+      "community_name": "Community 4"
     },
     {
       "id": "src_venue",
@@ -1046,8 +1096,8 @@
       "file_type": "code",
       "source_file": "packages/db/jest.config.ts",
       "source_location": "L1",
-      "community": 18,
-      "community_name": "Community 18"
+      "community": 23,
+      "community_name": "Community 23"
     },
     {
       "id": "db_jest_config_config",
@@ -1055,8 +1105,8 @@
       "file_type": "code",
       "source_file": "packages/db/jest.config.ts",
       "source_location": "L3",
-      "community": 18,
-      "community_name": "Community 18"
+      "community": 23,
+      "community_name": "Community 23"
     },
     {
       "id": "src_check",
@@ -1064,8 +1114,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/check.ts",
       "source_location": "L1",
-      "community": 12,
-      "community_name": "Community 12"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "src_check_checkdatabase",
@@ -1073,8 +1123,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/check.ts",
       "source_location": "L3",
-      "community": 12,
-      "community_name": "Community 12"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "src_data_source",
@@ -1082,8 +1132,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/data-source.ts",
       "source_location": "L1",
-      "community": 12,
-      "community_name": "Community 12"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "src_data_source_env",
@@ -1091,8 +1141,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/data-source.ts",
       "source_location": "L5",
-      "community": 12,
-      "community_name": "Community 12"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "src_data_source_appdatasource",
@@ -1100,8 +1150,8 @@
       "file_type": "code",
       "source_file": "packages/db/src/data-source.ts",
       "source_location": "L7",
-      "community": 12,
-      "community_name": "Community 12"
+      "community": 13,
+      "community_name": "Community 13"
     },
     {
       "id": "entities_index",
@@ -1118,8 +1168,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/jest.config.ts",
       "source_location": "L1",
-      "community": 20,
-      "community_name": "Community 20"
+      "community": 25,
+      "community_name": "Community 25"
     },
     {
       "id": "redis_scripts_jest_config_config",
@@ -1127,8 +1177,413 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/jest.config.ts",
       "source_location": "L3",
-      "community": 20,
-      "community_name": "Community 20"
+      "community": 25,
+      "community_name": "Community 25"
+    },
+    {
+      "id": "src_index_lua_dir",
+      "label": "LUA_DIR",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L6",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_loadluascript",
+      "label": "loadLuaScript()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L8",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_hold_seats_lua",
+      "label": "HOLD_SEATS_LUA",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L12",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_release_seats_lua",
+      "label": "RELEASE_SEATS_LUA",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L13",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_confirm_sold_lua",
+      "label": "CONFIRM_SOLD_LUA",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L14",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_unsell_seats_lua",
+      "label": "UNSELL_SEATS_LUA",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L15",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_extend_hold_lua",
+      "label": "EXTEND_HOLD_LUA",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L16",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_expire_due_lua",
+      "label": "EXPIRE_DUE_LUA",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L17",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_rediskeys",
+      "label": "RedisKeys",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L25",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_luaholdrawtuple",
+      "label": "LuaHoldRawTuple",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L36",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_luastatusrawtuple",
+      "label": "LuaStatusRawTuple",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L37",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_luaextendrawtuple",
+      "label": "LuaExtendRawTuple",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L38",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_ioredis",
+      "label": "ioredis",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L40",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_rediscommander",
+      "label": "RedisCommander",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L41",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_holdseatsparams",
+      "label": "HoldSeatsParams",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L97",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_holdseatsresult",
+      "label": "HoldSeatsResult",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L106",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_releaseseatsparams",
+      "label": "ReleaseSeatsParams",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L116",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_releaseseatsresult",
+      "label": "ReleaseSeatsResult",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L122",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_confirmsoldparams",
+      "label": "ConfirmSoldParams",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L131",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_confirmsoldresult",
+      "label": "ConfirmSoldResult",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L138",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_unsellseatsparams",
+      "label": "UnsellSeatsParams",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L147",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_unsellseatsresult",
+      "label": "UnsellSeatsResult",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L152",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_extendholdparams",
+      "label": "ExtendHoldParams",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L160",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_extendholdresult",
+      "label": "ExtendHoldResult",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L168",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_seatsnapshot",
+      "label": "SeatSnapshot",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L177",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_seatcounts",
+      "label": "SeatCounts",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L186",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_seatholdparams",
+      "label": "SeatHoldParams",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L193",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_seatholdresult",
+      "label": "SeatHoldResult",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L201",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_registeredclients",
+      "label": "registeredClients",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L207",
+      "community": 0,
+      "community_name": "Community 0"
+    },
+    {
+      "id": "src_index_registerredisscripts",
+      "label": "registerRedisScripts()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L209",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper",
+      "label": "RedisScriptsWrapper",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L248",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L249",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_holdseats",
+      "label": ".holdSeats()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L262",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_holdseat",
+      "label": ".holdSeat()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L328",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_releaseseats",
+      "label": ".releaseSeats()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L349",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_confirmsold",
+      "label": ".confirmSold()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L394",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_unsellseats",
+      "label": ".unsellSeats()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L442",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_extendhold",
+      "label": ".extendHold()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L480",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_expiredue",
+      "label": ".expireDue()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L541",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_getsnapshot",
+      "label": ".getSnapshot()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L555",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_redisscriptswrapper_getcounts",
+      "label": ".getCounts()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L610",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_createseatlockclient",
+      "label": "createSeatLockClient()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L626",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_getsnapshot",
+      "label": "getSnapshot()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L630",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_index_getcounts",
+      "label": "getCounts()",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L638",
+      "community": 3,
+      "community_name": "Community 3"
+    },
+    {
+      "id": "src_integration_spec",
+      "label": "integration.spec.ts",
+      "file_type": "code",
+      "source_file": "packages/redis-scripts/src/integration.spec.ts",
+      "source_location": "L1",
+      "community": 0,
+      "community_name": "Community 0"
     },
     {
       "id": "src_scripts",
@@ -1136,53 +1591,8 @@
       "file_type": "code",
       "source_file": "packages/redis-scripts/src/scripts.ts",
       "source_location": "L1",
-      "community": 10,
-      "community_name": "Community 10"
-    },
-    {
-      "id": "src_scripts_seatholdparams",
-      "label": "SeatHoldParams",
-      "file_type": "code",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L3",
-      "community": 10,
-      "community_name": "Community 10"
-    },
-    {
-      "id": "src_scripts_seatholdresult",
-      "label": "SeatHoldResult",
-      "file_type": "code",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L10",
-      "community": 10,
-      "community_name": "Community 10"
-    },
-    {
-      "id": "src_scripts_redisscriptswrapper",
-      "label": "RedisScriptsWrapper",
-      "file_type": "code",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L28",
-      "community": 10,
-      "community_name": "Community 10"
-    },
-    {
-      "id": "src_scripts_redisscriptswrapper_constructor",
-      "label": ".constructor()",
-      "file_type": "code",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L29",
-      "community": 10,
-      "community_name": "Community 10"
-    },
-    {
-      "id": "src_scripts_redisscriptswrapper_holdseat",
-      "label": ".holdSeat()",
-      "file_type": "code",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L36",
-      "community": 10,
-      "community_name": "Community 10"
+      "community": 0,
+      "community_name": "Community 0"
     },
     {
       "id": "venue_engine_jest_config",
@@ -1190,8 +1600,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/jest.config.ts",
       "source_location": "L1",
-      "community": 21,
-      "community_name": "Community 21"
+      "community": 26,
+      "community_name": "Community 26"
     },
     {
       "id": "venue_engine_jest_config_config",
@@ -1199,8 +1609,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/jest.config.ts",
       "source_location": "L3",
-      "community": 21,
-      "community_name": "Community 21"
+      "community": 26,
+      "community_name": "Community 26"
     },
     {
       "id": "tests_generators_spec",
@@ -1343,8 +1753,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L1",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "src_layout_point",
@@ -1352,8 +1762,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L1",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "src_layout_gridsectionconfig",
@@ -1361,8 +1771,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L6",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "src_layout_generatedseat",
@@ -1370,8 +1780,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L16",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "src_layout_generategridseats",
@@ -1379,8 +1789,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L25",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "src_layout_radialsectionconfig",
@@ -1388,8 +1798,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L57",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "src_layout_generateradialseats",
@@ -1397,8 +1807,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/layout.ts",
       "source_location": "L69",
-      "community": 8,
-      "community_name": "Community 8"
+      "community": 9,
+      "community_name": "Community 9"
     },
     {
       "id": "utils_aggregates",
@@ -1406,8 +1816,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/aggregates.ts",
       "source_location": "L1",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "utils_aggregates_sectionaggregate",
@@ -1415,8 +1825,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/aggregates.ts",
       "source_location": "L4",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "utils_aggregates_crossproduct",
@@ -1424,8 +1834,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/aggregates.ts",
       "source_location": "L15",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "utils_aggregates_convexhull",
@@ -1433,8 +1843,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/aggregates.ts",
       "source_location": "L23",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "utils_aggregates_sectionaggregates",
@@ -1442,8 +1852,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/aggregates.ts",
       "source_location": "L83",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "utils_bounding_box",
@@ -1451,8 +1861,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/bounding-box.ts",
       "source_location": "L1",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "utils_bounding_box_boundingbox",
@@ -1460,8 +1870,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/bounding-box.ts",
       "source_location": "L1",
-      "community": 0,
-      "community_name": "Community 0"
+      "community": 10,
+      "community_name": "Community 10"
     },
     {
       "id": "utils_ids",
@@ -1505,8 +1915,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L1",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "utils_parser_invalidlayouterror",
@@ -1514,8 +1924,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L13",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "utils_parser_invalidlayouterror_constructor",
@@ -1523,8 +1933,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L14",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "utils_parser_internalseatnode",
@@ -1532,8 +1942,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L26",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "utils_parser_internalvenuelayout",
@@ -1541,8 +1951,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L33",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "utils_parser_validatesectionconstraints",
@@ -1550,8 +1960,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L40",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "utils_parser_parselayout",
@@ -1559,8 +1969,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L108",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     },
     {
       "id": "utils_parser_serializelayout",
@@ -1568,8 +1978,8 @@
       "file_type": "code",
       "source_file": "packages/venue-engine/src/utils/parser.ts",
       "source_location": "L147",
-      "community": 7,
-      "community_name": "Community 7"
+      "community": 8,
+      "community_name": "Community 8"
     }
   ],
   "links": [
@@ -2433,7 +2843,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/errors.ts",
-      "source_location": "L26",
+      "source_location": "L28",
       "weight": 1,
       "_src": "src_errors",
       "_tgt": "src_errors_errorenvelope",
@@ -2445,7 +2855,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/errors.ts",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1,
       "_src": "src_errors",
       "_tgt": "src_errors_errorenvelopeschema",
@@ -2557,6 +2967,414 @@
     },
     {
       "source": "src_index",
+      "target": "src_index_confirm_sold_lua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L14",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_confirm_sold_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_confirmsoldparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L131",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_confirmsoldparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_confirmsoldresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L138",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_confirmsoldresult",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_createseatlockclient",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L626",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_createseatlockclient",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_expire_due_lua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L17",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_expire_due_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_extend_hold_lua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L16",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_extend_hold_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_extendholdparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L160",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_extendholdparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_extendholdresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L168",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_extendholdresult",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_getcounts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L638",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_getcounts",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_getsnapshot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L630",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_getsnapshot",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_hold_seats_lua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L12",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_hold_seats_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_holdseatsparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L97",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_holdseatsparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_holdseatsresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L106",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_holdseatsresult",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_ioredis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L40",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_ioredis",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_loadluascript",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L8",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_loadluascript",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_lua_dir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L6",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_lua_dir",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_luaextendrawtuple",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L38",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_luaextendrawtuple",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_luaholdrawtuple",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L36",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_luaholdrawtuple",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_luastatusrawtuple",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L37",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_luastatusrawtuple",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_rediscommander",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L41",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_rediscommander",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_rediskeys",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L25",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_rediskeys",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_redisscriptswrapper",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L248",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_redisscriptswrapper",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_registeredclients",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L207",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_registeredclients",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_registerredisscripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L209",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_registerredisscripts",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_release_seats_lua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L13",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_release_seats_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_releaseseatsparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L116",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_releaseseatsparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_releaseseatsresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L122",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_releaseseatsresult",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_seatcounts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L186",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_seatcounts",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_seatholdparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L193",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_seatholdparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_seatholdresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L201",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_seatholdresult",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_seatsnapshot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L177",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_seatsnapshot",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_unsell_seats_lua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L15",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_unsell_seats_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_unsellseatsparams",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L147",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_unsellseatsparams",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
+      "target": "src_index_unsellseatsresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L152",
+      "weight": 1,
+      "_src": "src_index",
+      "_tgt": "src_index_unsellseatsresult",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index",
       "target": "src_jobs",
       "relation": "imports_from",
       "confidence": "EXTRACTED",
@@ -2596,15 +3414,15 @@
     },
     {
       "source": "src_index",
-      "target": "src_scripts",
+      "target": "src_seats",
       "relation": "imports_from",
       "confidence": "EXTRACTED",
-      "source_file": "packages/redis-scripts/src/index.ts",
-      "source_location": "L1",
+      "source_file": "packages/contracts/src/index.ts",
+      "source_location": "L6",
       "weight": 1,
       "context": "re-export",
       "_src": "src_index",
-      "_tgt": "src_scripts",
+      "_tgt": "src_seats",
       "confidence_score": 1
     },
     {
@@ -2626,7 +3444,7 @@
       "relation": "imports_from",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/index.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1,
       "context": "re-export",
       "_src": "src_index",
@@ -2686,6 +3504,186 @@
       "confidence_score": 1
     },
     {
+      "source": "src_index_createseatlockclient",
+      "target": "src_index_redisscriptswrapper",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L627",
+      "weight": 1,
+      "_src": "src_index_createseatlockclient",
+      "_tgt": "src_index_redisscriptswrapper",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_getcounts",
+      "target": "src_index_redisscriptswrapper",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L643",
+      "weight": 1,
+      "_src": "src_index_getcounts",
+      "_tgt": "src_index_redisscriptswrapper",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_getsnapshot",
+      "target": "src_index_redisscriptswrapper",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L635",
+      "weight": 1,
+      "_src": "src_index_getsnapshot",
+      "_tgt": "src_index_redisscriptswrapper",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_confirmsold",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L394",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_confirmsold",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L249",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_constructor",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_expiredue",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L541",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_expiredue",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_extendhold",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L480",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_extendhold",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_getcounts",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L610",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_getcounts",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_getsnapshot",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L555",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_getsnapshot",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_holdseat",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L328",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_holdseat",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_holdseats",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L262",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_holdseats",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_releaseseats",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L349",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_releaseseats",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper",
+      "target": "src_index_redisscriptswrapper_unsellseats",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L442",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper",
+      "_tgt": "src_index_redisscriptswrapper_unsellseats",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper_constructor",
+      "target": "src_index_registerredisscripts",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L250",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper_constructor",
+      "_tgt": "src_index_registerredisscripts",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_redisscriptswrapper_holdseat",
+      "target": "src_index_redisscriptswrapper_holdseats",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.ts",
+      "source_location": "L329",
+      "weight": 1,
+      "_src": "src_index_redisscriptswrapper_holdseat",
+      "_tgt": "src_index_redisscriptswrapper_holdseats",
+      "confidence_score": 1
+    },
+    {
       "source": "src_index_spec",
       "target": "src_index",
       "relation": "imports_from",
@@ -2695,6 +3693,138 @@
       "weight": 1,
       "_src": "src_index_spec",
       "_tgt": "src_index",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_confirm_sold_lua",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_confirm_sold_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_expire_due_lua",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_expire_due_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_extend_hold_lua",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_extend_hold_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_hold_seats_lua",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_hold_seats_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_rediskeys",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_rediskeys",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_redisscriptswrapper",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_redisscriptswrapper",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_release_seats_lua",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_release_seats_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_index_spec",
+      "target": "src_index_unsell_seats_lua",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/index.spec.ts",
+      "source_location": "L2",
+      "weight": 1,
+      "_src": "src_index_spec",
+      "_tgt": "src_index_unsell_seats_lua",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_integration_spec",
+      "target": "src_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/integration.spec.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "_src": "src_integration_spec",
+      "_tgt": "src_index",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_integration_spec",
+      "target": "src_index_rediskeys",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/integration.spec.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "_src": "src_integration_spec",
+      "_tgt": "src_index_rediskeys",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_integration_spec",
+      "target": "src_index_redisscriptswrapper",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/redis-scripts/src/integration.spec.ts",
+      "source_location": "L5",
+      "weight": 1,
+      "_src": "src_integration_spec",
+      "_tgt": "src_index_redisscriptswrapper",
       "confidence_score": 1
     },
     {
@@ -2927,62 +4057,63 @@
     },
     {
       "source": "src_scripts",
-      "target": "src_scripts_redisscriptswrapper",
-      "relation": "contains",
+      "target": "src_index",
+      "relation": "imports_from",
       "confidence": "EXTRACTED",
       "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L28",
+      "source_location": "L1",
       "weight": 1,
+      "context": "re-export",
       "_src": "src_scripts",
-      "_tgt": "src_scripts_redisscriptswrapper",
+      "_tgt": "src_index",
       "confidence_score": 1
     },
     {
-      "source": "src_scripts",
-      "target": "src_scripts_seatholdparams",
+      "source": "src_seats",
+      "target": "src_seats_holdrequest",
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L13",
+      "weight": 1,
+      "_src": "src_seats",
+      "_tgt": "src_seats_holdrequest",
+      "confidence_score": 1
+    },
+    {
+      "source": "src_seats",
+      "target": "src_seats_holdrequestschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/contracts/src/seats.ts",
       "source_location": "L3",
       "weight": 1,
-      "_src": "src_scripts",
-      "_tgt": "src_scripts_seatholdparams",
+      "_src": "src_seats",
+      "_tgt": "src_seats_holdrequestschema",
       "confidence_score": 1
     },
     {
-      "source": "src_scripts",
-      "target": "src_scripts_seatholdresult",
+      "source": "src_seats",
+      "target": "src_seats_holdresponse",
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L10",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L24",
       "weight": 1,
-      "_src": "src_scripts",
-      "_tgt": "src_scripts_seatholdresult",
+      "_src": "src_seats",
+      "_tgt": "src_seats_holdresponse",
       "confidence_score": 1
     },
     {
-      "source": "src_scripts_redisscriptswrapper",
-      "target": "src_scripts_redisscriptswrapper_constructor",
-      "relation": "method",
+      "source": "src_seats",
+      "target": "src_seats_holdresponseschema",
+      "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L29",
+      "source_file": "packages/contracts/src/seats.ts",
+      "source_location": "L15",
       "weight": 1,
-      "_src": "src_scripts_redisscriptswrapper",
-      "_tgt": "src_scripts_redisscriptswrapper_constructor",
-      "confidence_score": 1
-    },
-    {
-      "source": "src_scripts_redisscriptswrapper",
-      "target": "src_scripts_redisscriptswrapper_holdseat",
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "packages/redis-scripts/src/scripts.ts",
-      "source_location": "L36",
-      "weight": 1,
-      "_src": "src_scripts_redisscriptswrapper",
-      "_tgt": "src_scripts_redisscriptswrapper_holdseat",
+      "_src": "src_seats",
+      "_tgt": "src_seats_holdresponseschema",
       "confidence_score": 1
     },
     {
@@ -3015,7 +4146,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L18",
+      "source_location": "L22",
       "weight": 1,
       "_src": "src_sockets",
       "_tgt": "src_sockets_roomjoinpayload",
@@ -3027,7 +4158,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L14",
+      "source_location": "L16",
       "weight": 1,
       "_src": "src_sockets",
       "_tgt": "src_sockets_roomjoinschema",
@@ -3039,7 +4170,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L24",
+      "source_location": "L30",
       "weight": 1,
       "_src": "src_sockets",
       "_tgt": "src_sockets_roomleavepayload",
@@ -3051,7 +4182,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L20",
+      "source_location": "L24",
       "weight": 1,
       "_src": "src_sockets",
       "_tgt": "src_sockets_roomleaveschema",
@@ -3063,7 +4194,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "packages/contracts/src/sockets.ts",
-      "source_location": "L12",
+      "source_location": "L14",
       "weight": 1,
       "_src": "src_sockets",
       "_tgt": "src_sockets_seatstateevent",

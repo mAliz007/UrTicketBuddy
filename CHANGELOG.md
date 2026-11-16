@@ -4,6 +4,42 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-5] - 2026-11-16
+
+### Atomic Redis Seat-Locking Lua Engine
+
+- **Ticket Key:** `UTB-5`
+- **Completion Date:** 2026-11-16
+- **Main Feature Branch:** `feat/UTB-5-seat-lock-lua`
+  - Sub-task 1: `feat/UTB-5/contracts`
+  - Sub-task 2: `feat/UTB-5/lua-scripts`
+  - Sub-task 3: `feat/UTB-5/integration-tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-5-seat-lock-lua`; PR ready for review)
+- **Packages Modified:** `packages/redis-scripts`, `packages/contracts`
+- **Scope & Deliverables:**
+  - **Contracts & Schemas (`packages/contracts`)**:
+    - Created `packages/contracts/src/seats.ts` exporting strict `HoldRequestSchema` and `HoldResponseSchema` (with `expiresAt`).
+    - Added error codes `SEAT_NOT_HELD_BY_YOU` and `TOO_MANY_SEATS` alongside `SEAT_ALREADY_HELD` and `HOLD_EXPIRED` in `ErrorCode` enum (`packages/contracts/src/errors.ts`).
+    - Enforced strict validation on `SeatStateEventSchema` with optional `expiresAt` (`packages/contracts/src/sockets.ts`).
+  - **Atomic Lua Concurrency Engine (`packages/redis-scripts/lua/`)**:
+    - Key slot affinity ensured via `{eventId}` hash tags across all locking keys: `seat_lock:{<eventId>}:<seatId>`, `seat_sold:{<eventId>}`, `hold_expiry:{<eventId>}`, `user_holds:{<eventId>}:<userId>`, `hold_extended:{<eventId>}:<userId>`.
+    - `hold_seats.lua`: Atomically checks `seat_sold` and live locks owned by others; prunes stale user holds; enforces `maxPerUser`; atomically executes `SET ... EX 600`, `ZADD hold_expiry`, and `SADD user_holds`.
+    - `release_seats.lua`: Verifies lock ownership before deleting locks and clearing tracking sets (`SEAT_NOT_HELD_BY_YOU` on unauthorized attempt).
+    - `confirm_sold.lua`: Validates active hold ownership and moves seats to `seat_sold` while pruning active locks.
+    - `unsell_seats.lua`: Admin revocation removing seats from `seat_sold`.
+    - `extend_hold.lua`: Enforces a strict one-time 120s grace period extension per user per event.
+    - `expire_due.lua`: Removes expired seats whose locks have timed out, freeing seat IDs atomically.
+  - **Typed TypeScript Wrappers (`packages/redis-scripts/src/index.ts`)**:
+    - Registered all 6 scripts with `ioredis` `defineCommand` and typed module augmentation.
+    - Implemented `RedisScriptsWrapper` (`RedisSeatLockEngine`) exposing `holdSeats`, `releaseSeats`, `confirmSold`, `unsellSeats`, `extendHold`, `expireDue`, `getSnapshot(eventId)`, and `getCounts(eventId)`.
+  - **Testing & Concurrency Verification (`packages/redis-scripts/src/`)**:
+    - Unit tests validating Lua scripts and key naming conventions.
+    - Testcontainers integration test suite (`redis/redis-stack-server:latest`) verifying 500 simultaneous hold attempts on a single seat (exactly 1 winner, 499 failures) and zero partial locks on overlapping multi-seat holds.
+  - **Documentation**:
+    - Documented Lua scripts, keys, and TypeScript usage in `packages/redis-scripts/README.md`, `packages/contracts/README.md`, `packages/README.md`, and root `README.md`.
+
+---
+
 ## [UTB-7] - 2026-11-15
 
 ### Parametric Venue Engine Core (Backend Math Phase)
