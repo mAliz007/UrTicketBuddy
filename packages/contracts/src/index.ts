@@ -3,3 +3,4 @@ export * from "./errors";
 export * from "./pagination";
 export * from "./sockets";
 export * from "./jobs";
+export * from "./venue";
