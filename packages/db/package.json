@@ -18,12 +18,14 @@
   "dependencies": {
     "@urticketbuddy/config": "workspace:*",
     "@urticketbuddy/contracts": "workspace:*",
+    "mongoose": "^9.12.1",
     "pg": "^8.13.3",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^22.13.4",
     "@types/pg": "^8.11.11",
     "jest": "^29.7.0",
