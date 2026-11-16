@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 import { QueryRunner } from "typeorm";
 import { AppDataSource } from "./index";
 import { Utb2InitExtensions1794836828550 } from "./migrations/1794836828550-UTB-2-init-extensions";
@@ -33,5 +35,19 @@ describe("packages/db", () => {
     await migration.down(mockQueryRunner as unknown as QueryRunner);
     expect(queriesRan).toContain(`DROP EXTENSION IF EXISTS "uuid-ossp";`);
     expect(queriesRan).toContain(`DROP EXTENSION IF EXISTS "pgcrypto";`);
+  });
+
+  it("should enforce migration filename format <timestamp>-UTB-<n>-<description>.ts", () => {
+    const migrationsDir = path.join(__dirname, "migrations");
+    const files = fs
+      .readdirSync(migrationsDir)
+      .filter((file) => file.endsWith(".ts") && !file.includes(".spec."));
+
+    expect(files.length).toBeGreaterThan(0);
+    const migrationPattern = /^\d+-UTB-\d+-[a-zA-Z0-9-]+\.ts$/;
+
+    for (const file of files) {
+      expect(file).toMatch(migrationPattern);
+    }
   });
 });
