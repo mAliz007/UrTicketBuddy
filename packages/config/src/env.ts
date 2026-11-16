@@ -1,6 +1,7 @@
 import { z } from "zod";
 import * as dotenv from "dotenv";
 import * as path from "path";
+import * as fs from "fs";
 
 export const envSchema = z.object({
   NODE_ENV: z
@@ -60,7 +61,19 @@ export function loadEnv(overridePath?: string): Env {
     return cachedEnv;
   }
 
-  const envFile = overridePath || path.resolve(process.cwd(), ".env");
+  let envFile = overridePath;
+  if (!envFile) {
+    const cwdEnv = path.resolve(process.cwd(), ".env");
+    const rootEnv = path.resolve(__dirname, "../../../.env");
+    if (fs.existsSync(cwdEnv)) {
+      envFile = cwdEnv;
+    } else if (fs.existsSync(rootEnv)) {
+      envFile = rootEnv;
+    } else {
+      envFile = cwdEnv;
+    }
+  }
+
   dotenv.config({ path: envFile });
 
   const result = envSchema.safeParse(process.env);
