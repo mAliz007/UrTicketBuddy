@@ -207,6 +207,18 @@ All common workflow tasks are orchestrated via Turborepo:
 
 ---
 
+## Continuous Integration & Quality Gates
+
+Automated CI checks run on every pull request and push to `main` via GitHub Actions (`.github/workflows/ci.yml`). Required status checks and branch protection rules are documented in [`docs/ci.md`](docs/ci.md):
+
+- **Lint & Typecheck**: ESLint and TypeScript validation across all workspaces.
+- **Unit Tests**: Full test suite execution across all apps and packages.
+- **Integration Tests**: Live service verification against PostgreSQL, MongoDB, and Redis Stack containers.
+- **Docker Builds**: Matrix container compilation for `api`, `realtime`, `worker`, and `web`.
+- **Migrations & DB Consistency**: Automated 5-step test sequence (Migrate Up $\rightarrow$ Revert $\rightarrow$ Migrate Up $\rightarrow$ Schema Drift Check $\rightarrow$ DB Consistency Checks). See [`packages/db/README.md`](packages/db/README.md) for details.
+
+---
+
 ## Code Ownership & Engineering Standards
 
 - **Ownership Matrix**: Directory and module ownership is defined in [`.github/CODEOWNERS`](.github/CODEOWNERS) following the three-member team distribution.
