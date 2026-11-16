@@ -168,12 +168,12 @@
     "hash": "88aacac5fc1ca1ebb2489b64165a57cf"
   },
   "C:/Users/Hello/Documents/UrTicketBuddy/packages/contracts/src/index.spec.ts": {
-    "mtime": 1794813373545.073,
-    "hash": "f3ee0d4628932cc714d329a459a7438f"
+    "mtime": 1794844377684.645,
+    "hash": "11d16050c382f832257534b7a35561e6"
   },
   "C:/Users/Hello/Documents/UrTicketBuddy/packages/contracts/src/index.ts": {
-    "mtime": 1794813373547.0881,
-    "hash": "64bbdf288557e9d178ce2355bb837ce1"
+    "mtime": 1794844369274.7446,
+    "hash": "7008e850409183a5d458f6c90997288a"
   },
   "C:/Users/Hello/Documents/UrTicketBuddy/packages/contracts/src/jobs.ts": {
     "mtime": 1794812908870.9006,
@@ -268,8 +268,8 @@
     "hash": "e96d33a6e62f971fb766091c4193b50c"
   },
   "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/index.ts": {
-    "mtime": 1794810588339.7336,
-    "hash": "de45eb12696d76f11965cad28cd327dc"
+    "mtime": 1794844315670.1792,
+    "hash": "46b06e88f6b85357e6a6fdff9252ff34"
   },
   "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/layout.ts": {
     "mtime": 1794810588342.2412,
@@ -292,11 +292,59 @@
     "hash": "389a67679351c677977d471cc92ed5b6"
   },
   "C:/Users/Hello/Documents/UrTicketBuddy/pnpm-lock.yaml": {
-    "mtime": 1794814520300.7434,
-    "hash": "4a8c084d153cec23cc508f756be15a78"
+    "mtime": 1794844315703.6265,
+    "hash": "0cfe3691339cf5b57de68ed60e07b329"
   },
   "C:/Users/Hello/Documents/UrTicketBuddy/pnpm-workspace.yaml": {
     "mtime": 1794810588342.2412,
     "hash": "1a21294439e20dfb1960984ca121032a"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/contracts/src/venue.ts": {
+    "mtime": 1794844315615.6758,
+    "hash": "eaea3f17bbaba74081086ccc6490d5cb"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/__tests__/generators.spec.ts": {
+    "mtime": 1794844315621.189,
+    "hash": "ccedfce289ae4c2fe4bb99764215012c"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/__tests__/performance.spec.ts": {
+    "mtime": 1794844315621.189,
+    "hash": "d677160dfb65eddc14e6fc21c573e105"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/__tests__/property.spec.ts": {
+    "mtime": 1794844315632.4023,
+    "hash": "a7ccab6f5af780c8f44093bc752a98a8"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/__tests__/utils.spec.ts": {
+    "mtime": 1794844315637.1692,
+    "hash": "14e19b42bfd86aa78d0ffd9666cbb988"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/generators/arc.ts": {
+    "mtime": 1794844315653.4683,
+    "hash": "fe32d8a53e49e0ddaa279767e502d89e"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/generators/grid.ts": {
+    "mtime": 1794844315653.4683,
+    "hash": "df0a5928d4b6210f4ff334085418d374"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/generators/table.ts": {
+    "mtime": 1794844315664.1406,
+    "hash": "da0df3aa74a470adca200fa62f41c3b9"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/utils/aggregates.ts": {
+    "mtime": 1794844315686.728,
+    "hash": "d9042fc8bce8ca5f86bbed1ac1e62f18"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/utils/bounding-box.ts": {
+    "mtime": 1794844315686.728,
+    "hash": "c43704394d2566b2ac04ad3b50c1658f"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/utils/ids.ts": {
+    "mtime": 1794844315696.1409,
+    "hash": "d1bd07f03c3ae4d923609dc098a8aa14"
+  },
+  "C:/Users/Hello/Documents/UrTicketBuddy/packages/venue-engine/src/utils/parser.ts": {
+    "mtime": 1794844315702.784,
+    "hash": "ce776f0a1ec8e22b87d20fc19463e313"
   }
 }
