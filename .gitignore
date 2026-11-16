@@ -43,3 +43,7 @@ data/
 .engram/studio/
 .engram/.graphify_ast.json
 .engram/.graphify_analysis.json
+
+# Temporary local files
+temp/
+
