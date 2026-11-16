@@ -46,6 +46,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build packages
+        run: pnpm build
+
       - name: Run linter
         run: pnpm lint
 
@@ -80,6 +83,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
 
       - name: Run unit test suites
         run: pnpm test
@@ -159,9 +165,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build packages
+        run: pnpm build
+
       - name: Verify service connectivity & run integration tests
         run: |
-          pnpm build
           pnpm --filter @urticketbuddy/api test
           pnpm --filter @urticketbuddy/realtime test
           pnpm --filter @urticketbuddy/worker test
@@ -241,6 +249,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
 
       - name: Step A - Migrate up on an empty database
         run: pnpm db:migrate

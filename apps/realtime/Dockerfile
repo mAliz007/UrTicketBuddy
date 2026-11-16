@@ -5,7 +5,7 @@ COPY pnpm-lock.yaml package.json pnpm-workspace.yaml turbo.json ./
 COPY packages/ ./packages/
 COPY apps/realtime/ ./apps/realtime/
 RUN pnpm install --frozen-lockfile
-RUN pnpm --filter @urticketbuddy/realtime build
+RUN pnpm --filter @urticketbuddy/realtime... build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
