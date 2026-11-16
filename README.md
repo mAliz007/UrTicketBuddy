@@ -167,9 +167,9 @@ UrTicketBuddy/
 │   └── worker/          # NestJS standalone BullMQ processor (:3002)
 ├── packages/
 │   ├── config/          # Shared tsconfig, eslint, prettier bases + Zod env loader
-│   ├── contracts/       # DTO schemas, enums, error codes, socket payloads, job definitions
+│   ├── contracts/       # DTO schemas, enums, error codes, seat hold schemas, socket & job payloads
 │   ├── db/              # TypeORM data source, entities, migrations (PgBouncer :6432)
-│   ├── redis-scripts/   # Atomic Lua scripts and typed wrappers for seat holds
+│   ├── redis-scripts/   # Atomic Lua scripts (hold/release/confirm/unsell/extend/expire) + ioredis wrappers
 │   └── venue-engine/    # Pure TypeScript parametric layout math (no DOM)
 ├── infra/
 │   ├── docker/          # Dockerfile and service configs (PgBouncer, Dockerfiles)
