@@ -17,7 +17,9 @@
     "@urticketbuddy/config": "workspace:*",
     "@urticketbuddy/contracts": "workspace:*",
     "@urticketbuddy/db": "workspace:*",
+    "@urticketbuddy/venue-engine": "workspace:*",
     "ioredis": "^5.5.0",
+    "mongoose": "^9.12.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

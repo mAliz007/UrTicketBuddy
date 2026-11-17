@@ -51,12 +51,16 @@ All migration filenames must strictly follow the format:
 Example:
 `packages/db/src/migrations/1794836828550-UTB-2-init-extensions.ts`
 
-### Baseline Migration
+### Baseline & Domain Migrations
 
-The initial baseline migration enables essential PostgreSQL extensions:
+- `1794836828550-UTB-2-init-extensions.ts`: Baseline migration enabling `pgcrypto` and `uuid-ossp`.
+- `1794836850000-UTB-9-init-venues-events.ts`: Venues, Events, and EventSeats tables with foreign keys and covering indexes.
 
-- `pgcrypto` (cryptographic primitives & UUID generation)
-- `uuid-ossp` (standard UUID algorithms)
+### Entities
+
+- `Venue`: Physical venue metadata and reference to MongoDB layout document (`layoutMongoId`).
+- `Event`: Event instance belonging to a venue (`venueId` FK).
+- `EventSeat`: Individual seat coordinate and tier record belonging to an event (`eventId` FK, `seatId` deterministic `<section>-<row>-<number>`).
 
 ---
 
