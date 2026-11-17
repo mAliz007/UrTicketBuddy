@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
-import { EventsService, CHUNK_SIZE } from "./events.service";
+import { EventsService } from "./events.service";
 import {
   EVENT_REPOSITORY,
   VENUE_REPOSITORY,
@@ -28,7 +28,7 @@ describe("EventsService", () => {
     find: jest.fn(),
   };
 
-  const MockVenueLayoutModel: any = {
+  const MockVenueLayoutModel = {
     findById: jest.fn(),
   };
 

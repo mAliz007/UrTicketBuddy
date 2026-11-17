@@ -20,10 +20,10 @@ describe("VenuesService", () => {
     save: jest.fn().mockResolvedValue({ _id: "mongo-layout-123" }),
   };
 
-  const MockVenueLayoutModel: any = jest
-    .fn()
-    .mockImplementation(() => mockSavedLayoutDoc);
-  MockVenueLayoutModel.findById = jest.fn();
+  const MockVenueLayoutModel = Object.assign(
+    jest.fn().mockImplementation(() => mockSavedLayoutDoc),
+    { findById: jest.fn() },
+  );
 
   beforeEach(async () => {
     jest.clearAllMocks();
