@@ -291,6 +291,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      typeorm:
+        specifier: ^0.3.20
+        version: 0.3.31(@google-cloud/spanner@8.13.0(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(pg@8.23.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.9.3))
     devDependencies:
       "@nestjs/cli":
         specifier: ^11.0.4
