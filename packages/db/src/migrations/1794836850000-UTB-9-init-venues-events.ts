@@ -28,7 +28,7 @@ export class Utb9InitVenuesEvents1794836850000 implements MigrationInterface {
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_events_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_events_venue_id" FOREIGN KEY ("venueId") REFERENCES "venues"("id") ON DELETE CASCADE
+        CONSTRAINT "FK_0af7bb0535bc01f3c130cfe5fe7" FOREIGN KEY ("venueId") REFERENCES "venues"("id") ON DELETE CASCADE ON UPDATE NO ACTION
       );
     `);
 
@@ -49,7 +49,7 @@ export class Utb9InitVenuesEvents1794836850000 implements MigrationInterface {
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_event_seats_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_event_seats_event_id" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE,
+        CONSTRAINT "FK_37a6eacafce0034d82ed9403540" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE NO ACTION,
         CONSTRAINT "uq_event_seats_event_seat" UNIQUE ("eventId", "seatId")
       );
     `);
