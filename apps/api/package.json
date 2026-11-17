@@ -17,9 +17,12 @@
     "@urticketbuddy/config": "workspace:*",
     "@urticketbuddy/contracts": "workspace:*",
     "@urticketbuddy/db": "workspace:*",
+    "@urticketbuddy/venue-engine": "workspace:*",
     "ioredis": "^5.5.0",
+    "mongoose": "^9.12.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.4",
@@ -28,7 +31,9 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.4",
+    "@types/supertest": "^6.0.2",
     "jest": "^29.7.0",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
