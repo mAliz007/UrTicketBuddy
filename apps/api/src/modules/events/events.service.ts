@@ -13,7 +13,7 @@ import {
   generateArc,
   generateTableCluster,
 } from "@urticketbuddy/venue-engine";
-import { ErrorCode } from "@urticketbuddy/contracts";
+import { ErrorCode, SectionConfig, SeatNode } from "@urticketbuddy/contracts";
 import {
   EVENT_REPOSITORY,
   VENUE_REPOSITORY,
@@ -182,7 +182,7 @@ export class EventsService implements EventSeatCatalogPort {
     const seenSeatIds = new Set<string>();
 
     if (Array.isArray(layout.sections)) {
-      for (const section of layout.sections as any[]) {
+      for (const section of layout.sections as unknown as SectionConfig[]) {
         if (section.type === "grid") {
           const seats = generateGrid({
             origin: section.origin,
@@ -270,7 +270,7 @@ export class EventsService implements EventSeatCatalogPort {
 
     // Explicit seats in layout
     if (Array.isArray(layout.seats)) {
-      for (const s of layout.seats as any[]) {
+      for (const s of layout.seats as unknown as SeatNode[]) {
         if (!seenSeatIds.has(s.id)) {
           seenSeatIds.add(s.id);
           generatedSeats.push({

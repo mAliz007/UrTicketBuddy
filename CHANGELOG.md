@@ -4,6 +4,43 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-9] - 2026-11-17
+
+### Venues & Events NestJS REST API with Polyglot Persistence
+
+- **Ticket Key:** `UTB-9`
+- **Completion Date:** 2026-11-17
+- **Main Feature Branch:** `feat/UTB-9-venues-events-api`
+  - Sub-task 1: `feat/UTB-9-venues-events-api-db-schemas`
+  - Sub-task 2: `feat/UTB-9-venues-events-api-nestjs-modules`
+  - Sub-task 3: `feat/UTB-9-venues-events-api-bulk-generation`
+  - Sub-task 4: `feat/UTB-9-venues-events-api-tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-9-venues-events-api`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/db`, `apps/api`, `README.md`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **TypeORM Entities & PostgreSQL Migrations (`packages/db`)**:
+    - Implemented `Venue` entity: `id` (uuid PK), `name` (varchar), `location` (varchar), `layoutMongoId` (varchar).
+    - Implemented `Event` entity: `id` (uuid PK), `venueId` (uuid FK with covering index `idx_events_venue_id`), `name` (varchar), `startTime` (timestamptz), `status` (varchar).
+    - Implemented `EventSeat` entity: `id` (uuid PK), `eventId` (uuid FK with covering index `idx_event_seats_event_id`), `seatId` (varchar deterministic `<section>-<row>-<number>`), `tierId` (varchar nullable), `x` (float), `y` (float), `status` (varchar default `AVAILABLE`), unique constraint `uq_event_seats_event_seat`.
+    - Added reversible TypeORM migration `1794836850000-UTB-9-init-venues-events.ts` creating tables, foreign keys, and indexes, verified with `pnpm db:check`.
+  - **Mongoose Schema (`apps/api/src/modules/venues/schemas/venue-layout.schema.ts`)**:
+    - Created Mongoose schema `VenueLayout` storing raw venue layout configuration conforming to `VenueLayoutSchema` (from `@urticketbuddy/contracts`).
+  - **Venues NestJS Module (`apps/api/src/modules/venues`)**:
+    - `POST /api/v1/venues`: Validates incoming layout JSON using `parseLayout` from `@urticketbuddy/venue-engine`. Returns `400 Bad Request` on invalid schema/geometry. Persists layout to MongoDB and stores venue in PostgreSQL with MongoDB `_id` in `layoutMongoId`.
+    - `GET /api/v1/venues/:id`: Fetches PostgreSQL venue metadata and joins the complete MongoDB layout document.
+  - **Events NestJS Module & Bulk Seat Generation (`apps/api/src/modules/events`)**:
+    - `POST /api/v1/events`: Creates an event associated with an existing venue.
+    - `GET /api/v1/events/:id`: Retrieves event details.
+    - `POST /api/v1/events/:id/generate-seats`: Mathematically calculates 2D coordinates and metadata for all seats across grid, arc, and table sections using `@urticketbuddy/venue-engine`. Sets initial seat status to `AVAILABLE`.
+    - **Chunked Bulk Insert**: Batches seat insertions into PostgreSQL in chunks of 1,000 to prevent database query size and memory exhaustion.
+    - Implemented `EventSeatCatalogPort` for querying seat availability.
+  - **Testing & Quality Verification**:
+    - Unit test suites for `VenuesService`, `VenuesController`, `EventsService`, and `EventsController`.
+    - E2E Supertest integration suite (`apps/api/test/venues-events.e2e-spec.ts`) testing 400 rejection on invalid layouts, joined venue retrieval, and exact mathematical seat count persistence.
+    - Passed all quality gates: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm db:check`, and `pnpm graphify`.
+
+---
+
 ## [UTB-2] - 2026-11-16
 
 ### CI Pipeline & TypeORM Migration Tooling
