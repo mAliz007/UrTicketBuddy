@@ -4,6 +4,51 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-2] - 2026-11-16
+
+### CI Pipeline & TypeORM Migration Tooling
+
+- **Ticket Key:** `UTB-2`
+- **Completion Date:** 2026-11-16
+- **Main Feature Branch:** `ci/UTB-2-ci-migrations`
+  - Sub-task 1: `ci/UTB-2/typeorm-scripts`
+  - Sub-task 2: `ci/UTB-2/db-checks`
+  - Sub-task 3: `ci/UTB-2/github-actions`
+  - Sub-task 4: `ci/UTB-2/docs`
+- **Status:** Completed (Sub-tasks merged into `ci/UTB-2-ci-migrations`; PR ready for review)
+- **Packages & Directories Modified:** `.github`, `packages/db`, `packages/config`, `apps/*`, `infra/docker`, `scripts`, `docs`
+- **Scope & Deliverables:**
+  - **CI Workflow Pipeline (`.github/workflows/ci.yml`)**:
+    - Implemented GitHub Actions CI workflow running on pushes and pull requests targeting `main`.
+    - Integrated pnpm store caching (`pnpm/action-setup@v4`, `actions/setup-node@v4` with `cache: 'pnpm'`) and Turborepo caching (`actions/cache@v4` with `.turbo`).
+    - Configured parallel jobs:
+      - `lint-typecheck`: Validates ESLint and strict `tsc --noEmit` across all workspace projects.
+      - `unit`: Parallel execution of Jest unit test suites across all packages and apps.
+      - `integration`: Spawns live service containers (PostgreSQL 16, MongoDB 7, Redis Stack with RedisBloom) and verifies integration and service health.
+      - `docker-build`: Parallel matrix builds for `api`, `realtime`, `worker`, and `web` images using Docker Buildx and GitHub Actions cache.
+      - `migrations`: Deterministic 5-step transactional verification (Up $\rightarrow$ Revert $\rightarrow$ Up $\rightarrow$ Schema Drift Check $\rightarrow$ DB Consistency Checks).
+  - **TypeORM DataSource & Migration Tooling (`packages/db`)**:
+    - Created TypeORM DataSource in `packages/db/src/data-source.ts` reading environment configuration strictly from `@urticketbuddy/config`.
+    - Enforced `synchronize: false` across all environments as mandated by architectural decisions D-7 and D-8.
+    - Standardized migration scripts: `db:migrate`, `db:revert`, `db:generate`, and `db:check`.
+    - Added baseline migration `1794836828550-UTB-2-init-extensions.ts` enabling PostgreSQL `pgcrypto` and `uuid-ossp` extensions with reversible `down()` step.
+    - Added unit test asserting strict adherence to migration filename format `<timestamp>-UTB-<n>-<description>.ts`.
+  - **Database Consistency Checks (`scripts/db-check.ts`, `packages/db/src/check.ts`)**:
+    - Built comprehensive validation script enforcing four critical database invariants:
+      1. Zero-tolerance check ensuring `synchronize: true` never appears anywhere in the codebase.
+      2. Primary key validation across database tables and entity metadatas.
+      3. Covering index validation ensuring every foreign key column has an index on its leading columns.
+      4. Mongoose schema index validation ensuring all index definitions compile and load cleanly.
+    - Added unit test suite `packages/db/src/check.spec.ts` validating passing states and failure detections.
+  - **Docker Containerization (`infra/docker/`, `apps/*/Dockerfile`)**:
+    - Created production-ready multi-stage Dockerfiles for NestJS microservices (`api`, `realtime`, `worker`) and frontend SPA (`web` with Nginx Alpine).
+  - **Documentation & Protection Policies**:
+    - Created `docs/ci.md` specifying exact GitHub branch protection rules for `main` and required status checks.
+    - Added `TODO: [UTB-18]` for ephemeral Railway preview deployment workflow.
+    - Updated `packages/db/README.md` and root `README.md` with complete migration guides and quality gate architecture.
+
+---
+
 ## [UTB-5] - 2026-11-16
 
 ### Atomic Redis Seat-Locking Lua Engine
