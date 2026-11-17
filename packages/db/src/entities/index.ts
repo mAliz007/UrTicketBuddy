@@ -1,2 +1,3 @@
-// Placeholder entities export - will be populated by domain tickets
-export {};
+export * from "./venue.entity";
+export * from "./event.entity";
+export * from "./event-seat.entity";
