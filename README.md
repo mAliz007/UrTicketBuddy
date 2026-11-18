@@ -219,6 +219,38 @@ Automated CI checks run on every pull request and push to `main` via GitHub Acti
 
 ---
 
+## Production Dockerization & Continuous Delivery (CD)
+
+UrTicketBuddy provides an automated production continuous delivery pipeline targeting [Railway](https://railway.app) and a standalone production Docker Compose stack. Detailed instructions, architecture diagrams, rollback playbooks, and troubleshooting procedures are in [`docs/deployment.md`](docs/deployment.md).
+
+### 1. Multi-Stage Dockerfiles
+
+Each backend service (`api`, `realtime`, `worker`) features an optimized 4-stage multi-stage Dockerfile located in `docker/` (and mirrored in `apps/<service>/Dockerfile`):
+
+- `deps`: Caches workspace dependencies (`pnpm install --frozen-lockfile`) using Corepack-pinned `pnpm@12.21.0` on Node 22 Alpine.
+- `build`: Builds shared workspace packages and target application bundles.
+- `prod-deps`: Isolates production-only dependencies and runtime workspace links via `pnpm deploy --prod`.
+- `production`: Minimal runtime running as non-root `USER node`, managed by `tini` for signal handling, with container health checks (`wget -q --spider`).
+
+### 2. Local Production Stack
+
+Run the full production-like environment with all infrastructure and compiled containers:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build
+```
+
+### 3. Continuous Delivery Pipeline
+
+The CD workflow ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) automatically triggers after the `CI Pipeline` successfully passes on the `main` branch (`workflow_run` event):
+
+- **Deployment**: Deploys `api`, `realtime`, and `worker` to Railway sequentially using the Railway CLI and `RAILWAY_TOKEN`.
+- **Status Check**: Verifies Railway deployment status for background worker and WebSocket services.
+- **Health Verification**: Probes `GET /api/v1/health` with exponential backoff (10 attempts, 10s intervals) before declaring the release successful.
+- **Rollback**: Supports instant Railway rollback via `railway rollback --service <name>` or git revert.
+
+---
+
 ## Code Ownership & Engineering Standards
 
 - **Ownership Matrix**: Directory and module ownership is defined in [`.github/CODEOWNERS`](.github/CODEOWNERS) following the three-member team distribution.
