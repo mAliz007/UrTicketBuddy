@@ -13,6 +13,8 @@ import {
   EVENT_SEAT_REPOSITORY,
   USER_REPOSITORY,
   REFRESH_TOKEN_REPOSITORY,
+  ORDER_REPOSITORY,
+  ORDER_ITEM_REPOSITORY,
   VENUE_LAYOUT_MODEL,
 } from "../src/database/database.tokens";
 
@@ -92,6 +94,14 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       .useValue({
         isInitialized: true,
         destroy: jest.fn(),
+        getRepository: jest.fn(() => ({
+          create: jest.fn((dto: any) => dto),
+          save: jest.fn(async (entity: any) => entity),
+          findOne: jest.fn(),
+          find: jest.fn(),
+          delete: jest.fn(),
+          update: jest.fn(),
+        })),
       })
       .overrideProvider(MONGO_CONNECTION)
       .useValue({
@@ -102,6 +112,10 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       .overrideProvider(EVENT_REPOSITORY)
       .useValue({ findOne: jest.fn(), save: jest.fn() })
       .overrideProvider(EVENT_SEAT_REPOSITORY)
+      .useValue({ findOne: jest.fn(), save: jest.fn() })
+      .overrideProvider(ORDER_REPOSITORY)
+      .useValue({ findOne: jest.fn(), save: jest.fn() })
+      .overrideProvider(ORDER_ITEM_REPOSITORY)
       .useValue({ findOne: jest.fn(), save: jest.fn() })
       .overrideProvider(USER_REPOSITORY)
       .useValue(mockUserRepo)
