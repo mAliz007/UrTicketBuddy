@@ -1,0 +1,264 @@
+name: urticketbuddy-prod
+
+networks:
+  urticketbuddy_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
+  elasticsearch_data:
+
+services:
+  # ----------------------------------------------------------------------------
+  # Core Infrastructure Dependencies
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: utb_postgres_prod
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-urticketbuddy}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-urticketbuddy}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - urticketbuddy_network
+
+  pgbouncer:
+    image: edoburu/pgbouncer:v1.22.1
+    container_name: utb_pgbouncer_prod
+    restart: unless-stopped
+    ports:
+      - "6432:6432"
+    environment:
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-urticketbuddy}
+      POOL_MODE: transaction
+      LISTEN_PORT: 6432
+      AUTH_TYPE: trust
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 50
+    volumes:
+      - ./infra/docker/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./infra/docker/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h 127.0.0.1 -p 6432 -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-urticketbuddy}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - urticketbuddy_network
+
+  mongo:
+    image: mongo:7.0
+    container_name: utb_mongo_prod
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${POSTGRES_DB:-urticketbuddy}
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'mongosh --quiet --eval "db.adminCommand(''ping'')" || exit 1',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - urticketbuddy_network
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: utb_redis_prod
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - urticketbuddy_network
+
+  elasticsearch:
+    image: elasticsearch:8.17.2
+    container_name: utb_elasticsearch_prod
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'curl -s http://localhost:9200/_cluster/health | grep -vq ''"status":"red"'' || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - urticketbuddy_network
+
+  # ----------------------------------------------------------------------------
+  # Production Backend Application Services (Target: production)
+  # ----------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: production
+    image: urticketbuddy/api:production
+    container_name: utb_api_prod
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - API_PORT=3000
+      - POSTGRES_HOST=pgbouncer
+      - POSTGRES_PORT=6432
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-urticketbuddy}
+      - MONGO_URI=mongodb://mongo:27017/urticketbuddy
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - ELASTICSEARCH_NODE=http://elasticsearch:9200
+      - JWT_SECRET=${JWT_SECRET:-production-jwt-secret-min-16-characters}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-production-jwt-refresh-secret-min-16}
+      - MASTER_TICKET_SECRET=${MASTER_TICKET_SECRET:-prod-master-ticket-secret-32-chars-long-key}
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://127.0.0.1:3000/api/v1/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - urticketbuddy_network
+
+  realtime:
+    build:
+      context: .
+      dockerfile: docker/realtime.Dockerfile
+      target: production
+    image: urticketbuddy/realtime:production
+    container_name: utb_realtime_prod
+    restart: unless-stopped
+    ports:
+      - "${REALTIME_PORT:-3001}:3001"
+    environment:
+      - NODE_ENV=production
+      - REALTIME_PORT=3001
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - JWT_SECRET=${JWT_SECRET:-production-jwt-secret-min-16-characters}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://127.0.0.1:3001/api/v1/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - urticketbuddy_network
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/worker.Dockerfile
+      target: production
+    image: urticketbuddy/worker:production
+    container_name: utb_worker_prod
+    restart: unless-stopped
+    ports:
+      - "${WORKER_PORT:-3002}:3002"
+    environment:
+      - NODE_ENV=production
+      - WORKER_PORT=3002
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - POSTGRES_HOST=pgbouncer
+      - POSTGRES_PORT=6432
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-urticketbuddy}
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://127.0.0.1:3002/api/v1/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - urticketbuddy_network
