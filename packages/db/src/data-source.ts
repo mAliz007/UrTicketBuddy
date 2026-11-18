@@ -4,6 +4,8 @@ import { loadEnv } from "@urticketbuddy/config";
 import { Venue } from "./entities/venue.entity";
 import { Event } from "./entities/event.entity";
 import { EventSeat } from "./entities/event-seat.entity";
+import { Order } from "./entities/order.entity";
+import { OrderItem } from "./entities/order-item.entity";
 
 const env = loadEnv();
 
@@ -20,6 +22,8 @@ export const AppDataSource = new DataSource({
     Venue,
     Event,
     EventSeat,
+    Order,
+    OrderItem,
     __dirname + "/entities/**/!(*.spec|*.test).{js,ts}",
   ],
   migrations: [__dirname + "/migrations/**/!(*.spec|*.test).{js,ts}"],
