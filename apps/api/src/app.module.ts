@@ -4,6 +4,7 @@ import { DatabaseModule } from "./database/database.module";
 import { VenuesModule } from "./modules/venues/venues.module";
 import { EventsModule } from "./modules/events/events.module";
 import { CheckoutModule } from "./modules/checkout/checkout.module";
+import { OrdersModule } from "./modules/orders/orders.module";
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CheckoutModule } from "./modules/checkout/checkout.module";
     VenuesModule,
     EventsModule,
     CheckoutModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [],

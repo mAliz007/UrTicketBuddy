@@ -32,6 +32,45 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-10] - 2026-11-18
+
+### Orders, Payment Gateway Integration, & Checkout Completion API
+
+- **Ticket Key:** `UTB-10`
+- **Completion Date:** 2026-11-18
+- **Main Feature Branch:** `feat/UTB-10-orders-payment-api`
+  - Sub-task 1: `feat/UTB-10-orders-payment-api-db-entities`
+  - Sub-task 2: `feat/UTB-10-orders-payment-api-orders-module`
+  - Sub-task 3: `feat/UTB-10-orders-payment-api-tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-10-orders-payment-api`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `README.md`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **TypeORM Entities & PostgreSQL Migrations (`packages/db`)**:
+    - Implemented `Order` entity: `id` (uuid PK), `userId` (varchar indexed), `eventId` (uuid FK with covering index `idx_orders_event_id`), `totalAmount` (`numeric(12, 2)`), `currency` (`PKR`), `status` (`PENDING`, `COMPLETED`, `CANCELLED`, `REFUNDED`), `paymentGatewayRef` (varchar nullable).
+    - Implemented `OrderItem` entity: `id` (uuid PK), `orderId` (uuid FK with covering index `idx_order_items_order_id`, on delete cascade), `eventSeatId` (uuid FK with covering index `idx_order_items_event_seat_id`), `price` (`numeric(12, 2)`).
+    - Generated reversible TypeORM migration `1794936850000-UTB-10-init-orders.ts` with hashed foreign keys (`FK_80f390b083014fd69ec40b8c38c`, `FK_f1d359a55923bb45b057fbdab0d`, `FK_3d40cd9b9c9fab977c139cd4b11`) ensuring zero schema drift under `typeorm migration:generate --check`.
+    - Passed all 4 database health checks via `pnpm db:check`.
+  - **Contracts & Schemas (`packages/contracts/src/orders.ts`)**:
+    - Created Zod schemas: `CheckoutRequestSchema`, `OrderItemDtoSchema`, `OrderResponseSchema`, and `OrderStatus` enum.
+  - **Mock Payment Gateway Service (`apps/api/src/modules/orders/payment/mock-payment.service.ts`)**:
+    - Implemented `PaymentProvider` interface supporting intent creation, webhook signature verification, and simulated charges (`tok_visa`, `tok_fail`).
+  - **Orders Module & Checkout Pipeline (`apps/api/src/modules/orders`)**:
+    - `POST /api/v1/orders/checkout`:
+      1. **Active Hold Verification:** Verifies requested seats are actively locked by user in Redis via `@urticketbuddy/redis-scripts`. Rejects expired holds (`409 HOLD_EXPIRED`) or holds owned by another user (`409 SEAT_NOT_HELD_BY_YOU`).
+      2. **Payment Processing:** Charges the payment gateway, returning `400 PAYMENT_FAILED` on card/token failure.
+      3. **Atomic Lua Lock Confirmation:** Executes `confirm_sold.lua` via `RedisScriptsWrapper.confirmSold` atomically.
+      4. **PostgreSQL ACID Transaction:** Executes `dataSource.transaction()` to insert the `Order`, insert all `OrderItem` line items, and atomically update `EventSeat.status` to `SOLD`.
+      5. **Real-time Pub/Sub Broadcast:** Emits Redis event on `seat-updates:{eventId}` and `seat.state` with state `SOLD`.
+      6. Returns completed order details with monetary amounts and timestamps.
+    - `GET /api/v1/orders/:id`: Fetches order details with line items and event association. Returns `404 Not Found` if missing.
+  - **Testing & Quality Verification**:
+    - Unit test suites for `OrdersController` (2/2 passed) and `OrdersService` (11/11 passed).
+    - Supertest E2E integration test suite (`apps/api/test/orders.e2e-spec.ts`) asserting successful checkout, transaction rollback on payment decline, hold expiration rejection, foreign user lock rejection, and order retrieval (6/6 passed).
+    - Monorepo tests: 13/13 tasks passing (48/48 tests in `apps/api`).
+    - Passed `pnpm lint`, `pnpm typecheck`, `pnpm db:check`, and `pnpm graphify`.
+
+---
+
 ## [UTB-9] - 2026-11-17
 
 ### Venues & Events NestJS REST API with Polyglot Persistence

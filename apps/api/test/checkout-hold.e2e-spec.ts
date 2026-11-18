@@ -9,6 +9,9 @@ import {
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
   MONGO_CONNECTION,
+  ORDER_ITEM_REPOSITORY,
+  ORDER_REPOSITORY,
+  REDIS_CLIENT,
   VENUE_LAYOUT_MODEL,
   VENUE_REPOSITORY,
 } from "../src/database/database.tokens";
@@ -78,7 +81,11 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
       imports: [AppModule],
     })
       .overrideProvider(DATA_SOURCE)
-      .useValue({ isInitialized: true, destroy: jest.fn() })
+      .useValue({
+        isInitialized: true,
+        destroy: jest.fn(),
+        getRepository: jest.fn().mockReturnValue({}),
+      })
       .overrideProvider(MONGO_CONNECTION)
       .useValue({ readyState: 1 })
       .overrideProvider(VENUE_REPOSITORY)
@@ -87,8 +94,14 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
       .useValue({})
       .overrideProvider(EVENT_SEAT_REPOSITORY)
       .useValue({})
+      .overrideProvider(ORDER_REPOSITORY)
+      .useValue({})
+      .overrideProvider(ORDER_ITEM_REPOSITORY)
+      .useValue({})
       .overrideProvider(VENUE_LAYOUT_MODEL)
       .useValue({})
+      .overrideProvider(REDIS_CLIENT)
+      .useValue(mockRedis)
       .overrideProvider(CHECKOUT_REDIS_CLIENT)
       .useValue(mockRedis)
       .overrideProvider(REDIS_SCRIPTS_WRAPPER)
@@ -108,7 +121,9 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   const eventId = "11111111-1111-4111-8111-111111111111";
