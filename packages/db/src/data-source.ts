@@ -6,6 +6,8 @@ import { Event } from "./entities/event.entity";
 import { EventSeat } from "./entities/event-seat.entity";
 import { Order } from "./entities/order.entity";
 import { OrderItem } from "./entities/order-item.entity";
+import { User } from "./entities/user.entity";
+import { RefreshToken } from "./entities/refresh-token.entity";
 
 const env = loadEnv();
 
@@ -24,6 +26,8 @@ export const AppDataSource = new DataSource({
     EventSeat,
     Order,
     OrderItem,
+    User,
+    RefreshToken,
     __dirname + "/entities/**/!(*.spec|*.test).{js,ts}",
   ],
   migrations: [__dirname + "/migrations/**/!(*.spec|*.test).{js,ts}"],

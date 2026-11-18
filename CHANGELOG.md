@@ -4,34 +4,6 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
-## [UTB-8] - 2026-11-18
-
-### Seat Hold API & Realtime WebSockets
-
-- **Ticket Key:** `UTB-8`
-- **Completion Date:** 2026-11-18
-- **Main Feature Branch:** `feat/UTB-8-checkout-realtime`
-  - Sub-task 1: `feat/UTB-8/api-checkout`
-  - Sub-task 2: `feat/UTB-8/realtime-gateway`
-  - Sub-task 3: `feat/UTB-8/tests`
-- **Status:** Completed (Sub-tasks merged into `feat/UTB-8-checkout-realtime`; PR ready for review; `main` unmerged)
-- **Packages & Directories Modified:** `apps/api`, `apps/realtime`, `CHANGELOG.md`, `.engram`
-- **Scope & Deliverables:**
-  - **Checkout NestJS Module (`apps/api/src/modules/checkout`)**:
-    - Implemented `POST /api/v1/checkout/hold` accepting `{ eventId, seatIds }` validated against `HoldRequestSchema` (`@urticketbuddy/contracts`) and extracting `userId` from `x-user-id` header (temporary mock prior to UTB-3).
-    - Integrated `RedisScriptsWrapper.holdSeats` from `@urticketbuddy/redis-scripts`.
-    - Returns `409 Conflict` with `GlobalHttpExceptionFilter` envelope on hold failure (`SEAT_ALREADY_HELD`, etc.).
-    - Publishes `{ eventId, seatIds, state: "HELD", userId }` to Redis Pub/Sub channel `seat-updates:{eventId}` on success and returns `{ eventId, userId, seatIds, expiresAt }`.
-  - **Realtime WebSocket Gateway (`apps/realtime/src/gateway`)**:
-    - Implemented `SeatUpdatesGateway` using `@nestjs/platform-socket.io` handling `join-event` messages to add sockets to `event:{eventId}` rooms.
-    - Configured dedicated `ioredis` subscriber listening to `seat-updates:*` via `psubscribe` and broadcasting `seats-updated` to `event:{eventId}` rooms.
-  - **Integration & Unit Tests (`apps/api/test`, `apps/realtime/test`)**:
-    - Added Supertest E2E suite `apps/api/test/checkout-hold.e2e-spec.ts` verifying hold acquisition, Pub/Sub publishing, `409 Conflict` on already-held seats, `401` on missing `x-user-id`, and `400` on invalid input.
-    - Added `socket.io-client` test `apps/realtime/test/seat-updates.gateway.spec.ts` verifying two clients in an event room both receive `seats-updated` after `holdSeats` + Pub/Sub publish.
-    - Updated `apps/api/README.md`, `apps/realtime/README.md`, `apps/api/src/modules/checkout/README.md`, `apps/realtime/src/gateway/README.md`, and `CHANGELOG.md`.
-
----
-
 ## [UTB-10] - 2026-11-18
 
 ### Orders, Payment Gateway Integration, & Checkout Completion API
@@ -68,6 +40,74 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
     - Supertest E2E integration test suite (`apps/api/test/orders.e2e-spec.ts`) asserting successful checkout, transaction rollback on payment decline, hold expiration rejection, foreign user lock rejection, and order retrieval (6/6 passed).
     - Monorepo tests: 13/13 tasks passing (48/48 tests in `apps/api`).
     - Passed `pnpm lint`, `pnpm typecheck`, `pnpm db:check`, and `pnpm graphify`.
+
+---
+
+## [UTB-8] - 2026-11-18
+
+### Seat Hold API & Realtime WebSockets
+
+- **Ticket Key:** `UTB-8`
+- **Completion Date:** 2026-11-18
+- **Main Feature Branch:** `feat/UTB-8-checkout-realtime`
+  - Sub-task 1: `feat/UTB-8/api-checkout`
+  - Sub-task 2: `feat/UTB-8/realtime-gateway`
+  - Sub-task 3: `feat/UTB-8/tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-8-checkout-realtime`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `apps/api`, `apps/realtime`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **Checkout NestJS Module (`apps/api/src/modules/checkout`)**:
+    - Implemented `POST /api/v1/checkout/hold` accepting `{ eventId, seatIds }` validated against `HoldRequestSchema` (`@urticketbuddy/contracts`) and extracting `userId` from `x-user-id` header (temporary mock prior to UTB-3).
+    - Integrated `RedisScriptsWrapper.holdSeats` from `@urticketbuddy/redis-scripts`.
+    - Returns `409 Conflict` with `GlobalHttpExceptionFilter` envelope on hold failure (`SEAT_ALREADY_HELD`, etc.).
+    - Publishes `{ eventId, seatIds, state: "HELD", userId }` to Redis Pub/Sub channel `seat-updates:{eventId}` on success and returns `{ eventId, userId, seatIds, expiresAt }`.
+  - **Realtime WebSocket Gateway (`apps/realtime/src/gateway`)**:
+    - Implemented `SeatUpdatesGateway` using `@nestjs/platform-socket.io` handling `join-event` messages to add sockets to `event:{eventId}` rooms.
+    - Configured dedicated `ioredis` subscriber listening to `seat-updates:*` via `psubscribe` and broadcasting `seats-updated` to `event:{eventId}` rooms.
+  - **Integration & Unit Tests (`apps/api/test`, `apps/realtime/test`)**:
+    - Added Supertest E2E suite `apps/api/test/checkout-hold.e2e-spec.ts` verifying hold acquisition, Pub/Sub publishing, `409 Conflict` on already-held seats, `401` on missing `x-user-id`, and `400` on invalid input.
+    - Added `socket.io-client` test `apps/realtime/test/seat-updates.gateway.spec.ts` verifying two clients in an event room both receive `seats-updated` after `holdSeats` + Pub/Sub publish.
+    - Updated `apps/api/README.md`, `apps/realtime/README.md`, `apps/api/src/modules/checkout/README.md`, `apps/realtime/src/gateway/README.md`, and `CHANGELOG.md`.
+
+---
+
+## [UTB-3] - 2026-11-18
+
+### JWT Authentication, Password Hashing, RBAC, and Token Rotation Module
+
+- **Ticket Key:** `UTB-3`
+- **Completion Date:** 2026-11-18
+- **Main Feature Branch:** `feat/UTB-3-jwt-auth-rbac`
+  - Sub-task 1: `feat/UTB-3-jwt-auth-rbac-db-user-entity`
+  - Sub-task 2: `feat/UTB-3-jwt-auth-rbac-auth-module`
+  - Sub-task 3: `feat/UTB-3-jwt-auth-rbac-tests`
+- **Status:** Completed & Audited (Security & identity audit issues resolved; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/db`, `packages/contracts`, `apps/api`, `README.md`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **TypeORM Entities & Migrations (`packages/db`)**:
+    - Implemented `User` entity: `id` (uuid PK), `email` (varchar unique), `passwordHash` (varchar), `firstName` (varchar), `lastName` (varchar), `role` (varchar: `CUSTOMER`, `ORGANIZER`, `ADMIN`, `GATE_STAFF`, default `CUSTOMER`), `organizerTenantId` (uuid nullable, indexed with `idx_users_organizer_tenant_id`), `createdAt`, `updatedAt`.
+    - Implemented `RefreshToken` entity: `id` (uuid PK), `userId` (uuid FK with covering index `idx_refresh_tokens_user_id`), `tokenHash` (varchar unique with index `idx_refresh_tokens_token_hash`), `familyId` (uuid with index `idx_refresh_tokens_family_id`), `isRevoked` (boolean default false), `expiresAt` (timestamptz), `createdAt`, `updatedAt`.
+    - Added reversible migrations `1794837000000-UTB-3-init-users.ts` and `1794837100000-UTB-3-init-refresh-tokens.ts`, validated via `pnpm db:check`.
+  - **Contracts & Validation (`packages/contracts`)**:
+    - Created `RegisterRequestSchema`, `LoginRequestSchema`, `AuthUserSchema`, `AuthResponseSchema`, `CreateGateStaffRequestSchema`, and `UpdateProfileRequestSchema`.
+    - Added `GATE_STAFF` to `UserRole` enum.
+    - Added `EMAIL_ALREADY_EXISTS`, `INVALID_CREDENTIALS`, `INVALID_REFRESH_TOKEN`, `TOO_MANY_REQUESTS` to `ErrorCode`.
+  - **NestJS Auth Module & Security (`apps/api/src/modules/auth` & `apps/api/src/modules/users`)**:
+    - `POST /api/v1/auth/register`: Hashes passwords with `bcrypt` (10 rounds), checks email uniqueness (409 Conflict on duplicate), stores user in PostgreSQL, returns user object with short-lived JWT `accessToken` (15m) and sets `httpOnly`, `Secure`, `SameSite: strict` refresh token cookie.
+    - `POST /api/v1/auth/login`: Authenticates credentials using `bcrypt.compare`, rate-limited via `@Throttle({ default: { limit: 5, ttl: 60000 } })`, returns JWT access token and sets secure refresh token cookie.
+    - `POST /api/v1/auth/refresh`: Implements cryptographic token rotation with family reuse detection (`jti: crypto.randomUUID()`). Replaying an already-revoked refresh token revokes all active tokens in that user's token family.
+    - `POST /api/v1/auth/logout`: Revokes refresh token in database and clears the refresh cookie.
+    - `POST /api/v1/organizer/gate-staff`: Allows organizers or admins to provision scanner accounts bound to their `organizerTenantId`.
+    - `GET` & `PUT /api/v1/users/me/profile`: Authenticated user profile retrieval and update endpoints.
+    - `GoogleStrategy`: Passport Google OAuth 2.0 integration linked securely by verified email with automatic account creation/lookup.
+    - `JwtStrategy` & `JwtAuthGuard`: Passport-based strategy extracting Bearer token and verifying against `JWT_SECRET`. Supports `@Public()` decorator to bypass authentication.
+    - `RolesGuard` & `@Roles(...)`: Enforces RBAC permissions (`CUSTOMER`, `ORGANIZER`, `ADMIN`, `GATE_STAFF`), returning 403 Forbidden on role mismatch.
+    - `OwnershipGuard`: Tenant and resource ownership protection for organizer resources.
+    - Parameter decorator `@CurrentUser()` for accessing authenticated user payload.
+  - **Testing & Quality Verification**:
+    - Comprehensive unit tests for `AuthService` and `AuthController` (18/18 passing).
+    - Supertest E2E integration suite (`apps/api/test/auth.e2e-spec.ts`, 12/12 passing) validating registration, login, bad credential rejections, duplicate conflict rejections, token rotation, family reuse detection, gate staff provisioning, profile updates, and RBAC matrix.
+    - Quality gates passed: `pnpm lint` (0 errors, 0 warnings), `pnpm typecheck` (0 errors), `pnpm test`, `pnpm db:check` (4/4 passed), and `pnpm graphify`.
 
 ---
 
