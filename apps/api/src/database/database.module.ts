@@ -1,17 +1,32 @@
 import { Global, Module, OnModuleDestroy } from "@nestjs/common";
-import { AppDataSource, Venue, Event, EventSeat } from "@urticketbuddy/db";
+import {
+  AppDataSource,
+  Venue,
+  Event,
+  EventSeat,
+  Order,
+  OrderItem,
+} from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import mongoose from "mongoose";
 import { DataSource } from "typeorm";
+import Redis from "ioredis";
+import { RedisScriptsWrapper } from "@urticketbuddy/redis-scripts";
 import { VenueLayoutModel } from "../modules/venues/schemas/venue-layout.schema";
 import {
   DATA_SOURCE,
   VENUE_REPOSITORY,
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
+  ORDER_REPOSITORY,
+  ORDER_ITEM_REPOSITORY,
   MONGO_CONNECTION,
   VENUE_LAYOUT_MODEL,
+  REDIS_CLIENT,
+  REDIS_SCRIPTS_WRAPPER,
 } from "./database.tokens";
+
+let redisClientInstance: Redis | null = null;
 
 @Global()
 @Module({
@@ -54,6 +69,20 @@ import {
       inject: [DATA_SOURCE],
     },
     {
+      provide: ORDER_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(Order);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: ORDER_ITEM_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(OrderItem);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
       provide: MONGO_CONNECTION,
       useFactory: async () => {
         const env = loadEnv();
@@ -76,14 +105,44 @@ import {
         return VenueLayoutModel;
       },
     },
+    {
+      provide: REDIS_CLIENT,
+      useFactory: () => {
+        const env = loadEnv();
+        if (!redisClientInstance) {
+          redisClientInstance = new Redis({
+            host: env.REDIS_HOST,
+            port: env.REDIS_PORT,
+            lazyConnect: true,
+            maxRetriesPerRequest: 1,
+            retryStrategy: () => null,
+          });
+          redisClientInstance.on("error", () => {
+            // Suppress unhandled redis connection errors in offline/test envs
+          });
+        }
+        return redisClientInstance;
+      },
+    },
+    {
+      provide: REDIS_SCRIPTS_WRAPPER,
+      useFactory: (redisClient: Redis) => {
+        return new RedisScriptsWrapper(redisClient);
+      },
+      inject: [REDIS_CLIENT],
+    },
   ],
   exports: [
     DATA_SOURCE,
     VENUE_REPOSITORY,
     EVENT_REPOSITORY,
     EVENT_SEAT_REPOSITORY,
+    ORDER_REPOSITORY,
+    ORDER_ITEM_REPOSITORY,
     MONGO_CONNECTION,
     VENUE_LAYOUT_MODEL,
+    REDIS_CLIENT,
+    REDIS_SCRIPTS_WRAPPER,
   ],
 })
 export class DatabaseModule implements OnModuleDestroy {
@@ -93,6 +152,10 @@ export class DatabaseModule implements OnModuleDestroy {
     }
     if (mongoose.connection.readyState !== 0) {
       await mongoose.disconnect();
+    }
+    if (redisClientInstance && redisClientInstance.status === "ready") {
+      await redisClientInstance.quit();
+      redisClientInstance = null;
     }
   }
 }

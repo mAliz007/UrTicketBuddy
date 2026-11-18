@@ -276,6 +276,9 @@ importers:
       "@urticketbuddy/db":
         specifier: workspace:*
         version: link:../../packages/db
+      "@urticketbuddy/redis-scripts":
+        specifier: workspace:*
+        version: link:../../packages/redis-scripts
       "@urticketbuddy/venue-engine":
         specifier: workspace:*
         version: link:../../packages/venue-engine
