@@ -2,11 +2,11 @@
 
 ## Corpus Check
 
-- Corpus is ~47,907 words - fits in a single context window. You may not need a graph.
+- Corpus is ~48,735 words - fits in a single context window. You may not need a graph.
 
 ## Summary
 
-- 380 nodes · 444 edges · 39 communities detected
+- 381 nodes · 444 edges · 39 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 - Edge kinds: contains: 180 · references: 106 · method: 62 · imports_from: 38 · imports: 27 · calls: 17 · implements: 12 · inherits: 2
@@ -15,12 +15,12 @@
 
 - Requested: all
 - Resolved: all (source: configured-default)
-- Included files: 130 · Candidates: recursive
+- Included files: 132 · Candidates: recursive
 - Excluded: 0 untracked · 0 ignored · 3 sensitive · 0 missing committed
 
 ## Graph Freshness
 
-- Built from Git commit: `f13384f`
+- Built from Git commit: `835a3c2`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
