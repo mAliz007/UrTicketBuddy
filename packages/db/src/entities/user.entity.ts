@@ -34,6 +34,10 @@ export class User {
   })
   role!: UserRole | string;
 
+  @Index("idx_users_organizer_tenant_id")
+  @Column({ type: "uuid", nullable: true })
+  organizerTenantId!: string | null;
+
   @CreateDateColumn({ type: "timestamp with time zone" })
   createdAt!: Date;
 

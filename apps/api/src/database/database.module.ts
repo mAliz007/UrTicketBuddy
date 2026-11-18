@@ -5,6 +5,7 @@ import {
   Event,
   EventSeat,
   User,
+  RefreshToken,
 } from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import mongoose from "mongoose";
@@ -16,6 +17,7 @@ import {
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
   USER_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
   MONGO_CONNECTION,
   VENUE_LAYOUT_MODEL,
 } from "./database.tokens";
@@ -68,6 +70,13 @@ import {
       inject: [DATA_SOURCE],
     },
     {
+      provide: REFRESH_TOKEN_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(RefreshToken);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
       provide: MONGO_CONNECTION,
       useFactory: async () => {
         const env = loadEnv();
@@ -97,6 +106,7 @@ import {
     EVENT_REPOSITORY,
     EVENT_SEAT_REPOSITORY,
     USER_REPOSITORY,
+    REFRESH_TOKEN_REPOSITORY,
     MONGO_CONNECTION,
     VENUE_LAYOUT_MODEL,
   ],

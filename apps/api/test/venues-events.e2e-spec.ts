@@ -10,6 +10,7 @@ import {
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
   USER_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
   VENUE_LAYOUT_MODEL,
 } from "../src/database/database.tokens";
 
@@ -114,6 +115,13 @@ describe("Venues & Events API (e2e - Supertest)", () => {
       .useValue(mockEventSeatRepo)
       .overrideProvider(USER_REPOSITORY)
       .useValue({ findOne: jest.fn(), save: jest.fn(), create: jest.fn() })
+      .overrideProvider(REFRESH_TOKEN_REPOSITORY)
+      .useValue({
+        findOne: jest.fn(),
+        save: jest.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+      })
       .overrideProvider(VENUE_LAYOUT_MODEL)
       .useValue(MockVenueLayoutModel)
       .compile();

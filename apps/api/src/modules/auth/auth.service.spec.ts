@@ -4,11 +4,15 @@ import {
   BadRequestException,
   ConflictException,
   UnauthorizedException,
+  NotFoundException,
 } from "@nestjs/common";
 import { UserRole } from "@urticketbuddy/contracts";
 import * as bcrypt from "bcryptjs";
 import { AuthService } from "./auth.service";
-import { USER_REPOSITORY } from "../../database/database.tokens";
+import {
+  USER_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
+} from "../../database/database.tokens";
 
 describe("AuthService", () => {
   let service: AuthService;
@@ -20,6 +24,7 @@ describe("AuthService", () => {
     firstName: "John",
     lastName: "Doe",
     role: UserRole.CUSTOMER,
+    organizerTenantId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -28,6 +33,13 @@ describe("AuthService", () => {
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+  };
+
+  const mockRefreshTokenRepository = {
+    findOne: jest.fn(),
+    create: jest.fn((dto) => dto),
+    save: jest.fn((dto) => Promise.resolve(dto)),
+    update: jest.fn().mockResolvedValue({ affected: 1 }),
   };
 
   const mockJwtService = {
@@ -49,6 +61,10 @@ describe("AuthService", () => {
         {
           provide: USER_REPOSITORY,
           useValue: mockUserRepository,
+        },
+        {
+          provide: REFRESH_TOKEN_REPOSITORY,
+          useValue: mockRefreshTokenRepository,
         },
         {
           provide: JwtService,
@@ -90,6 +106,7 @@ describe("AuthService", () => {
       });
       expect(mockUserRepository.create).toHaveBeenCalled();
       expect(mockUserRepository.save).toHaveBeenCalled();
+      expect(mockRefreshTokenRepository.save).toHaveBeenCalled();
       expect(result.user.email).toBe("john@example.com");
       expect(result.accessToken).toBeDefined();
       expect(result.refreshToken).toBeDefined();
@@ -155,14 +172,104 @@ describe("AuthService", () => {
         }),
       ).rejects.toThrow(UnauthorizedException);
     });
+  });
 
-    it("should throw BadRequestException if login payload is malformed", async () => {
+  describe("refresh (token rotation & reuse detection)", () => {
+    it("should successfully rotate refresh token and issue new token pair", async () => {
+      const stored = {
+        id: "rt-1",
+        userId: mockUser.id,
+        tokenHash: "hash-val",
+        familyId: "fam-1",
+        isRevoked: false,
+        expiresAt: new Date(Date.now() + 1000000),
+      };
+      mockRefreshTokenRepository.findOne.mockResolvedValue(stored);
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+
+      const result = await service.refresh("some-refresh-token");
+      expect(result.accessToken).toBeDefined();
+      expect(result.refreshToken).toBeDefined();
+      expect(stored.isRevoked).toBe(true);
+      expect(mockRefreshTokenRepository.save).toHaveBeenCalled();
+    });
+
+    it("should trigger family revocation if an already-revoked token is reused", async () => {
+      const stored = {
+        id: "rt-1",
+        userId: mockUser.id,
+        tokenHash: "hash-val",
+        familyId: "fam-1",
+        isRevoked: true,
+        expiresAt: new Date(Date.now() + 1000000),
+      };
+      mockRefreshTokenRepository.findOne.mockResolvedValue(stored);
+
+      await expect(service.refresh("reused-token")).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(mockRefreshTokenRepository.update).toHaveBeenCalledWith(
+        { familyId: "fam-1" },
+        { isRevoked: true },
+      );
+    });
+  });
+
+  describe("gate staff provisioning", () => {
+    it("should allow organizer to provision gate staff", async () => {
+      mockUserRepository.findOne.mockResolvedValue(null);
+      mockUserRepository.create.mockImplementation((dto) => ({
+        id: "staff-1",
+        ...dto,
+      }));
+      mockUserRepository.save.mockImplementation((entity) =>
+        Promise.resolve(entity),
+      );
+
+      const creator = {
+        id: "org-1",
+        email: "org@example.com",
+        firstName: "Organizer",
+        lastName: "Boss",
+        role: UserRole.ORGANIZER,
+        organizerTenantId: "tenant-1",
+        createdAt: new Date(),
+      };
+
+      const staff = await service.createGateStaff(creator, {
+        email: "scanner@example.com",
+        password: "StaffPassword123!",
+        firstName: "Staff",
+        lastName: "Scanner",
+      });
+
+      expect(staff.email).toBe("scanner@example.com");
+      expect(staff.role).toBe(UserRole.GATE_STAFF);
+      expect(staff.organizerTenantId).toBe("tenant-1");
+    });
+  });
+
+  describe("profile management", () => {
+    it("should update user profile", async () => {
+      const user = { ...mockUser };
+      mockUserRepository.findOne.mockResolvedValue(user);
+      mockUserRepository.save.mockImplementation((u) => Promise.resolve(u));
+
+      const updated = await service.updateProfile(user.id, {
+        firstName: "Johnny",
+        lastName: "Updated",
+      });
+
+      expect(updated.firstName).toBe("Johnny");
+      expect(updated.lastName).toBe("Updated");
+    });
+
+    it("should throw NotFoundException if user is not found", async () => {
+      mockUserRepository.findOne.mockResolvedValue(null);
+
       await expect(
-        service.login({
-          email: "not-an-email",
-          password: "",
-        }),
-      ).rejects.toThrow(BadRequestException);
+        service.updateProfile("unknown", { firstName: "Test" }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });

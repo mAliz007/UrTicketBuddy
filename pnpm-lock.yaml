@@ -273,6 +273,9 @@ importers:
       "@nestjs/platform-express":
         specifier: ^11.0.10
         version: 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(supports-color@8.1.1)
+      "@nestjs/throttler":
+        specifier: ^6.8.0
+        version: 6.8.0(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(reflect-metadata@0.2.2)
       "@urticketbuddy/config":
         specifier: workspace:*
         version: link:../../packages/config
@@ -288,6 +291,9 @@ importers:
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
+      cookie-parser:
+        specifier: ^1.4.7
+        version: 1.4.7
       ioredis:
         specifier: ^5.5.0
         version: 5.11.1(supports-color@8.1.1)
@@ -297,6 +303,9 @@ importers:
       passport:
         specifier: ^0.7.0
         version: 0.7.0
+      passport-google-oauth20:
+        specifier: ^2.0.0
+        version: 2.0.0
       passport-jwt:
         specifier: ^4.0.1
         version: 4.0.1
@@ -322,6 +331,9 @@ importers:
       "@types/bcryptjs":
         specifier: ^3.0.0
         version: 3.0.0
+      "@types/cookie-parser":
+        specifier: ^1.4.10
+        version: 1.4.10(@types/express@5.0.6)
       "@types/express":
         specifier: ^5.0.0
         version: 5.0.6
@@ -331,6 +343,9 @@ importers:
       "@types/node":
         specifier: ^22.13.4
         version: 22.20.5
+      "@types/passport-google-oauth20":
+        specifier: ^2.0.17
+        version: 2.0.17
       "@types/passport-jwt":
         specifier: ^4.0.1
         version: 4.0.1
@@ -2429,6 +2444,17 @@ packages:
       "@nestjs/platform-express":
         optional: true
 
+  "@nestjs/throttler@6.8.0":
+    resolution:
+      {
+        integrity: sha512-kApHI/Ycxu3cxz7mcEhth7eeR9+L2GGb2CKpaBU+uAWz6DF4XRK68VWXFDKDA1aVwCdOf7HjYiafvQVG+eD2Gw==,
+      }
+    engines: { node: ^20.19.0 || ^22.12.0 || >=24.0.0 }
+    peerDependencies:
+      "@nestjs/common": ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      "@nestjs/core": ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
+
   "@nestjs/websockets@11.2.10":
     resolution:
       {
@@ -3079,6 +3105,14 @@ packages:
         integrity: sha512-BgT2szDXnVypgpNxOK8aL5SGjUdaQbC++WZNjF1Qge3Og2+zhHj+RWhmehLhYyvQwqAmvezruVfOf8+3m74W+g==,
       }
 
+  "@types/cookie-parser@1.4.10":
+    resolution:
+      {
+        integrity: sha512-B4xqkqfZ8Wek+rCOeRxsjMS9OgvzebEzzLYw7NHYuvzb7IdxOkI0ZHGgeEBX4PUM7QGVvNSK60T3OvWj3YfBRg==,
+      }
+    peerDependencies:
+      "@types/express": "*"
+
   "@types/cookiejar@2.1.5":
     resolution:
       {
@@ -3218,10 +3252,28 @@ packages:
         integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==,
       }
 
+  "@types/oauth@0.9.6":
+    resolution:
+      {
+        integrity: sha512-H9TRCVKBNOhZZmyHLqFt9drPM9l+ShWiqqJijU1B8P3DX3ub84NjxDuy+Hjrz+fEca5Kwip3qPMKNyiLgNJtIA==,
+      }
+
+  "@types/passport-google-oauth20@2.0.17":
+    resolution:
+      {
+        integrity: sha512-MHNOd2l7gOTCn3iS+wInPQMiukliAUvMpODO3VlXxOiwNEMSyzV7UNvAdqxSN872o8OXx1SqPDVT6tLW74AtqQ==,
+      }
+
   "@types/passport-jwt@4.0.1":
     resolution:
       {
         integrity: sha512-Y0Ykz6nWP4jpxgEUYq8NoVZeCQPo1ZndJLfapI249g1jHChvRfZRO/LS3tqu26YgAS/laI1qx98sYGz0IalRXQ==,
+      }
+
+  "@types/passport-oauth2@1.8.0":
+    resolution:
+      {
+        integrity: sha512-6//z+4orIOy/g3zx17HyQ71GSRK4bs7Sb+zFasRoc2xzlv7ZCJ+vkDBYFci8U6HY+or6Zy7ajf4mz4rK7nsWJQ==,
       }
 
   "@types/passport-strategy@0.2.38":
@@ -4035,6 +4087,13 @@ packages:
       }
     engines: { node: ^4.5.0 || >= 5.9 }
 
+  base64url@3.0.1:
+    resolution:
+      {
+        integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==,
+      }
+    engines: { node: ">=6.0.0" }
+
   baseline-browser-mapping@2.11.37:
     resolution:
       {
@@ -4563,6 +4622,19 @@ packages:
     resolution:
       {
         integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==,
+      }
+
+  cookie-parser@1.4.7:
+    resolution:
+      {
+        integrity: sha512-nGUvgXnotP3BsjiLX2ypbQnWoGUPIIfHQNZkkC668ntrzGWEZVW70HDEB1qnNGMicPje6EttlIgzo51YSwNQGw==,
+      }
+    engines: { node: ">= 0.8.0" }
+
+  cookie-signature@1.0.6:
+    resolution:
+      {
+        integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==,
       }
 
   cookie-signature@1.2.2:
@@ -7323,6 +7395,12 @@ packages:
       }
     engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
 
+  oauth@0.10.2:
+    resolution:
+      {
+        integrity: sha512-JtFnB+8nxDEXgNyniwz573xxbKSOu3R8D40xQKqcjwJ2CDkYqUDI53o6IuzDJBx60Z8VKCm271+t8iFjakrl8Q==,
+      }
+
   object-assign@4.1.1:
     resolution:
       {
@@ -7539,11 +7617,25 @@ packages:
         integrity: sha512-Njv/59hHaokb/hRUjce3Hdv12wd60MtM9Z5Olmn+nehe0QDAsRtRbJPvJ0Z91TusF0SuZRIvnM+S4l6EIP8leA==,
       }
 
+  passport-google-oauth20@2.0.0:
+    resolution:
+      {
+        integrity: sha512-KSk6IJ15RoxuGq7D1UKK/8qKhNfzbLeLrG3gkLZ7p4A6DBCcv7xpyQwuXtWdpyR0+E0mwkpjY1VfPOhxQrKzdQ==,
+      }
+    engines: { node: ">= 0.4.0" }
+
   passport-jwt@4.0.1:
     resolution:
       {
         integrity: sha512-UCKMDYhNuGOBE9/9Ycuoyh7vP6jpeTp/+sfMJl7nLff/t6dps+iaeE0hhNkKN8/HZHcJ7lCdOyDxHdDoxoSvdQ==,
       }
+
+  passport-oauth2@1.8.0:
+    resolution:
+      {
+        integrity: sha512-cjsQbOrXIDE4P8nNb3FQRCCmJJ/utnFKEz2NX209f7KOHPoX18gF7gBzBbLLsj2/je4KrgiwLLGjf0lm9rtTBA==,
+      }
+    engines: { node: ">= 0.4.0" }
 
   passport-strategy@1.0.0:
     resolution:
@@ -9355,6 +9447,12 @@ packages:
     engines: { node: ">=0.8.0" }
     hasBin: true
 
+  uid2@0.0.4:
+    resolution:
+      {
+        integrity: sha512-IevTus0SbGwQzYh3+fRsAMTVVPOoIVufzacXcHPmdlle1jUpq7BRL+mw3dgeLanvGZdwwbWhRV6XrcFNdBmjWA==,
+      }
+
   uid@2.0.2:
     resolution:
       {
@@ -11158,6 +11256,12 @@ snapshots:
     optionalDependencies:
       "@nestjs/platform-express": 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(supports-color@8.1.1)
 
+  "@nestjs/throttler@6.8.0(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(reflect-metadata@0.2.2)":
+    dependencies:
+      "@nestjs/common": 11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
+      "@nestjs/core": 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/platform-express@11.2.10)(@nestjs/websockets@11.2.10)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
+
   "@nestjs/websockets@11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(@nestjs/platform-socket.io@11.2.10)(reflect-metadata@0.2.2)(rxjs@7.8.2)":
     dependencies:
       "@nestjs/common": 11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
@@ -11524,6 +11628,10 @@ snapshots:
     dependencies:
       "@types/node": 26.6.6
 
+  "@types/cookie-parser@1.4.10(@types/express@5.0.6)":
+    dependencies:
+      "@types/express": 5.0.6
+
   "@types/cookiejar@2.1.5": {}
 
   "@types/cors@2.8.19":
@@ -11622,10 +11730,26 @@ snapshots:
     dependencies:
       undici-types: 8.9.0
 
+  "@types/oauth@0.9.6":
+    dependencies:
+      "@types/node": 22.20.5
+
+  "@types/passport-google-oauth20@2.0.17":
+    dependencies:
+      "@types/express": 5.0.6
+      "@types/passport": 1.0.17
+      "@types/passport-oauth2": 1.8.0
+
   "@types/passport-jwt@4.0.1":
     dependencies:
       "@types/jsonwebtoken": 9.0.10
       "@types/passport-strategy": 0.2.38
+
+  "@types/passport-oauth2@1.8.0":
+    dependencies:
+      "@types/express": 5.0.6
+      "@types/oauth": 0.9.6
+      "@types/passport": 1.0.17
 
   "@types/passport-strategy@0.2.38":
     dependencies:
@@ -12183,6 +12307,8 @@ snapshots:
 
   base64id@2.0.0: {}
 
+  base64url@3.0.1: {}
+
   baseline-browser-mapping@2.11.37: {}
 
   bcrypt-pbkdf@1.0.2:
@@ -12466,6 +12592,13 @@ snapshots:
       split2: 4.2.0
 
   convert-source-map@2.0.0: {}
+
+  cookie-parser@1.4.7:
+    dependencies:
+      cookie: 0.7.2
+      cookie-signature: 1.0.6
+
+  cookie-signature@1.0.6: {}
 
   cookie-signature@1.2.2: {}
 
@@ -14346,6 +14479,8 @@ snapshots:
     dependencies:
       path-key: 4.0.0
 
+  oauth@0.10.2: {}
+
   object-assign@4.1.1: {}
 
   object-hash@3.0.0: {}
@@ -14479,10 +14614,22 @@ snapshots:
 
   partial-json@0.1.7: {}
 
+  passport-google-oauth20@2.0.0:
+    dependencies:
+      passport-oauth2: 1.8.0
+
   passport-jwt@4.0.1:
     dependencies:
       jsonwebtoken: 9.0.3
       passport-strategy: 1.0.0
+
+  passport-oauth2@1.8.0:
+    dependencies:
+      base64url: 3.0.1
+      oauth: 0.10.2
+      passport-strategy: 1.0.0
+      uid2: 0.0.4
+      utils-merge: 1.0.1
 
   passport-strategy@1.0.0: {}
 
@@ -15651,6 +15798,8 @@ snapshots:
 
   uglify-js@3.19.3:
     optional: true
+
+  uid2@0.0.4: {}
 
   uid@2.0.2:
     dependencies:

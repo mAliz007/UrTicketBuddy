@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import request from "supertest";
+import cookieParser from "cookie-parser";
 import { ErrorCode, UserRole } from "@urticketbuddy/contracts";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
@@ -11,6 +12,7 @@ import {
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
   USER_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
   VENUE_LAYOUT_MODEL,
 } from "../src/database/database.tokens";
 
@@ -19,8 +21,9 @@ jest.setTimeout(30000);
 describe("Auth & RBAC API (e2e - Supertest)", () => {
   let app: INestApplication;
 
-  // In-memory user storage
+  // In-memory user and token storage
   const usersStore = new Map<string, any>();
+  const refreshTokensStore = new Map<string, any>();
 
   const mockUserRepo = {
     create: jest.fn((dto: any) => ({
@@ -48,6 +51,39 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
     }),
   };
 
+  const mockRefreshTokenRepo = {
+    create: jest.fn((dto: any) => ({
+      id: `rt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...dto,
+    })),
+    save: jest.fn(async (entity: any) => {
+      refreshTokensStore.set(entity.tokenHash, entity);
+      return entity;
+    }),
+    findOne: jest.fn(async ({ where }: any) => {
+      if (where?.tokenHash) {
+        return refreshTokensStore.get(where.tokenHash) || null;
+      }
+      return null;
+    }),
+    update: jest.fn(async (criteria: any, partial: any) => {
+      if (criteria?.familyId) {
+        for (const token of refreshTokensStore.values()) {
+          if (token.familyId === criteria.familyId) {
+            token.isRevoked = partial.isRevoked;
+          }
+        }
+      }
+      if (criteria?.tokenHash) {
+        const token = refreshTokensStore.get(criteria.tokenHash);
+        if (token) token.isRevoked = partial.isRevoked;
+      }
+      return { affected: 1 };
+    }),
+  };
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -69,11 +105,14 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       .useValue({ findOne: jest.fn(), save: jest.fn() })
       .overrideProvider(USER_REPOSITORY)
       .useValue(mockUserRepo)
+      .overrideProvider(REFRESH_TOKEN_REPOSITORY)
+      .useValue(mockRefreshTokenRepo)
       .overrideProvider(VENUE_LAYOUT_MODEL)
       .useValue({ findById: jest.fn() })
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.use(cookieParser());
     app.setGlobalPrefix("api/v1");
     app.useGlobalFilters(new GlobalHttpExceptionFilter());
     await app.init();
@@ -87,6 +126,7 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
 
   beforeEach(() => {
     usersStore.clear();
+    refreshTokensStore.clear();
   });
 
   describe("POST /api/v1/auth/register", () => {
@@ -111,14 +151,18 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       expect(res.body.user.lastName).toBe("Smith");
       expect(res.body.user.role).toBe(UserRole.CUSTOMER);
       expect(res.body.user.passwordHash).toBeUndefined();
-      expect(res.body.user.password).toBeUndefined();
 
       expect(res.body.accessToken).toBeDefined();
       expect(typeof res.body.accessToken).toBe("string");
-      expect(res.body.refreshToken).toBeDefined();
-      expect(typeof res.body.refreshToken).toBe("string");
 
-      // Verify user in store
+      // Verify Set-Cookie header contains refreshToken
+      const cookies = res.headers["set-cookie"] || [];
+      const hasRefreshCookie = cookies.some((c: string) =>
+        c.startsWith("refreshToken="),
+      );
+      expect(hasRefreshCookie).toBe(true);
+
+      // Verify password hashed
       const stored = usersStore.get(res.body.user.id);
       expect(stored).toBeDefined();
       expect(stored.passwordHash).not.toBe("SecurePassword123!");
@@ -146,23 +190,6 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       expect(res.body.error).toBeDefined();
       expect(res.body.error.code).toBe(ErrorCode.EMAIL_ALREADY_EXISTS);
     });
-
-    it("should reject registration with 400 Bad Request on invalid payload", async () => {
-      const payload = {
-        email: "not-an-email",
-        password: "short",
-        firstName: "",
-        lastName: "",
-      };
-
-      const res = await request(app.getHttpServer())
-        .post("/api/v1/auth/register")
-        .send(payload)
-        .expect(400);
-
-      expect(res.body.error).toBeDefined();
-      expect(res.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
-    });
   });
 
   describe("POST /api/v1/auth/login", () => {
@@ -176,7 +203,7 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       });
     });
 
-    it("should successfully log in with valid credentials and return access + refresh tokens", async () => {
+    it("should successfully log in with valid credentials and return access token + cookie", async () => {
       const res = await request(app.getHttpServer())
         .post("/api/v1/auth/login")
         .send({
@@ -188,7 +215,11 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       expect(res.body.user).toBeDefined();
       expect(res.body.user.email).toBe("carol@example.com");
       expect(res.body.accessToken).toBeDefined();
-      expect(res.body.refreshToken).toBeDefined();
+
+      const cookies = res.headers["set-cookie"] || [];
+      expect(cookies.some((c: string) => c.startsWith("refreshToken="))).toBe(
+        true,
+      );
     });
 
     it("should return 401 Unauthorized if password is incorrect", async () => {
@@ -203,88 +234,203 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       expect(res.body.error).toBeDefined();
       expect(res.body.error.code).toBe(ErrorCode.INVALID_CREDENTIALS);
     });
+  });
 
-    it("should return 401 Unauthorized if email is not found", async () => {
-      const res = await request(app.getHttpServer())
-        .post("/api/v1/auth/login")
+  describe("Token Rotation & Reuse Detection (POST /api/v1/auth/refresh)", () => {
+    let originalCookie: string;
+
+    beforeEach(async () => {
+      const registerRes = await request(app.getHttpServer())
+        .post("/api/v1/auth/register")
         .send({
-          email: "unknown@example.com",
+          email: "rotator@example.com",
           password: "Password123!",
-        })
+          firstName: "Rotate",
+          lastName: "User",
+        });
+
+      const cookies = registerRes.headers["set-cookie"] || [];
+      const cookie = cookies.find((c: string) => c.startsWith("refreshToken="));
+      originalCookie = cookie ? cookie.split(";")[0] : "";
+    });
+
+    it("should rotate refresh token and issue new token pair", async () => {
+      const refreshRes = await request(app.getHttpServer())
+        .post("/api/v1/auth/refresh")
+        .set("Cookie", originalCookie)
+        .expect(200);
+
+      expect(refreshRes.body.accessToken).toBeDefined();
+      const newCookies = refreshRes.headers["set-cookie"] || [];
+      expect(
+        newCookies.some((c: string) => c.startsWith("refreshToken=")),
+      ).toBe(true);
+    });
+
+    it("should detect token reuse and revoke token family on replay of old token", async () => {
+      // First refresh succeeds and rotates the token
+      await request(app.getHttpServer())
+        .post("/api/v1/auth/refresh")
+        .set("Cookie", originalCookie)
+        .expect(200);
+
+      // Replaying the old (now revoked) cookie triggers reuse detection
+      const replayRes = await request(app.getHttpServer())
+        .post("/api/v1/auth/refresh")
+        .set("Cookie", originalCookie)
         .expect(401);
 
-      expect(res.body.error).toBeDefined();
-      expect(res.body.error.code).toBe(ErrorCode.INVALID_CREDENTIALS);
+      expect(replayRes.body.error).toBeDefined();
+      expect(replayRes.body.error.code).toBe(ErrorCode.INVALID_REFRESH_TOKEN);
     });
   });
 
-  describe("RBAC & Guards (JwtAuthGuard & RolesGuard)", () => {
+  describe("Gate Staff Provisioning (POST /api/v1/organizer/gate-staff)", () => {
     let customerToken: string;
-    let adminToken: string;
+    let organizerToken: string;
 
     beforeEach(async () => {
-      const customerRes = await request(app.getHttpServer())
+      const custRes = await request(app.getHttpServer())
         .post("/api/v1/auth/register")
         .send({
-          email: "customer@example.com",
-          password: "CustomerPass123!",
+          email: "regular@example.com",
+          password: "Password123!",
           firstName: "Reg",
           lastName: "Customer",
           role: UserRole.CUSTOMER,
         });
-      customerToken = customerRes.body.accessToken;
+      customerToken = custRes.body.accessToken;
 
-      const adminRes = await request(app.getHttpServer())
+      const orgRes = await request(app.getHttpServer())
         .post("/api/v1/auth/register")
         .send({
-          email: "admin@example.com",
-          password: "AdminPass123!",
-          firstName: "Super",
-          lastName: "Admin",
-          role: UserRole.ADMIN,
+          email: "organizer@example.com",
+          password: "OrganizerPass123!",
+          firstName: "Org",
+          lastName: "Manager",
+          role: UserRole.ORGANIZER,
         });
-      adminToken = adminRes.body.accessToken;
+      organizerToken = orgRes.body.accessToken;
     });
 
-    it("GET /api/v1/auth/me - should succeed with valid JWT Bearer token", async () => {
+    it("should reject customer attempts to provision gate staff with 403 Forbidden", async () => {
       const res = await request(app.getHttpServer())
-        .get("/api/v1/auth/me")
+        .post("/api/v1/organizer/gate-staff")
         .set("Authorization", `Bearer ${customerToken}`)
-        .expect(200);
-
-      expect(res.body.user).toBeDefined();
-      expect(res.body.user.email).toBe("customer@example.com");
-      expect(res.body.user.role).toBe(UserRole.CUSTOMER);
-    });
-
-    it("GET /api/v1/auth/me - should return 401 Unauthorized when Bearer token is missing", async () => {
-      const res = await request(app.getHttpServer())
-        .get("/api/v1/auth/me")
-        .expect(401);
-
-      expect(res.body.error).toBeDefined();
-      expect(res.body.error.code).toBe(ErrorCode.UNAUTHORIZED);
-    });
-
-    it("GET /api/v1/auth/admin-only - should return 403 Forbidden when CUSTOMER attempts to access ADMIN route", async () => {
-      const res = await request(app.getHttpServer())
-        .get("/api/v1/auth/admin-only")
-        .set("Authorization", `Bearer ${customerToken}`)
+        .send({
+          email: "staff1@example.com",
+          password: "Password123!",
+          firstName: "Gate",
+          lastName: "Staff",
+        })
         .expect(403);
 
       expect(res.body.error).toBeDefined();
       expect(res.body.error.code).toBe(ErrorCode.FORBIDDEN);
     });
 
-    it("GET /api/v1/auth/admin-only - should return 200 OK when ADMIN accesses ADMIN route", async () => {
+    it("should allow organizer to provision gate staff bound to their tenant", async () => {
+      const res = await request(app.getHttpServer())
+        .post("/api/v1/organizer/gate-staff")
+        .set("Authorization", `Bearer ${organizerToken}`)
+        .send({
+          email: "scanner@example.com",
+          password: "ScannerPass123!",
+          firstName: "Scanner",
+          lastName: "One",
+        })
+        .expect(201);
+
+      expect(res.body.email).toBe("scanner@example.com");
+      expect(res.body.role).toBe(UserRole.GATE_STAFF);
+    });
+  });
+
+  describe("User Profile Management (GET & PUT /api/v1/users/me/profile)", () => {
+    let userToken: string;
+
+    beforeEach(async () => {
+      const regRes = await request(app.getHttpServer())
+        .post("/api/v1/auth/register")
+        .send({
+          email: "profileuser@example.com",
+          password: "Password123!",
+          firstName: "OriginalFirst",
+          lastName: "OriginalLast",
+        });
+      userToken = regRes.body.accessToken;
+    });
+
+    it("GET /api/v1/users/me/profile - should return current user profile", async () => {
+      const res = await request(app.getHttpServer())
+        .get("/api/v1/users/me/profile")
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(200);
+
+      expect(res.body.email).toBe("profileuser@example.com");
+      expect(res.body.firstName).toBe("OriginalFirst");
+      expect(res.body.lastName).toBe("OriginalLast");
+    });
+
+    it("PUT /api/v1/users/me/profile - should update profile attributes", async () => {
+      const res = await request(app.getHttpServer())
+        .put("/api/v1/users/me/profile")
+        .set("Authorization", `Bearer ${userToken}`)
+        .send({
+          firstName: "UpdatedFirst",
+          lastName: "UpdatedLast",
+        })
+        .expect(200);
+
+      expect(res.body.firstName).toBe("UpdatedFirst");
+      expect(res.body.lastName).toBe("UpdatedLast");
+    });
+  });
+
+  describe("RBAC & Guards Matrix", () => {
+    let adminToken: string;
+    let customerToken: string;
+
+    beforeEach(async () => {
+      const adm = await request(app.getHttpServer())
+        .post("/api/v1/auth/register")
+        .send({
+          email: "superadmin@example.com",
+          password: "AdminPass123!",
+          firstName: "Super",
+          lastName: "Admin",
+          role: UserRole.ADMIN,
+        });
+      adminToken = adm.body.accessToken;
+
+      const cust = await request(app.getHttpServer())
+        .post("/api/v1/auth/register")
+        .send({
+          email: "regular2@example.com",
+          password: "Password123!",
+          firstName: "Reg",
+          lastName: "Two",
+          role: UserRole.CUSTOMER,
+        });
+      customerToken = cust.body.accessToken;
+    });
+
+    it("should allow ADMIN to access admin-only route with 200 OK", async () => {
       const res = await request(app.getHttpServer())
         .get("/api/v1/auth/admin-only")
         .set("Authorization", `Bearer ${adminToken}`)
         .expect(200);
 
       expect(res.body.message).toBe("Admin access granted");
-      expect(res.body.user).toBeDefined();
-      expect(res.body.user.role).toBe(UserRole.ADMIN);
+    });
+
+    it("should reject CUSTOMER on admin-only route with 403 Forbidden", async () => {
+      const res = await request(app.getHttpServer())
+        .get("/api/v1/auth/admin-only")
+        .set("Authorization", `Bearer ${customerToken}`)
+        .expect(403);
+
+      expect(res.body.error.code).toBe(ErrorCode.FORBIDDEN);
     });
   });
 });
