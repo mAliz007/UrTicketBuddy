@@ -17,7 +17,7 @@ describe("Production Dockerization & CD Pipeline Validation [UTB-18]", () => {
       expect(content).toContain(".env");
       expect(content).toContain("coverage");
       expect(content).toContain("docs");
-      expect(content).toContain("apps/web/src");
+      expect(content).toContain("apps/web/dist");
     });
   });
 

@@ -34,9 +34,7 @@ docs
 **/*.md
 !**/package.json
 
-# Frontend web application source files (backend container isolation)
-apps/web/src
-apps/web/public
+# Frontend web application build artifacts
 apps/web/dist
 
 # OS and editor files
