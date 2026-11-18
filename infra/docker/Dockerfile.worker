@@ -23,7 +23,7 @@ RUN pnpm install --frozen-lockfile
 FROM deps AS build
 WORKDIR /app
 
-COPY tsconfig.json eslint.config.mjs ./
+COPY eslint.config.mjs ./
 COPY packages/ ./packages/
 COPY apps/worker/ ./apps/worker/
 
