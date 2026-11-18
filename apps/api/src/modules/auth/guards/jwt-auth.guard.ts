@@ -27,15 +27,19 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     return super.canActivate(context);
   }
 
-  handleRequest(err: any, user: any, info: any) {
+  handleRequest<TUser = unknown>(
+    err: unknown,
+    user: TUser,
+    info: { message?: string } | undefined,
+  ): TUser {
     if (err || !user) {
-      throw (
-        err ||
-        new UnauthorizedException({
-          code: ErrorCode.UNAUTHORIZED,
-          message: info?.message || "Unauthorized access",
-        })
-      );
+      if (err instanceof Error) {
+        throw err;
+      }
+      throw new UnauthorizedException({
+        code: ErrorCode.UNAUTHORIZED,
+        message: info?.message || "Unauthorized access",
+      });
     }
     return user;
   }
