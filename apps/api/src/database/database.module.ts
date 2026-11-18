@@ -1,5 +1,11 @@
 import { Global, Module, OnModuleDestroy } from "@nestjs/common";
-import { AppDataSource, Venue, Event, EventSeat } from "@urticketbuddy/db";
+import {
+  AppDataSource,
+  Venue,
+  Event,
+  EventSeat,
+  User,
+} from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import mongoose from "mongoose";
 import { DataSource } from "typeorm";
@@ -9,6 +15,7 @@ import {
   VENUE_REPOSITORY,
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
+  USER_REPOSITORY,
   MONGO_CONNECTION,
   VENUE_LAYOUT_MODEL,
 } from "./database.tokens";
@@ -54,6 +61,13 @@ import {
       inject: [DATA_SOURCE],
     },
     {
+      provide: USER_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(User);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
       provide: MONGO_CONNECTION,
       useFactory: async () => {
         const env = loadEnv();
@@ -82,6 +96,7 @@ import {
     VENUE_REPOSITORY,
     EVENT_REPOSITORY,
     EVENT_SEAT_REPOSITORY,
+    USER_REPOSITORY,
     MONGO_CONNECTION,
     VENUE_LAYOUT_MODEL,
   ],
