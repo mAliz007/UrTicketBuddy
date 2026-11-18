@@ -1,0 +1,53 @@
+# Dependency directories
+node_modules
+**/node_modules
+
+# Build artifacts
+dist
+**/dist
+build
+**/build
+
+# Version control
+.git
+.gitignore
+
+# Cache and temporary folders
+.turbo
+**/.turbo
+temp
+scratch
+.engram
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test coverage and reports
+coverage
+**/coverage
+test-results
+
+# Documentation and design assets
+docs
+**/*.md
+!**/package.json
+
+# Frontend web application source files (backend container isolation)
+apps/web/src
+apps/web/public
+apps/web/dist
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
