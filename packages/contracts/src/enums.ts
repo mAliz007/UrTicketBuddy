@@ -22,5 +22,6 @@ export const SeatStateColors = {
 export enum UserRole {
   ADMIN = "ADMIN",
   ORGANIZER = "ORGANIZER",
-  ATTENDEE = "ATTENDEE",
+  CUSTOMER = "CUSTOMER",
+  ATTENDEE = "CUSTOMER",
 }
