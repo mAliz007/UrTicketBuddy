@@ -4,6 +4,43 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-18] - 2026-11-18
+
+### Production Dockerization & Continuous Delivery Pipeline
+
+- **Ticket Key:** `UTB-18`
+- **Completion Date:** 2026-11-18
+- **Main Feature Branch:** `feat/UTB-18-docker-cd-pipeline`
+  - Sub-task 1: `feat/UTB-18/dockerfiles`
+  - Sub-task 2: `feat/UTB-18/cd-workflow`
+  - Sub-task 3: `feat/UTB-18/tests`
+- **Status:** Completed (Sub-tasks merged locally into `feat/UTB-18-docker-cd-pipeline`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `docker/`, `apps/api/`, `apps/realtime/`, `apps/worker/`, `infra/docker/`, `.github/workflows/`, `packages/config/`, `docs/`, `.dockerignore`, `docker-compose.prod.yml`, `.env.example`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Root `.dockerignore`**: Created comprehensive Docker ignore file excluding `node_modules`, `dist`, `.git`, `.turbo`, `.env*`, `coverage`, `docs`, and frontend application sources (`apps/web/src`, `apps/web/public`, `apps/web/dist`) to guarantee backend container build isolation.
+  - **Multi-Stage Dockerfiles (`docker/api.Dockerfile`, `docker/realtime.Dockerfile`, `docker/worker.Dockerfile`)**:
+    - Implemented standardized 4-stage multi-stage Docker builds across all three backend services:
+      1. `deps`: Node 22 Alpine, Corepack-pinned `pnpm@12.21.0`, layer-cached package manifests, and frozen lockfile installation.
+      2. `build`: Compiles shared workspace packages and service targets (`pnpm --filter <app>... build`).
+      3. `prod-deps`: Produces production-only dependencies and isolated workspace symlinks using `pnpm deploy --prod --prefer-offline`.
+      4. `production`: Minimal runtime Alpine image executing as non-root `USER node` with `--chown=node:node`, process signal handling via `tini`, container health check with busybox `wget -q --spider`, proper `EXPOSE` port, and `CMD ["node", "dist/main.js"]`.
+    - Synced app-level Dockerfiles (`apps/api/Dockerfile`, `apps/realtime/Dockerfile`, `apps/worker/Dockerfile`) and infra Dockerfiles to match the multi-stage standard.
+  - **Production Docker Compose Stack (`docker-compose.prod.yml`)**:
+    - Defines standalone production orchestration for `api`, `realtime`, and `worker` targeting `production` image stages.
+    - Wires infrastructure services (`postgres`, `pgbouncer`, `mongo`, `redis`, `elasticsearch`) with healthcheck-based `depends_on`.
+    - Configured restart policies (`unless-stopped`), port bindings, and environment variables referencing `.env.example`.
+  - **GitHub Actions CD Pipeline (`.github/workflows/cd.yml`)**:
+    - Triggered via `workflow_run` on completion of `CI Pipeline` on `main` when `conclusion == 'success'` (with `workflow_dispatch` fallback).
+    - Configured sequential non-overlapping `concurrency` and minimal read permissions.
+    - Automated deployment to Railway via `@railway/cli` for API, Realtime, and Worker services using `RAILWAY_TOKEN`.
+    - Post-deploy verification probing `GET /api/v1/health` with exponential backoff (10 attempts, 10s intervals) and Railway status inspection for background services.
+  - **Documentation & Verification Suite**:
+    - Authored `docs/deployment.md` detailing CD flow diagrams, secret requirements, rollback playbooks, and troubleshooting guides.
+    - Updated root `README.md` with production deployment and container reference.
+    - Added automated Jest validation suite (`packages/config/src/docker-cd.spec.ts`) verifying Dockerfile stage contracts, compose dependencies, and workflow configurations.
+
+---
+
 ## [UTB-8] - 2026-11-18
 
 ### Seat Hold API & Realtime WebSockets
