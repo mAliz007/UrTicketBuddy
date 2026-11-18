@@ -115,7 +115,7 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
   const userA = "22222222-2222-4222-8222-222222222222";
   const userB = "33333333-3333-4333-8333-333333333333";
 
-  it("POST /api/v1/checkout/hold holds seats, publishes Pub/Sub, and returns expiresAt", async () => {
+  it("POST /api/v1/checkout/hold holds seats, publishes Pub/Sub with expiresAt, and returns expiresAt", async () => {
     const res = await request(app.getHttpServer())
       .post("/api/v1/checkout/hold")
       .set("x-user-id", userA)
@@ -133,6 +133,7 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
       seatIds: ["sec1-A-1", "sec1-A-2"],
       state: "HELD",
       userId: userA,
+      expiresAt: res.body.expiresAt,
     });
   });
 

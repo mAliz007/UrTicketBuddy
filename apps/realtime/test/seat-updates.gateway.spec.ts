@@ -41,7 +41,7 @@ describe("SeatUpdatesGateway (WebSocket + Redis Pub/Sub)", () => {
     await app.close();
   });
 
-  it("broadcasts seats-updated to all clients in the event room when Pub/Sub fires after holdSeats", async () => {
+  it("broadcasts seats-updated with expiresAt to all clients in the event room when Pub/Sub fires after holdSeats", async () => {
     const eventId = "11111111-1111-4111-8111-111111111111";
     const userId = "22222222-2222-4222-8222-222222222222";
     const seatIds = ["sec1-A-1", "sec1-A-2"];
@@ -99,6 +99,7 @@ describe("SeatUpdatesGateway (WebSocket + Redis Pub/Sub)", () => {
         seatIds: holdResult.seatIds,
         state: "HELD",
         userId,
+        expiresAt: holdResult.expiresAt,
       };
 
       const received1 = new Promise<unknown>((resolve) => {

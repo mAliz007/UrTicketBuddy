@@ -33,7 +33,7 @@ describe("CheckoutService", () => {
     service = module.get<CheckoutService>(CheckoutService);
   });
 
-  it("holds seats, publishes to Redis Pub/Sub, and returns expiresAt", async () => {
+  it("holds seats, publishes to Redis Pub/Sub with expiresAt, and returns expiresAt", async () => {
     const expiresAt = Date.now() + 600_000;
     mockRedisScripts.holdSeats.mockResolvedValue({
       success: true,
@@ -61,6 +61,7 @@ describe("CheckoutService", () => {
         seatIds,
         state: "HELD",
         userId,
+        expiresAt,
       }),
     );
     expect(result).toEqual({

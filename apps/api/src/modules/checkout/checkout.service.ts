@@ -18,6 +18,7 @@ export interface SeatUpdatePubSubPayload {
   seatIds: string[];
   state: "HELD" | "SOLD" | "RELEASED";
   userId: string;
+  expiresAt?: number;
 }
 
 @Injectable()
@@ -63,6 +64,7 @@ export class CheckoutService {
       seatIds: result.seatIds,
       state: "HELD",
       userId,
+      expiresAt: result.expiresAt,
     };
 
     await this.redis.publish(channel, JSON.stringify(payload));

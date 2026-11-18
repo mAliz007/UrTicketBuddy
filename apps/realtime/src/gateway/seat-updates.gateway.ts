@@ -19,6 +19,7 @@ export interface SeatUpdatesBroadcastPayload {
   seatIds: string[];
   state: "HELD" | "SOLD" | "RELEASED";
   userId?: string;
+  expiresAt?: number;
 }
 
 @WebSocketGateway({
