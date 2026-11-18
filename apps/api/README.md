@@ -16,11 +16,13 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - Health check: `GET /api/v1/health` (reports dependency status for Postgres, Mongo, Redis, and Elasticsearch)
 - Venues: `POST /api/v1/venues`, `GET /api/v1/venues/:id` (see [Venues Module](src/modules/venues/README.md))
 - Events: `POST /api/v1/events`, `GET /api/v1/events/:id`, `POST /api/v1/events/:id/generate-seats` (see [Events Module](src/modules/events/README.md))
+- Orders: `POST /api/v1/orders/checkout`, `GET /api/v1/orders/:id` (see [Orders Module](src/modules/orders/README.md))
 
 ## Persistence Model (Polyglot)
 
-- **PostgreSQL**: System of record for physical venues (`venues`), events (`events`), and individual seats (`event_seats`).
+- **PostgreSQL**: System of record for physical venues (`venues`), events (`events`), individual seats (`event_seats`), orders (`orders`), and order line items (`order_items`).
 - **MongoDB**: Raw JSON venue layouts adhering to `VenueLayoutSchema` stored in `venue_layouts`.
+- **Redis**: Fast transient seat state locks (`seat_lock`, `seat_sold`, `hold_expiry`, `user_holds`) operated atomically via `@urticketbuddy/redis-scripts` (`confirm_sold.lua`).
 - **Seat Generation**: Deterministic 2D coordinate calculations via `@urticketbuddy/venue-engine` with 1,000-seat chunked bulk insertions.
 
 ## Directory Structure

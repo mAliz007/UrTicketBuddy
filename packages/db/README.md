@@ -55,12 +55,15 @@ Example:
 
 - `1794836828550-UTB-2-init-extensions.ts`: Baseline migration enabling `pgcrypto` and `uuid-ossp`.
 - `1794836850000-UTB-9-init-venues-events.ts`: Venues, Events, and EventSeats tables with foreign keys and covering indexes.
+- `1794936850000-UTB-10-init-orders.ts`: Orders and OrderItems tables with foreign keys, covering indexes, and monetary precision.
 
 ### Entities
 
 - `Venue`: Physical venue metadata and reference to MongoDB layout document (`layoutMongoId`).
 - `Event`: Event instance belonging to a venue (`venueId` FK).
 - `EventSeat`: Individual seat coordinate and tier record belonging to an event (`eventId` FK, `seatId` deterministic `<section>-<row>-<number>`).
+- `Order`: Customer order record with total amount, currency, status, and event association (`eventId` FK, `userId` index).
+- `OrderItem`: Line item connecting an order to an individual event seat (`orderId` FK, `eventSeatId` FK, `price`).
 
 ---
 

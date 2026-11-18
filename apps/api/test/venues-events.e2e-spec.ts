@@ -100,6 +100,14 @@ describe("Venues & Events API (e2e - Supertest)", () => {
       .useValue({
         isInitialized: true,
         destroy: jest.fn(),
+        getRepository: jest.fn(() => ({
+          create: jest.fn((d: any) => d),
+          save: jest.fn(async (e: any) => e),
+          findOne: jest.fn(),
+          find: jest.fn(),
+          update: jest.fn(),
+          delete: jest.fn(),
+        })),
       })
       .overrideProvider(MONGO_CONNECTION)
       .useValue({
