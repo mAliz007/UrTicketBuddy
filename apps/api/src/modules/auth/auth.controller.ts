@@ -7,7 +7,7 @@ import {
   HttpStatus,
   UseGuards,
 } from "@nestjs/common";
-import { UserRole } from "@urticketbuddy/contracts";
+import { UserRole, AuthUser } from "@urticketbuddy/contracts";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -37,14 +37,14 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get("me")
-  async getProfile(@CurrentUser() user: any) {
+  async getProfile(@CurrentUser() user: AuthUser) {
     return { user };
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @Get("admin-only")
-  async adminOnly(@CurrentUser() user: any) {
+  async adminOnly(@CurrentUser() user: AuthUser) {
     return { message: "Admin access granted", user };
   }
 }

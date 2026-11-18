@@ -23,5 +23,5 @@ export enum UserRole {
   ADMIN = "ADMIN",
   ORGANIZER = "ORGANIZER",
   CUSTOMER = "CUSTOMER",
-  ATTENDEE = "CUSTOMER",
+  ATTENDEE = "ATTENDEE",
 }

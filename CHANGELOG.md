@@ -4,6 +4,39 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-3] - 2026-11-18
+
+### JWT Authentication, Password Hashing, and RBAC Module
+
+- **Ticket Key:** `UTB-3`
+- **Completion Date:** 2026-11-18
+- **Main Feature Branch:** `feat/UTB-3-jwt-auth-rbac`
+  - Sub-task 1: `feat/UTB-3-jwt-auth-rbac-db-user-entity`
+  - Sub-task 2: `feat/UTB-3-jwt-auth-rbac-auth-module`
+  - Sub-task 3: `feat/UTB-3-jwt-auth-rbac-tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-3-jwt-auth-rbac`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/db`, `packages/contracts`, `apps/api`, `README.md`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **TypeORM Entity & Migration (`packages/db`)**:
+    - Implemented `User` entity: `id` (uuid PK), `email` (varchar unique), `passwordHash` (varchar), `firstName` (varchar), `lastName` (varchar), `role` (varchar: `CUSTOMER`, `ORGANIZER`, `ADMIN`, default `CUSTOMER`), `createdAt`, `updatedAt`.
+    - Added covering indexes `idx_users_email` and `idx_users_role`.
+    - Added reversible TypeORM migration `1794837000000-UTB-3-init-users.ts`, validated via `pnpm db:check`.
+  - **Contracts & Validation (`packages/contracts`)**:
+    - Created `RegisterRequestSchema`, `LoginRequestSchema`, `AuthUserSchema`, and `AuthResponseSchema`.
+    - Added `CUSTOMER` to `UserRole` enum and added `EMAIL_ALREADY_EXISTS`, `INVALID_CREDENTIALS` to `ErrorCode`.
+  - **NestJS Auth Module (`apps/api/src/modules/auth`)**:
+    - `POST /api/v1/auth/register`: Hashes passwords with `bcrypt` (10 rounds), checks email uniqueness (409 Conflict on duplicate), stores user in PostgreSQL, returns user object with short-lived JWT `accessToken` (15m) and `refreshToken` (7d).
+    - `POST /api/v1/auth/login`: Authenticates credentials using `bcrypt.compare`, returns JWT access token and refresh token, throws 401 on invalid email or password.
+    - `JwtStrategy` & `JwtAuthGuard`: Passport-based strategy extracting Bearer token and verifying against `JWT_SECRET`. Supports `@Public()` decorator to bypass authentication.
+    - `RolesGuard` & `@Roles(...)`: Enforces RBAC permissions (`CUSTOMER`, `ORGANIZER`, `ADMIN`), returning 403 Forbidden on role mismatch.
+    - Parameter decorator `@CurrentUser()` for accessing authenticated user payload.
+  - **Testing & Quality Verification**:
+    - Comprehensive unit tests for `AuthService` and `AuthController`.
+    - Supertest E2E integration suite (`apps/api/test/auth.e2e-spec.ts`) validating registration, login, bad credential rejections, duplicate conflict rejections, and RBAC guard enforcement.
+    - Quality gates passed: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm db:check`, and `pnpm graphify`.
+
+---
+
 ## [UTB-9] - 2026-11-17
 
 ### Venues & Events NestJS REST API with Polyglot Persistence

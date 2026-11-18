@@ -31,7 +31,7 @@ describe("AuthService", () => {
   };
 
   const mockJwtService = {
-    signAsync: jest.fn().mockImplementation((payload, options) => {
+    signAsync: jest.fn().mockImplementation((payload, _options) => {
       return Promise.resolve(`jwt_token_${payload.type || "access"}`);
     }),
   };
