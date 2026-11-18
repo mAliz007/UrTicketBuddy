@@ -25,7 +25,7 @@ export class Utb3InitRefreshTokens1794837100000 implements MigrationInterface {
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_refresh_tokens_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_refresh_tokens_user_id" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+        CONSTRAINT "FK_610102b60fea1455310ccd299de" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION
       );
     `);
 
