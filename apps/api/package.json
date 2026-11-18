@@ -20,6 +20,7 @@
     "@urticketbuddy/config": "workspace:*",
     "@urticketbuddy/contracts": "workspace:*",
     "@urticketbuddy/db": "workspace:*",
+    "@urticketbuddy/redis-scripts": "workspace:*",
     "@urticketbuddy/venue-engine": "workspace:*",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
