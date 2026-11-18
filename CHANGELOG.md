@@ -4,6 +4,34 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-8] - 2026-11-18
+
+### Seat Hold API & Realtime WebSockets
+
+- **Ticket Key:** `UTB-8`
+- **Completion Date:** 2026-11-18
+- **Main Feature Branch:** `feat/UTB-8-checkout-realtime`
+  - Sub-task 1: `feat/UTB-8/api-checkout`
+  - Sub-task 2: `feat/UTB-8/realtime-gateway`
+  - Sub-task 3: `feat/UTB-8/tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-8-checkout-realtime`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `apps/api`, `apps/realtime`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **Checkout NestJS Module (`apps/api/src/modules/checkout`)**:
+    - Implemented `POST /api/v1/checkout/hold` accepting `{ eventId, seatIds }` validated against `HoldRequestSchema` (`@urticketbuddy/contracts`) and extracting `userId` from `x-user-id` header (temporary mock prior to UTB-3).
+    - Integrated `RedisScriptsWrapper.holdSeats` from `@urticketbuddy/redis-scripts`.
+    - Returns `409 Conflict` with `GlobalHttpExceptionFilter` envelope on hold failure (`SEAT_ALREADY_HELD`, etc.).
+    - Publishes `{ eventId, seatIds, state: "HELD", userId }` to Redis Pub/Sub channel `seat-updates:{eventId}` on success and returns `{ eventId, userId, seatIds, expiresAt }`.
+  - **Realtime WebSocket Gateway (`apps/realtime/src/gateway`)**:
+    - Implemented `SeatUpdatesGateway` using `@nestjs/platform-socket.io` handling `join-event` messages to add sockets to `event:{eventId}` rooms.
+    - Configured dedicated `ioredis` subscriber listening to `seat-updates:*` via `psubscribe` and broadcasting `seats-updated` to `event:{eventId}` rooms.
+  - **Integration & Unit Tests (`apps/api/test`, `apps/realtime/test`)**:
+    - Added Supertest E2E suite `apps/api/test/checkout-hold.e2e-spec.ts` verifying hold acquisition, Pub/Sub publishing, `409 Conflict` on already-held seats, `401` on missing `x-user-id`, and `400` on invalid input.
+    - Added `socket.io-client` test `apps/realtime/test/seat-updates.gateway.spec.ts` verifying two clients in an event room both receive `seats-updated` after `holdSeats` + Pub/Sub publish.
+    - Updated `apps/api/README.md`, `apps/realtime/README.md`, `apps/api/src/modules/checkout/README.md`, `apps/realtime/src/gateway/README.md`, and `CHANGELOG.md`.
+
+---
+
 ## [UTB-10] - 2026-11-18
 
 ### Orders, Payment Gateway Integration, & Checkout Completion API
