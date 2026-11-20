@@ -8,6 +8,8 @@ import { Order } from "./entities/order.entity";
 import { OrderItem } from "./entities/order-item.entity";
 import { User } from "./entities/user.entity";
 import { RefreshToken } from "./entities/refresh-token.entity";
+import { Ticket } from "./entities/ticket.entity";
+import { GateScan } from "./entities/gate-scan.entity";
 
 const env = loadEnv();
 
@@ -28,6 +30,8 @@ export const AppDataSource = new DataSource({
     OrderItem,
     User,
     RefreshToken,
+    Ticket,
+    GateScan,
     __dirname + "/entities/**/!(*.spec|*.test).{js,ts}",
   ],
   migrations: [__dirname + "/migrations/**/!(*.spec|*.test).{js,ts}"],
