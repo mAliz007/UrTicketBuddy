@@ -100,12 +100,14 @@ for _, staleSeatId in ipairs(staleExistingSeats) do
 end
 
 local expiresAtMs = nowMs + (ttlSeconds * 1000)
+local holdOwnersKey = 'hold_owners:{' .. eventId .. '}'
 
 for _, seatId in ipairs(seatIds) do
   local lockKey = lockKeys[seatId]
   redis.call('SET', lockKey, userId, 'EX', ttlSeconds)
   redis.call('ZADD', holdExpiryKey, expiresAtMs, seatId)
   redis.call('SADD', userHoldsKey, seatId)
+  redis.call('HSET', holdOwnersKey, seatId, userId)
 end
 
 return { 1, 'OK', tostring(expiresAtMs), seatIds }

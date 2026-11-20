@@ -146,18 +146,21 @@ export class OrdersService {
       });
     }
 
-    // Step 3: Execute Redis confirm_sold.lua atomically
+    // Step 3: Execute Redis confirm_sold.lua atomically with fresh post-payment timestamp
     const confirmRes = await this.redisScripts.confirmSold(
       eventId,
       effectiveUserId,
       seatIds,
-      nowMs,
+      Date.now(),
     );
 
     if (!confirmRes.success) {
       const isExpiredOrLost =
         confirmRes.code === "HOLD_EXPIRED" ||
         confirmRes.code === "SEAT_NOT_HELD_BY_YOU";
+      this.logger.error(
+        `CRITICAL: Payment ${paymentResult.transactionId ?? "unknown"} succeeded for user ${effectiveUserId} on event ${eventId}, but confirmSold failed with ${confirmRes.code} — compensating refund required`,
+      );
       throw new ConflictException({
         code: isExpiredOrLost ? confirmRes.code : ErrorCode.CONFLICT,
         message: `Failed to confirm seat lock in Redis: ${confirmRes.code}`,
