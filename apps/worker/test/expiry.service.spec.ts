@@ -14,6 +14,8 @@ describe("ExpiryService (Unit)", () => {
   let mockRedis: {
     scan: jest.Mock;
     publish: jest.Mock;
+    set: jest.Mock;
+    eval: jest.Mock;
   };
   let mockRedisScripts: {
     expireDue: jest.Mock;
@@ -27,13 +29,16 @@ describe("ExpiryService (Unit)", () => {
   };
   let mockDataSource: {
     isInitialized: boolean;
+    initialize: jest.Mock;
     getRepository: jest.Mock;
   };
 
   beforeEach(async () => {
     mockRedis = {
-      scan: jest.fn(),
+      scan: jest.fn().mockResolvedValue(["0", []]),
       publish: jest.fn().mockResolvedValue(1),
+      set: jest.fn().mockResolvedValue("OK"),
+      eval: jest.fn().mockResolvedValue(1),
     };
 
     mockRedisScripts = {
@@ -50,6 +55,7 @@ describe("ExpiryService (Unit)", () => {
 
     mockDataSource = {
       isInitialized: false,
+      initialize: jest.fn().mockResolvedValue(undefined),
       getRepository: jest.fn().mockReturnValue({
         createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
       }),
@@ -120,6 +126,7 @@ describe("ExpiryService (Unit)", () => {
         source: "WORKER_EXPIRY",
       }),
     );
+    expect(service.getMetrics().seatsReleasedTotal).toBe(2);
   });
 
   it("continues processing remaining events if one event throws", async () => {
@@ -137,15 +144,7 @@ describe("ExpiryService (Unit)", () => {
 
     expect(result).toEqual({ [event2]: ["VIP-1-1"] });
     expect(mockRedis.publish).toHaveBeenCalledTimes(1);
-    expect(mockRedis.publish).toHaveBeenCalledWith(
-      `seat-updates:${event2}`,
-      JSON.stringify({
-        eventId: event2,
-        seatIds: ["VIP-1-1"],
-        state: "AVAILABLE",
-        source: "WORKER_EXPIRY",
-      }),
-    );
+    expect(service.getMetrics().errorsByStage.lua).toBe(1);
   });
 
   it("syncs event_seats to AVAILABLE in Postgres when DataSource is initialized", async () => {
@@ -172,5 +171,63 @@ describe("ExpiryService (Unit)", () => {
 
     expect(result).toEqual({ [eventId]: ["SEC3-C-4"] });
     expect(mockRedis.publish).toHaveBeenCalledTimes(1);
+    expect(service.getMetrics().errorsByStage.db).toBe(1);
+  });
+
+  it("acquires distributed leader lock in handleCron and releases it atomically", async () => {
+    await service.handleCron();
+
+    expect(mockRedis.set).toHaveBeenCalledWith(
+      "worker:expiry:leader",
+      expect.any(String),
+      "PX",
+      4500,
+      "NX",
+    );
+    expect(mockRedis.eval).toHaveBeenCalledTimes(1);
+    expect(service.getMetrics().ticksTotal).toBe(1);
+    expect(service.getMetrics().ticksSkippedLock).toBe(0);
+  });
+
+  it("skips tick when another worker replica holds the distributed leader lock", async () => {
+    mockRedis.set.mockResolvedValueOnce(null);
+
+    await service.handleCron();
+
+    expect(mockRedis.scan).not.toHaveBeenCalled();
+    expect(mockRedis.eval).not.toHaveBeenCalled();
+    expect(service.getMetrics().ticksSkippedLock).toBe(1);
+  });
+
+  it("suppresses overlapping handleCron ticks and drains on onModuleDestroy", async () => {
+    let releaseScan!: (value: [string, string[]]) => void;
+    mockRedis.scan.mockImplementationOnce(
+      () =>
+        new Promise<[string, string[]]>((resolve) => {
+          releaseScan = resolve;
+        }),
+    );
+
+    const firstTick = service.handleCron();
+    // Yield microtask so firstTick reaches scan
+    await Promise.resolve();
+    await Promise.resolve();
+
+    // Second tick should be skipped due to isRunning overlap guard
+    await service.handleCron();
+    expect(service.getMetrics().ticksSkippedOverlap).toBe(1);
+
+    // Start shutdown drain while firstTick is still in flight
+    let drained = false;
+    const drainPromise = service.onModuleDestroy().then(() => {
+      drained = true;
+    });
+    await Promise.resolve();
+    expect(drained).toBe(false);
+
+    releaseScan(["0", []]);
+    await firstTick;
+    await drainPromise;
+    expect(drained).toBe(true);
   });
 });

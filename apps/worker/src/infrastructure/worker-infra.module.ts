@@ -46,21 +46,20 @@ import {
     },
     {
       provide: WORKER_DATA_SOURCE,
-      useFactory: async (): Promise<DataSource | null> => {
+      useFactory: async (): Promise<DataSource> => {
         const logger = new Logger("WorkerDataSource");
         try {
           if (!AppDataSource.isInitialized) {
             await AppDataSource.initialize();
           }
-          return AppDataSource;
         } catch (err) {
           logger.warn(
-            `PostgreSQL connection deferred (DB sync disabled until available): ${
+            `PostgreSQL connection deferred (will retry lazily on sync): ${
               err instanceof Error ? err.message : String(err)
             }`,
           );
-          return null;
         }
+        return AppDataSource;
       },
     },
   ],
