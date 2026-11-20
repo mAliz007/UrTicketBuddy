@@ -2,15 +2,15 @@
 
 ## Corpus Check
 
-- 169 files · ~60,882 words
+- 169 files · ~61,443 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 561 nodes · 729 edges · 57 communities detected
+- 561 nodes · 730 edges · 57 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
-- Edge kinds: contains: 236 · references: 225 · method: 132 · calls: 46 · imports_from: 42 · imports: 29 · implements: 17 · inherits: 2
+- Edge kinds: contains: 236 · references: 225 · method: 132 · calls: 47 · imports_from: 42 · imports: 29 · implements: 17 · inherits: 2
 
 ## Input Scope
 
@@ -21,7 +21,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `a489699`
+- Built from Git commit: `4228f52`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
@@ -149,7 +149,7 @@ Nodes (6): InternalSeatNode, InternalVenueLayout, InvalidLayoutError, parseLayou
 
 ### Community 19 - "Community 19"
 
-Cohesion: 0.38
+Cohesion: 0.43
 Nodes (2): BloomService, OnApplicationBootstrap
 
 ### Community 20 - "Community 20"

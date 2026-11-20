@@ -92,6 +92,7 @@ describe("GateService", () => {
     mockRedisClient = {
       set: jest.fn(async () => "OK"), // "OK" on NX success, null on duplicate
       del: jest.fn(async () => 1),
+      exists: jest.fn(async () => 1),
     };
 
     mockBloomService = {
@@ -156,7 +157,14 @@ describe("GateService", () => {
       // Verify PostgreSQL queried
       expect(mockTicketRepo.findOne).toHaveBeenCalled();
 
-      // Verify replay protection acquired
+      // Verify concurrency scan lock and replay protection acquired
+      expect(mockRedisClient.set).toHaveBeenCalledWith(
+        `scan_lock:${sampleTicket.id}`,
+        "1",
+        "EX",
+        5,
+        "NX",
+      );
       expect(mockRedisClient.set).toHaveBeenCalledWith(
         `qr_nonce:${sampleTicket.id}:${validWindow}`,
         "1",
@@ -165,10 +173,19 @@ describe("GateService", () => {
         "NX",
       );
 
-      // Verify status atomically updated to CHECKED_IN
+      // Verify status atomically updated to CHECKED_IN with seedVersion
       expect(mockTicketRepo.update).toHaveBeenCalledWith(
-        { id: sampleTicket.id, status: TicketStatus.ISSUED },
+        {
+          id: sampleTicket.id,
+          status: TicketStatus.ISSUED,
+          seedVersion: sampleTicket.seedVersion,
+        },
         { status: TicketStatus.CHECKED_IN },
+      );
+
+      // Verify scan_lock deleted in finally
+      expect(mockRedisClient.del).toHaveBeenCalledWith(
+        `scan_lock:${sampleTicket.id}`,
       );
 
       // Verify gate scan recorded as VALID with foreign key and ref
@@ -242,9 +259,20 @@ describe("GateService", () => {
       );
     });
 
-    it("should reject replay scan within 60s window with 409 Conflict", async () => {
-      // Redis NX returns null (already set)
+    it("should reject with 409 Conflict if another turnstile holds the active scan lock", async () => {
+      // scan_lock fails (null)
       mockRedisClient.set.mockResolvedValueOnce(null);
+
+      await expect(
+        service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it("should reject replay scan within 60s window with 409 Conflict", async () => {
+      // scan_lock succeeds, qr_nonce returns null (already set)
+      mockRedisClient.set
+        .mockResolvedValueOnce("OK") // scan_lock
+        .mockResolvedValueOnce(null); // qr_nonce
 
       await expect(
         service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
@@ -300,6 +328,25 @@ describe("GateService", () => {
       await expect(
         service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
       ).rejects.toThrow(ConflictException);
+
+      expect(mockGateScanRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          result: ScanResult.INVALID,
+        }),
+      );
+    });
+
+    it("should reject scan with 400 Bad Request if seedVersion was rotated concurrently", async () => {
+      // Update fails because seedVersion changed
+      mockTicketRepo.update.mockResolvedValueOnce({ affected: 0 });
+      // When refreshed from DB, seedVersion is 2 instead of 1
+      mockTicketRepo.findOne
+        .mockResolvedValueOnce({ ...sampleTicket }) // initial lookup
+        .mockResolvedValueOnce({ ...sampleTicket, seedVersion: 2 }); // refreshed lookup
+
+      await expect(
+        service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
+      ).rejects.toThrow(BadRequestException);
 
       expect(mockGateScanRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({

@@ -16,6 +16,7 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 3: `feat/UTB-14-dynamic-qr-gate-scanner-bloom`
   - Sub-task 4: `feat/UTB-14-dynamic-qr-gate-tests`
   - Sub-task 5: `feat/UTB-14-dynamic-qr-gate-security-hardening`
+  - Sub-task 6: `feat/UTB-14-dynamic-qr-gate-audit-fixes`
 - **Status:** Completed (Sub-tasks merged into `feat/UTB-14-dynamic-qr-gate`; PR ready for review; `main` unmerged)
 - **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `README.md`, `CHANGELOG.md`
 - **Scope & Deliverables:**
@@ -66,6 +67,15 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
     - Added explicit status differentiation (`CHECKED_IN`, `REVOKED`, `VOID`).
     - Added Redis replay nonce rollback on unexpected transient database errors so patrons are not locked out for 60s on transient DB network glitches.
     - Scoped entry velocity calculation strictly to valid scans in the trailing 5-minute sliding window.
+  - **Adversarial Security & Architecture Audit Fixes (Sub-task 6)**:
+    - Implemented distributed per-ticket turnstile scan lock (`scan_lock:${ticketId}`, TTL 5s) in Redis to eliminate race conditions between adjacent 30-second windows across concurrent turnstiles.
+    - Added atomic `seedVersion: ticket.seedVersion` guard in `ticketRepository.update` to detect concurrent key rotation and reject revoked tokens with 400 Bad Request (`TICKET_INVALID`).
+    - Implemented Redis key existence check and fail-open mechanism in `BloomService` to ensure cold starts, Redis flushes, or network partitions never falsely reject legitimate paying attendees.
+    - Added strict UUID validation via NestJS `ParseUUIDPipe` on `:ticketId` route parameters and `eventId` query parameters.
+    - Enforced safe string truncation (`substring(0, 255)`) on `scannedTicketRef` to prevent PostgreSQL VARCHAR(255) overflow errors on oversized attack payloads.
+    - Added Zod refinement in `packages/config` forbidding the default development `MASTER_TICKET_SECRET` when `NODE_ENV === "production"`.
+    - Hardened organizer tenant isolation in `GateService` to fail closed for organizer roles when event ownership cannot be verified.
+    - Corrected concurrent check-in error message to `"Ticket is no longer in ISSUED state (already checked in)"`.
 
 ---
 

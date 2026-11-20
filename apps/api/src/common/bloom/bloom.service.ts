@@ -30,6 +30,7 @@ export class BloomService implements OnApplicationBootstrap {
   public static readonly BLOOM_KEY = "bf:tickets";
   public static readonly FALLBACK_KEY = "bf:tickets:fallback";
   private isBloomAvailable = true;
+  private isWarming = false;
   private readonly inMemoryFallback = new Set<string>();
 
   constructor(
@@ -49,6 +50,10 @@ export class BloomService implements OnApplicationBootstrap {
    * using cursor pagination and pipelined batching for optimal memory and throughput.
    */
   async initAndRebuild(): Promise<void> {
+    if (this.isWarming) {
+      return;
+    }
+    this.isWarming = true;
     try {
       if (!this.ticketRepository) {
         return;
@@ -131,6 +136,8 @@ export class BloomService implements OnApplicationBootstrap {
           err instanceof Error ? err.message : String(err)
         }`,
       );
+    } finally {
+      this.isWarming = false;
     }
   }
 
@@ -191,6 +198,29 @@ export class BloomService implements OnApplicationBootstrap {
       typeof (this.redisClient as any).call === "function"
     ) {
       try {
+        if (typeof this.redisClient.exists === "function") {
+          const keyExists = await this.redisClient.exists(
+            BloomService.BLOOM_KEY,
+          );
+          if (!keyExists) {
+            // Bloom key is uninitialized or Redis was restarted/flushed
+            // Fail open to avoid rejecting valid patrons, and trigger background warming
+            if (!this.isWarming) {
+              this.logger.warn(
+                `RedisBloom key '${BloomService.BLOOM_KEY}' missing; failing open and triggering re-warming.`,
+              );
+              this.initAndRebuild().catch((err) =>
+                this.logger.error(
+                  `Background warming failed: ${
+                    err instanceof Error ? err.message : String(err)
+                  }`,
+                ),
+              );
+            }
+            return true;
+          }
+        }
+
         const res = await (this.redisClient as any).call(
           "BF.EXISTS",
           BloomService.BLOOM_KEY,
@@ -209,6 +239,18 @@ export class BloomService implements OnApplicationBootstrap {
 
     if (this.redisClient && typeof this.redisClient.sismember === "function") {
       try {
+        if (typeof this.redisClient.exists === "function") {
+          const keyExists = await this.redisClient.exists(
+            BloomService.FALLBACK_KEY,
+          );
+          if (!keyExists) {
+            if (!this.isWarming) {
+              this.initAndRebuild().catch(() => {});
+            }
+            return true;
+          }
+        }
+
         const exists = await this.redisClient.sismember(
           BloomService.FALLBACK_KEY,
           ticketId,
