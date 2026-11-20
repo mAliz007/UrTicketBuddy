@@ -5,6 +5,8 @@ import {
   Body,
   Query,
   UseGuards,
+  HttpCode,
+  HttpStatus,
   BadRequestException,
 } from "@nestjs/common";
 import { UserRole, ErrorCode } from "@urticketbuddy/contracts";
@@ -26,6 +28,7 @@ export class GateController {
    * Protected for GATE_STAFF, ORGANIZER, and ADMIN roles.
    */
   @Post("scan")
+  @HttpCode(HttpStatus.OK)
   @Roles(UserRole.GATE_STAFF, UserRole.ORGANIZER, UserRole.ADMIN)
   async scanTicket(@Body() dto: ScanTicketDto, @CurrentUser() user: any) {
     const scannedBy = user?.id || user?.userId || user?.email || "gate-staff";
