@@ -100,6 +100,12 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
       }
       return { affected: 0 };
     }),
+    increment: jest.fn(async (criteria: any, field: string, amount: number) => {
+      const existing = ticketsStore.get(criteria.id);
+      if (existing) {
+        existing[field] = (existing[field] || 0) + amount;
+      }
+    }),
   };
 
   const mockGateScanRepo = {
@@ -123,6 +129,10 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
 
   const mockRedisClient = {
     get: jest.fn(async () => null),
+    del: jest.fn(async (key: string) => {
+      redisNonces.delete(key);
+      return 1;
+    }),
     set: jest.fn(
       async (
         key: string,
@@ -206,7 +216,19 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
       .overrideProvider(VENUE_REPOSITORY)
       .useValue({ findOne: jest.fn(), save: jest.fn() })
       .overrideProvider(EVENT_REPOSITORY)
-      .useValue({ findOne: jest.fn(), save: jest.fn() })
+      .useValue({
+        findOne: jest.fn(async ({ where }: any) => {
+          if (where?.id === eventId) {
+            return {
+              id: eventId,
+              organizerId: "org-1",
+              title: "Test Event",
+            };
+          }
+          return null;
+        }),
+        save: jest.fn(),
+      })
       .overrideProvider(EVENT_SEAT_REPOSITORY)
       .useValue({ findOne: jest.fn(), save: jest.fn() })
       .overrideProvider(ORDER_REPOSITORY)
@@ -431,10 +453,15 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
       // Verify PostgreSQL findOne was NEVER called (O(1) prefilter protection)
       expect(mockTicketRepo.findOne).not.toHaveBeenCalled();
 
-      // Verify scan audit was logged as INVALID
-      expect(gateScansStore.some((s) => s.result === ScanResult.INVALID)).toBe(
-        true,
-      );
+      // Verify scan audit was logged as INVALID with ticketId: null and scannedTicketRef
+      expect(
+        gateScansStore.some(
+          (s) =>
+            s.result === ScanResult.INVALID &&
+            s.ticketId === null &&
+            s.scannedTicketRef === forgedTicketId,
+        ),
+      ).toBe(true);
     });
   });
 

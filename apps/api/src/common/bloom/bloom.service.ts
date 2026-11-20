@@ -19,10 +19,10 @@ import {
  * ARCHITECTURAL INVARIANT (D-7 & Section 7):
  * - The Bloom filter is a prefilter ONLY: it is used to reject definite non-existent/forged
  *   tokens with O(1) time complexity without querying PostgreSQL.
- * - It NEVER approves a scan; scans that pass the Bloom filter MUST still be verified against
- *   PostgreSQL and the Redis replay nonce lock.
+ * - It NEVER approves a scan; candidate scans that pass the Bloom filter MUST still be
+ *   verified against PostgreSQL, tenant boundaries, and the Redis replay nonce lock.
  * - If RedisBloom commands (BF.ADD / BF.EXISTS) are unavailable (e.g. in test/offline environments),
- *   it falls back gracefully to a Redis SET (`bf:tickets:fallback`), and finally to in-memory Set.
+ *   it falls back gracefully to a Redis SET (`bf:tickets:fallback`), and finally to an in-memory Set.
  */
 @Injectable()
 export class BloomService implements OnApplicationBootstrap {
@@ -45,21 +45,85 @@ export class BloomService implements OnApplicationBootstrap {
   }
 
   /**
-   * Rebuilds or warms the Bloom filter from PostgreSQL tickets on startup.
+   * Rebuilds or warms the Bloom filter from PostgreSQL tickets on startup
+   * using cursor pagination and pipelined batching for optimal memory and throughput.
    */
   async initAndRebuild(): Promise<void> {
     try {
       if (!this.ticketRepository) {
         return;
       }
-      const tickets = await this.ticketRepository.find({
-        select: ["id"],
-      });
-      for (const ticket of tickets) {
-        await this.add(ticket.id);
+
+      const chunkSize = 2000;
+      let offset = 0;
+      let totalWarmed = 0;
+
+      while (true) {
+        const tickets = await this.ticketRepository.find({
+          select: ["id"],
+          skip: offset,
+          take: chunkSize,
+        });
+
+        if (!tickets || tickets.length === 0) {
+          break;
+        }
+
+        // Pipelined RedisBloom batch insertion
+        if (
+          this.isBloomAvailable &&
+          this.redisClient &&
+          typeof (this.redisClient as any).pipeline === "function"
+        ) {
+          try {
+            const pipeline = this.redisClient.pipeline();
+            for (const ticket of tickets) {
+              (pipeline as any).call(
+                "BF.ADD",
+                BloomService.BLOOM_KEY,
+                ticket.id,
+              );
+            }
+            await pipeline.exec();
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            if (
+              msg.includes("unknown command") ||
+              msg.includes("ERR unknown")
+            ) {
+              this.isBloomAvailable = false;
+            }
+          }
+        }
+
+        // Fallback Redis SET batch insertion
+        if (
+          !this.isBloomAvailable &&
+          this.redisClient &&
+          typeof this.redisClient.sadd === "function"
+        ) {
+          try {
+            const ids = tickets.map((t) => t.id);
+            await this.redisClient.sadd(BloomService.FALLBACK_KEY, ...ids);
+          } catch {
+            // Proceed to in-memory fallback
+          }
+        }
+
+        // In-memory set warming
+        for (const ticket of tickets) {
+          this.inMemoryFallback.add(ticket.id);
+        }
+
+        totalWarmed += tickets.length;
+        offset += tickets.length;
+        if (tickets.length < chunkSize) {
+          break;
+        }
       }
+
       this.logger.log(
-        `Warmed RedisBloom ticket prefilter with ${tickets.length} tickets.`,
+        `Warmed RedisBloom ticket prefilter with ${totalWarmed} tickets.`,
       );
     } catch (err) {
       this.logger.warn(
@@ -161,6 +225,7 @@ export class BloomService implements OnApplicationBootstrap {
       }
     }
 
+    // In-memory fallback
     return (
       this.inMemoryFallback.size === 0 || this.inMemoryFallback.has(ticketId)
     );

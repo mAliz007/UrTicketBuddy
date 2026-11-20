@@ -38,6 +38,13 @@ describe("TicketsService", () => {
         return null;
       }),
       save: jest.fn(async (ticket: any) => ticket),
+      increment: jest.fn(
+        async (criteria: any, field: string, amount: number) => {
+          if (criteria.id === sampleTicket.id) {
+            sampleTicket.seedVersion += amount;
+          }
+        },
+      ),
       find: jest.fn(async ({ where }: any) => {
         if (where.ownerId === sampleTicket.ownerId) {
           return [{ ...sampleTicket }];
@@ -230,7 +237,11 @@ describe("TicketsService", () => {
     it("should increment seedVersion by 1 and save", async () => {
       const rotated = await service.rotateKey(sampleTicket.id);
       expect(rotated.seedVersion).toBe(2);
-      expect(mockTicketRepo.save).toHaveBeenCalled();
+      expect(mockTicketRepo.increment).toHaveBeenCalledWith(
+        { id: sampleTicket.id },
+        "seedVersion",
+        1,
+      );
     });
   });
 

@@ -178,7 +178,7 @@
     "video": []
   },
   "total_files": 169,
-  "total_words": 59747,
+  "total_words": 60882,
   "needs_graph": true,
   "warning": null,
   "skipped_sensitive": [
@@ -191,7 +191,7 @@
   "graphifyignore_patterns": 3,
   "git": {
     "source_owner": "git",
-    "source_hash": "a0a678adbd4ccbab583cc617947d6e064a35a42d",
+    "source_hash": "a4896995544fe179829ea9f93c655395b0c94574",
     "branches": [
       "chore/UTB-1-monorepo-scaffold",
       "chore/UTB-1-monorepo-scaffold-apps",
@@ -206,6 +206,7 @@
       "feat/UTB-14-dynamic-qr-gate",
       "feat/UTB-14-dynamic-qr-gate-db-entities",
       "feat/UTB-14-dynamic-qr-gate-scanner-bloom",
+      "feat/UTB-14-dynamic-qr-gate-security-hardening",
       "feat/UTB-14-dynamic-qr-gate-tests",
       "feat/UTB-14-dynamic-qr-gate-tickets-module",
       "feat/UTB-3-jwt-auth-rbac",
@@ -235,7 +236,7 @@
     "source": "configured-default",
     "root": ".",
     "git_root": ".",
-    "head": "a0a678adbd4ccbab583cc617947d6e064a35a42d",
+    "head": "a4896995544fe179829ea9f93c655395b0c94574",
     "candidate_count": null,
     "included_count": 169,
     "excluded_untracked_count": 0,

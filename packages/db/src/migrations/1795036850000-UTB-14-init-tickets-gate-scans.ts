@@ -45,12 +45,13 @@ export class Utb14InitTicketsGateScans1795036850000 implements MigrationInterfac
       CREATE TABLE "gate_scans" (
         "id" uuid NOT NULL DEFAULT gen_random_uuid(),
         "ticketId" uuid,
+        "scannedTicketRef" character varying(255),
         "eventId" uuid NOT NULL,
         "scannedBy" character varying(255) NOT NULL,
         "result" character varying(50) NOT NULL,
         "scannedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_gate_scans_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_594f94930d041a64fef309e6252" FOREIGN KEY ("ticketId") REFERENCES "tickets"("id") ON DELETE CASCADE ON UPDATE NO ACTION,
+        CONSTRAINT "FK_594f94930d041a64fef309e6252" FOREIGN KEY ("ticketId") REFERENCES "tickets"("id") ON DELETE SET NULL ON UPDATE NO ACTION,
         CONSTRAINT "FK_eb2d496837fe287e6d5218e5fe3" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE NO ACTION
       );
     `);
@@ -62,9 +63,16 @@ export class Utb14InitTicketsGateScans1795036850000 implements MigrationInterfac
     await queryRunner.query(`
       CREATE INDEX "idx_gate_scans_event_id" ON "gate_scans" ("eventId");
     `);
+
+    await queryRunner.query(`
+      CREATE INDEX "idx_gate_scans_event_scanned_at" ON "gate_scans" ("eventId", "scannedAt");
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "idx_gate_scans_event_scanned_at";`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_gate_scans_event_id";`);
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_gate_scans_ticket_id";`);
     await queryRunner.query(`DROP TABLE IF EXISTS "gate_scans";`);

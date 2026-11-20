@@ -102,19 +102,14 @@ export class TicketsService {
 
       const currentWindow = Math.floor(currentTimestampMs / 1000 / 30);
 
-      // Verify window validity: accept currentWindow and currentWindow - 1
-      if (tokenWindow < currentWindow - 1) {
+      // Verify window validity: strictly accept currentWindow and currentWindow - 1 (Decision D-3)
+      if (tokenWindow < currentWindow - 1 || tokenWindow > currentWindow) {
         return {
           valid: false,
-          reason: "Token window expired",
-          window: tokenWindow,
-          isExpired: true,
-        };
-      }
-      if (tokenWindow > currentWindow + 1) {
-        return {
-          valid: false,
-          reason: "Token window from far future",
+          reason:
+            tokenWindow < currentWindow - 1
+              ? "Token window expired"
+              : "Token window from future",
           window: tokenWindow,
           isExpired: true,
         };
@@ -206,12 +201,14 @@ export class TicketsService {
       });
     }
 
-    ticket.seedVersion += 1;
-    const saved = await this.ticketRepository.save(ticket);
+    await this.ticketRepository.increment({ id: ticketId }, "seedVersion", 1);
+    const updated = await this.ticketRepository.findOne({
+      where: { id: ticketId },
+    });
     this.logger.log(
-      `Rotated seed version for ticket ${ticketId} to ${saved.seedVersion}`,
+      `Rotated seed version for ticket ${ticketId} to ${updated!.seedVersion}`,
     );
-    return saved;
+    return updated!;
   }
 
   /**

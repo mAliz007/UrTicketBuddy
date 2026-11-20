@@ -1,26 +1,34 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BadRequestException, ConflictException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+} from "@nestjs/common";
 import { GateService } from "./gate.service";
 import {
   TICKET_REPOSITORY,
   GATE_SCAN_REPOSITORY,
+  EVENT_REPOSITORY,
   REDIS_CLIENT,
 } from "../../database/database.tokens";
 import { BloomService } from "../../common/bloom/bloom.service";
 import { TicketsService } from "../tickets/tickets.service";
-import { TicketStatus, ScanResult } from "@urticketbuddy/contracts";
+import { TicketStatus, ScanResult, UserRole } from "@urticketbuddy/contracts";
 import { Ticket } from "@urticketbuddy/db";
 
 describe("GateService", () => {
   let service: GateService;
   let mockTicketRepo: any;
   let mockGateScanRepo: any;
+  let mockEventRepo: any;
   let mockRedisClient: any;
   let mockBloomService: any;
   let mockTicketsService: any;
 
   const eventId = "11111111-1111-1111-1111-111111111111";
   const otherEventId = "99999999-9999-9999-9999-999999999999";
+  const organizerId = "organizer-tenant-123";
+
   const sampleTicket: Ticket = {
     id: "00000000-0000-0000-0000-000000000001",
     eventId,
@@ -58,6 +66,19 @@ describe("GateService", () => {
       }),
     };
 
+    mockEventRepo = {
+      findOne: jest.fn(async ({ where }: any) => {
+        if (where.id === eventId || where.id === otherEventId) {
+          return {
+            id: where.id,
+            organizerId,
+            title: "Test Event",
+          };
+        }
+        return null;
+      }),
+    };
+
     mockGateScanRepo = {
       create: jest.fn((dto: any) => ({
         id: "scan-uuid-123",
@@ -70,6 +91,7 @@ describe("GateService", () => {
 
     mockRedisClient = {
       set: jest.fn(async () => "OK"), // "OK" on NX success, null on duplicate
+      del: jest.fn(async () => 1),
     };
 
     mockBloomService = {
@@ -93,6 +115,10 @@ describe("GateService", () => {
         {
           provide: GATE_SCAN_REPOSITORY,
           useValue: mockGateScanRepo,
+        },
+        {
+          provide: EVENT_REPOSITORY,
+          useValue: mockEventRepo,
         },
         {
           provide: REDIS_CLIENT,
@@ -145,10 +171,11 @@ describe("GateService", () => {
         { status: TicketStatus.CHECKED_IN },
       );
 
-      // Verify gate scan recorded as VALID
+      // Verify gate scan recorded as VALID with foreign key and ref
       expect(mockGateScanRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
           ticketId: sampleTicket.id,
+          scannedTicketRef: sampleTicket.id,
           eventId,
           scannedBy: "scanner-staff-1",
           result: ScanResult.VALID,
@@ -156,7 +183,7 @@ describe("GateService", () => {
       );
     });
 
-    it("should reject forged ticket at Bloom filter with ZERO PostgreSQL queries", async () => {
+    it("should reject forged ticket at Bloom filter with ZERO PostgreSQL queries and safe null FK", async () => {
       // Bloom filter returns false (definite miss)
       mockBloomService.mightExist.mockResolvedValueOnce(false);
 
@@ -172,10 +199,11 @@ describe("GateService", () => {
       // Assert PostgreSQL repository findOne was NEVER called
       expect(mockTicketRepo.findOne).not.toHaveBeenCalled();
 
-      // Assert audit scan was logged as INVALID
+      // Assert audit scan was logged with ticketId: null (avoid FK violation) and scannedTicketRef
       expect(mockGateScanRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          ticketId: forgedTicketId,
+          ticketId: null,
+          scannedTicketRef: forgedTicketId,
           result: ScanResult.INVALID,
         }),
       );
@@ -230,8 +258,10 @@ describe("GateService", () => {
     });
 
     it("should reject if ticket is already CHECKED_IN with 409 Conflict", async () => {
-      // Update affected 0 (ticket was not in ISSUED state)
-      mockTicketRepo.update.mockResolvedValueOnce({ affected: 0 });
+      mockTicketRepo.findOne.mockResolvedValueOnce({
+        ...sampleTicket,
+        status: TicketStatus.CHECKED_IN,
+      });
 
       await expect(
         service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
@@ -243,14 +273,73 @@ describe("GateService", () => {
         }),
       );
     });
+
+    it("should reject REVOKED ticket with 409 Conflict and record INVALID", async () => {
+      mockTicketRepo.findOne.mockResolvedValueOnce({
+        ...sampleTicket,
+        status: TicketStatus.REVOKED,
+      });
+
+      await expect(
+        service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
+      ).rejects.toThrow(ConflictException);
+
+      expect(mockGateScanRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          result: ScanResult.INVALID,
+        }),
+      );
+    });
+
+    it("should reject VOID ticket with 409 Conflict and record INVALID", async () => {
+      mockTicketRepo.findOne.mockResolvedValueOnce({
+        ...sampleTicket,
+        status: TicketStatus.VOID,
+      });
+
+      await expect(
+        service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
+      ).rejects.toThrow(ConflictException);
+
+      expect(mockGateScanRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          result: ScanResult.INVALID,
+        }),
+      );
+    });
+
+    it("should rollback Redis nonce if database update fails unexpectedly", async () => {
+      mockTicketRepo.update.mockRejectedValueOnce(
+        new Error("Database connection lost"),
+      );
+
+      await expect(
+        service.scanTicket({ token: validToken, eventId }, "scanner-staff-1"),
+      ).rejects.toThrow("Database connection lost");
+
+      // Verify that Redis nonce was rolled back/deleted so the patron is not locked out
+      expect(mockRedisClient.del).toHaveBeenCalledWith(
+        `qr_nonce:${sampleTicket.id}:${validWindow}`,
+      );
+    });
+
+    it("should enforce tenant isolation if scanner belongs to another organizer", async () => {
+      await expect(
+        service.scanTicket({ token: validToken, eventId }, "scanner-staff-1", {
+          id: "intruder-scanner",
+          role: UserRole.ORGANIZER,
+          organizerTenantId: "different-tenant",
+        }),
+      ).rejects.toThrow(ForbiddenException);
+    });
   });
 
   describe("getMetrics", () => {
-    it("should return scan statistics and entry velocity", async () => {
+    it("should return scan statistics and entry velocity based on valid scans", async () => {
       mockGateScanRepo.count
         .mockResolvedValueOnce(100) // total
         .mockResolvedValueOnce(85) // valid
-        .mockResolvedValueOnce(25); // recent 5 mins
+        .mockResolvedValueOnce(25); // recent 5 mins valid scans
 
       const metrics = await service.getMetrics(eventId);
 
