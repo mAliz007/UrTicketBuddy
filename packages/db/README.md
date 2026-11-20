@@ -56,6 +56,7 @@ Example:
 - `1794836828550-UTB-2-init-extensions.ts`: Baseline migration enabling `pgcrypto` and `uuid-ossp`.
 - `1794836850000-UTB-9-init-venues-events.ts`: Venues, Events, and EventSeats tables with foreign keys and covering indexes.
 - `1794936850000-UTB-10-init-orders.ts`: Orders and OrderItems tables with foreign keys, covering indexes, and monetary precision.
+- `1795036850000-UTB-14-init-tickets-gate-scans.ts`: Tickets and GateScans tables with foreign keys, covering indexes, and status tracking.
 
 ### Entities
 
@@ -64,6 +65,8 @@ Example:
 - `EventSeat`: Individual seat coordinate and tier record belonging to an event (`eventId` FK, `seatId` deterministic `<section>-<row>-<number>`).
 - `Order`: Customer order record with total amount, currency, status, and event association (`eventId` FK, `userId` index).
 - `OrderItem`: Line item connecting an order to an individual event seat (`orderId` FK, `eventSeatId` FK, `price`).
+- `Ticket`: Digital admission ticket with cryptographic seed version, face value, and status (`ISSUED`, `CHECKED_IN`, `VOID`, `REVOKED`).
+- `GateScan`: Turnstile scan audit trail recording scan timestamps, scanner operator, and validation result (`VALID`, `USED`, `INVALID`, `EXPIRED`, `WRONG_EVENT`).
 
 ---
 
