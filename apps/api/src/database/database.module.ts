@@ -8,6 +8,8 @@ import {
   OrderItem,
   User,
   RefreshToken,
+  Ticket,
+  GateScan,
 } from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import mongoose from "mongoose";
@@ -24,6 +26,8 @@ import {
   REFRESH_TOKEN_REPOSITORY,
   ORDER_REPOSITORY,
   ORDER_ITEM_REPOSITORY,
+  TICKET_REPOSITORY,
+  GATE_SCAN_REPOSITORY,
   MONGO_CONNECTION,
   VENUE_LAYOUT_MODEL,
   REDIS_CLIENT,
@@ -101,6 +105,20 @@ let redisClientInstance: Redis | null = null;
       inject: [DATA_SOURCE],
     },
     {
+      provide: TICKET_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(Ticket);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: GATE_SCAN_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(GateScan);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
       provide: MONGO_CONNECTION,
       useFactory: async () => {
         const env = loadEnv();
@@ -159,6 +177,8 @@ let redisClientInstance: Redis | null = null;
     ORDER_ITEM_REPOSITORY,
     USER_REPOSITORY,
     REFRESH_TOKEN_REPOSITORY,
+    TICKET_REPOSITORY,
+    GATE_SCAN_REPOSITORY,
     MONGO_CONNECTION,
     VENUE_LAYOUT_MODEL,
     REDIS_CLIENT,

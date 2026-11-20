@@ -64,7 +64,9 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
     save: jest.fn(async (entityClass: any, entityOrEntities: any) => {
       if (Array.isArray(entityOrEntities)) {
         for (const item of entityOrEntities) {
-          orderItemsStore.set(item.id, item);
+          if (item && "price" in item && "eventSeatId" in item) {
+            orderItemsStore.set(item.id, item);
+          }
         }
         return entityOrEntities;
       }
