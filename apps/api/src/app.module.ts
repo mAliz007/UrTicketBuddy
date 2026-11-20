@@ -7,6 +7,7 @@ import { EventsModule } from "./modules/events/events.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { CheckoutModule } from "./modules/checkout/checkout.module";
 import { OrdersModule } from "./modules/orders/orders.module";
+import { TicketsModule } from "./modules/tickets/tickets.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OrdersModule } from "./modules/orders/orders.module";
     AuthModule,
     CheckoutModule,
     OrdersModule,
+    TicketsModule,
   ],
   controllers: [],
   providers: [],
