@@ -2,15 +2,15 @@
 
 ## Corpus Check
 
-- 169 files · ~59,747 words
+- 169 files · ~60,882 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 561 nodes · 728 edges · 57 communities detected
+- 561 nodes · 729 edges · 57 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
-- Edge kinds: contains: 236 · references: 224 · method: 132 · calls: 46 · imports_from: 42 · imports: 29 · implements: 17 · inherits: 2
+- Edge kinds: contains: 236 · references: 225 · method: 132 · calls: 46 · imports_from: 42 · imports: 29 · implements: 17 · inherits: 2
 
 ## Input Scope
 
@@ -21,7 +21,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `a0a678a`
+- Built from Git commit: `a489699`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
@@ -417,7 +417,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `config`, `PlatformSettingsPort`, `CurrentUser` to the rest of the system?**
   _131 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05403508771929825 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.054385964912280704 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.0553306342780027 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**

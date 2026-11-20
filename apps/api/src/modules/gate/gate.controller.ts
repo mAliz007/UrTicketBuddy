@@ -30,9 +30,19 @@ export class GateController {
   @Post("scan")
   @HttpCode(HttpStatus.OK)
   @Roles(UserRole.GATE_STAFF, UserRole.ORGANIZER, UserRole.ADMIN)
-  async scanTicket(@Body() dto: ScanTicketDto, @CurrentUser() user: any) {
+  async scanTicket(
+    @Body() dto: ScanTicketDto,
+    @CurrentUser()
+    user: {
+      id?: string;
+      userId?: string;
+      email?: string;
+      role?: string;
+      organizerTenantId?: string;
+    },
+  ) {
     const scannedBy = user?.id || user?.userId || user?.email || "gate-staff";
-    return this.gateService.scanTicket(dto, scannedBy);
+    return this.gateService.scanTicket(dto, scannedBy, user);
   }
 
   /**
@@ -42,13 +52,23 @@ export class GateController {
    */
   @Get("metrics")
   @Roles(UserRole.GATE_STAFF, UserRole.ORGANIZER, UserRole.ADMIN)
-  async getMetrics(@Query("eventId") eventId: string) {
+  async getMetrics(
+    @Query("eventId") eventId: string,
+    @CurrentUser()
+    user: {
+      id?: string;
+      userId?: string;
+      email?: string;
+      role?: string;
+      organizerTenantId?: string;
+    },
+  ) {
     if (!eventId) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
         message: "Query parameter 'eventId' is required",
       });
     }
-    return this.gateService.getMetrics(eventId);
+    return this.gateService.getMetrics(eventId, user);
   }
 }

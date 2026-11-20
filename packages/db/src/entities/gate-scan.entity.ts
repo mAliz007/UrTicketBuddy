@@ -11,6 +11,7 @@ import { Ticket } from "./ticket.entity";
 import { Event } from "./event.entity";
 
 @Entity("gate_scans")
+@Index("idx_gate_scans_event_scanned_at", ["eventId", "scannedAt"])
 export class GateScan {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -18,6 +19,9 @@ export class GateScan {
   @Index("idx_gate_scans_ticket_id")
   @Column({ type: "uuid", nullable: true })
   ticketId!: string | null;
+
+  @Column({ type: "varchar", length: 255, nullable: true })
+  scannedTicketRef?: string | null;
 
   @Index("idx_gate_scans_event_id")
   @Column({ type: "uuid" })
@@ -32,7 +36,7 @@ export class GateScan {
   @CreateDateColumn({ type: "timestamp with time zone" })
   scannedAt!: Date;
 
-  @ManyToOne(() => Ticket, { onDelete: "CASCADE", nullable: true })
+  @ManyToOne(() => Ticket, { onDelete: "SET NULL", nullable: true })
   @JoinColumn({ name: "ticketId" })
   ticket?: Ticket | null;
 

@@ -15,12 +15,13 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 2: `feat/UTB-14-dynamic-qr-gate-tickets-module`
   - Sub-task 3: `feat/UTB-14-dynamic-qr-gate-scanner-bloom`
   - Sub-task 4: `feat/UTB-14-dynamic-qr-gate-tests`
+  - Sub-task 5: `feat/UTB-14-dynamic-qr-gate-security-hardening`
 - **Status:** Completed (Sub-tasks merged into `feat/UTB-14-dynamic-qr-gate`; PR ready for review; `main` unmerged)
 - **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `README.md`, `CHANGELOG.md`
 - **Scope & Deliverables:**
   - **TypeORM Entities & PostgreSQL Migration (`packages/db`)**:
     - Created `Ticket` entity: `id` (uuid PK), `eventId` (uuid FK with covering index `idx_tickets_event_id`), `eventSeatId` (uuid FK with covering index `idx_tickets_event_seat_id`), `orderId` (uuid FK with covering index `idx_tickets_order_id`), `ownerId` (varchar indexed with `idx_tickets_owner_id`), `status` (`ISSUED`, `CHECKED_IN`, `VOID`, `REVOKED`), `seedVersion` (int default 1), `faceValueMinor` (int default 100000).
-    - Created `GateScan` entity: `id` (uuid PK), `ticketId` (uuid FK nullable with covering index `idx_gate_scans_ticket_id`), `eventId` (uuid FK with covering index `idx_gate_scans_event_id`), `scannedBy` (varchar), `result` (`VALID`, `USED`, `INVALID`, `EXPIRED`, `WRONG_EVENT`), `scannedAt` (timestamptz).
+    - Created `GateScan` entity: `id` (uuid PK), `ticketId` (uuid FK nullable with `ON DELETE SET NULL`, covering index `idx_gate_scans_ticket_id`), `scannedTicketRef` (varchar nullable storing raw scanned token id without FK violations), `eventId` (uuid FK with covering index `idx_gate_scans_event_id`), `scannedBy` (varchar), `result` (`VALID`, `USED`, `INVALID`, `EXPIRED`, `WRONG_EVENT`), `scannedAt` (timestamptz), and composite index `idx_gate_scans_event_scanned_at` on `(eventId, scannedAt)`.
     - Added reversible TypeORM migration `1795036850000-UTB-14-init-tickets-gate-scans.ts` with hashed foreign keys (`FK_8a101375d173c39a7c1d02c9d7d`, `FK_265db83fa22115be54165ab4c24`, `FK_e3e1e1e9d4ee34649da54a016e4`, `FK_594f94930d041a64fef309e6252`, `FK_eb2d496837fe287e6d5218e5fe3`) guaranteeing zero schema drift on `pnpm db:check`.
     - Integrated ticket creation into `OrdersService.checkout()` inside the ACID TypeORM transaction and registered issued tickets into `BloomService`.
   - **Contracts & Shared Types (`packages/contracts`)**:
@@ -52,9 +53,19 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
       7. Audit log insertion (`GateScan` -> `VALID`) and returns `200 OK`.
     - `GET /api/v1/gate/metrics`: Real-time entry velocity, total scans, valid check-ins, and rejections.
   - **Testing & Verification**:
-    - Unit tests for `TicketsService` (10/10 passed) and `GateService` (11/11 passed).
+    - Unit tests for `TicketsService` (10/10 passed) and `GateService` (15/15 passed).
     - Supertest E2E integration test suite (`apps/api/test/tickets-gate.e2e-spec.ts`) asserting dynamic QR generation, 403 authorization guards, successful check-ins, replay rejection, expired window screenshot rejection, seed rotation invalidation, and Bloom filter zero-PostgreSQL rejection (12/12 passed).
     - Quality gates passed: `pnpm db:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm graphify`.
+  - **Security & Concurrency Hardening (Sub-task 5)**:
+    - Fixed forged token audit logging to record `ticketId: null` and `scannedTicketRef` preventing PostgreSQL Foreign Key constraint crashes.
+    - Updated `gate_scans.ticketId` FK to `ON DELETE SET NULL` preventing turnstile audit logs from being wiped if a ticket record is removed.
+    - Implemented chunked (`take: 2000`) and pipelined RedisBloom warming to prevent node heap exhaustion during startup.
+    - Added strict window constraint `[currentWindow - 1, currentWindow]` per Decision D-3, rejecting future windows.
+    - Added atomic SQL increment for `seedVersion` in `TicketsService.rotateKey` avoiding race condition overwrites.
+    - Enforced organizer tenant isolation on gate scan and metrics endpoints.
+    - Added explicit status differentiation (`CHECKED_IN`, `REVOKED`, `VOID`).
+    - Added Redis replay nonce rollback on unexpected transient database errors so patrons are not locked out for 60s on transient DB network glitches.
+    - Scoped entry velocity calculation strictly to valid scans in the trailing 5-minute sliding window.
 
 ---
 
