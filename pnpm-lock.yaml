@@ -498,12 +498,21 @@ importers:
       "@nestjs/platform-express":
         specifier: ^11.0.10
         version: 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(supports-color@8.1.1)
+      "@nestjs/schedule":
+        specifier: ^12.0.4
+        version: 12.0.4(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)
       "@urticketbuddy/config":
         specifier: workspace:*
         version: link:../../packages/config
       "@urticketbuddy/contracts":
         specifier: workspace:*
         version: link:../../packages/contracts
+      "@urticketbuddy/db":
+        specifier: workspace:*
+        version: link:../../packages/db
+      "@urticketbuddy/redis-scripts":
+        specifier: workspace:*
+        version: link:../../packages/redis-scripts
       bullmq:
         specifier: ^5.41.6
         version: 5.81.5(supports-color@8.1.1)
@@ -516,6 +525,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      typeorm:
+        specifier: ^0.3.20
+        version: 0.3.31(@google-cloud/spanner@8.13.0(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(pg@8.23.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.9.3))
     devDependencies:
       "@nestjs/cli":
         specifier: ^11.0.4
@@ -538,6 +550,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.20.5)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.9.3))
+      testcontainers:
+        specifier: 10.18.0
+        version: 10.18.0(bare-buffer@3.7.2)(supports-color@8.1.1)
       ts-jest:
         specifier: ^29.2.5
         version: 29.4.15(@babel/core@7.29.13(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.13(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.25.12)(jest-util@29.7.0)(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.9.3)))(typescript@5.9.3)
@@ -2425,6 +2440,16 @@ packages:
       "@nestjs/websockets": ^11.0.0
       rxjs: ^7.1.0
 
+  "@nestjs/schedule@12.0.4":
+    resolution:
+      {
+        integrity: sha512-C797UxK2mOB8kTSwEfHmwy3Ut72qSLkS/BLFHR3jPW/NZKZkqGFpoX5Ga3QlLdeugCg6NxrXhvgOMxioHhFzXg==,
+      }
+    engines: { node: ">=20.19.0" }
+    peerDependencies:
+      "@nestjs/common": ^11.0.0 || ^12.0.0
+      "@nestjs/core": ^11.0.0 || ^12.0.0
+
   "@nestjs/schematics@11.1.0":
     resolution:
       {
@@ -3222,6 +3247,12 @@ packages:
     resolution:
       {
         integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==,
+      }
+
+  "@types/luxon@3.7.6":
+    resolution:
+      {
+        integrity: sha512-6KSjliQAXK8ZLgFQO4B7iE4Rpf/B3rItzCFuXezBY/XIAGxOdLd7vRNK9/StRPwiS/yJsVbB7HKpW46B8tcEuQ==,
       }
 
   "@types/methods@1.1.4":
@@ -4757,6 +4788,13 @@ packages:
       }
     engines: { node: ">=12.0.0" }
     deprecated: v4 is no longer maintained, upgrade to v5
+
+  cron@4.4.0:
+    resolution:
+      {
+        integrity: sha512-fkdfq+b+AHI4cKdhZlppHveI/mgz2qpiYxcm+t5E5TsxX7QrLS1VE0+7GENEk9z0EeGPcpSciGv6ez24duWhwQ==,
+      }
+    engines: { node: ">=18.x" }
 
   cross-spawn@7.0.6:
     resolution:
@@ -11264,6 +11302,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  "@nestjs/schedule@12.0.4(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)":
+    dependencies:
+      "@nestjs/common": 11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
+      "@nestjs/core": 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/platform-express@11.2.10)(@nestjs/websockets@11.2.10)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      cron: 4.4.0
+
   "@nestjs/schematics@11.1.0(chokidar@4.0.3)(prettier@3.10.1)(typescript@5.9.3)":
     dependencies:
       "@angular-devkit/core": 19.2.24(chokidar@4.0.3)
@@ -11730,6 +11774,8 @@ snapshots:
     dependencies:
       "@types/ms": 2.1.0
       "@types/node": 22.20.5
+
+  "@types/luxon@3.7.6": {}
 
   "@types/methods@1.1.4": {}
 
@@ -12699,6 +12745,11 @@ snapshots:
 
   cron-parser@4.9.0:
     dependencies:
+      luxon: 3.7.2
+
+  cron@4.4.0:
+    dependencies:
+      "@types/luxon": 3.7.6
       luxon: 3.7.2
 
   cross-spawn@7.0.6:

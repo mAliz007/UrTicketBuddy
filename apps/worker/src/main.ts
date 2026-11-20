@@ -8,6 +8,7 @@ async function bootstrap() {
   const logger = new Logger("WorkerBootstrap");
   const app = await NestFactory.create(AppModule);
 
+  app.enableShutdownHooks();
   app.setGlobalPrefix("api/v1");
   app.enableCors();
 

@@ -538,10 +538,7 @@ export class RedisScriptsWrapper {
 
   extend_hold = this.extendHold.bind(this);
 
-  async expireDue(
-    eventId: string,
-    nowMs: number = Date.now(),
-  ): Promise<string[]> {
+  async expireDue(eventId: string, nowMs: number = 0): Promise<string[]> {
     const freed = await this.redis.expire_due(
       RedisKeys.holdExpiry(eventId),
       eventId,
