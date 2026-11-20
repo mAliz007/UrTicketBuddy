@@ -1,4 +1,5 @@
 import { NestFactory } from "@nestjs/core";
+import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
 import { loadEnv } from "@urticketbuddy/config";
 import { Logger } from "@nestjs/common";
@@ -8,6 +9,7 @@ async function bootstrap() {
   const logger = new Logger("ApiBootstrap");
   const app = await NestFactory.create(AppModule);
 
+  app.use(cookieParser());
   app.setGlobalPrefix("api/v1");
   app.enableCors();
 

@@ -264,9 +264,18 @@ importers:
       "@nestjs/core":
         specifier: ^11.0.10
         version: 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/platform-express@11.2.10)(@nestjs/websockets@11.2.10)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      "@nestjs/jwt":
+        specifier: ^11.0.2
+        version: 11.0.2(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))
+      "@nestjs/passport":
+        specifier: ^11.0.5
+        version: 11.0.5(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(passport@0.7.0)
       "@nestjs/platform-express":
         specifier: ^11.0.10
         version: 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(supports-color@8.1.1)
+      "@nestjs/throttler":
+        specifier: ^6.8.0
+        version: 6.8.0(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(reflect-metadata@0.2.2)
       "@urticketbuddy/config":
         specifier: workspace:*
         version: link:../../packages/config
@@ -282,12 +291,27 @@ importers:
       "@urticketbuddy/venue-engine":
         specifier: workspace:*
         version: link:../../packages/venue-engine
+      bcryptjs:
+        specifier: ^3.0.3
+        version: 3.0.3
+      cookie-parser:
+        specifier: ^1.4.7
+        version: 1.4.7
       ioredis:
         specifier: ^5.5.0
         version: 5.11.1(supports-color@8.1.1)
       mongoose:
         specifier: ^9.12.1
         version: 9.12.1
+      passport:
+        specifier: ^0.7.0
+        version: 0.7.0
+      passport-google-oauth20:
+        specifier: ^2.0.0
+        version: 2.0.0
+      passport-jwt:
+        specifier: ^4.0.1
+        version: 4.0.1
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -307,6 +331,12 @@ importers:
       "@nestjs/testing":
         specifier: ^11.0.10
         version: 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(@nestjs/platform-express@11.2.10)
+      "@types/bcryptjs":
+        specifier: ^3.0.0
+        version: 3.0.0
+      "@types/cookie-parser":
+        specifier: ^1.4.10
+        version: 1.4.10(@types/express@5.0.6)
       "@types/express":
         specifier: ^5.0.0
         version: 5.0.6
@@ -316,6 +346,12 @@ importers:
       "@types/node":
         specifier: ^22.13.4
         version: 22.20.5
+      "@types/passport-google-oauth20":
+        specifier: ^2.0.17
+        version: 2.0.17
+      "@types/passport-jwt":
+        specifier: ^4.0.1
+        version: 4.0.1
       "@types/supertest":
         specifier: ^6.0.2
         version: 6.0.3
@@ -389,9 +425,15 @@ importers:
       "@types/node":
         specifier: ^22.13.4
         version: 22.20.5
+      "@urticketbuddy/redis-scripts":
+        specifier: workspace:*
+        version: link:../../packages/redis-scripts
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.20.5)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.9.3))
+      socket.io-client:
+        specifier: ^4.8.1
+        version: 4.8.4(supports-color@8.1.1)
       ts-jest:
         specifier: ^29.2.5
         version: 29.4.15(@babel/core@7.29.13(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.13(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.25.12)(jest-util@29.7.0)(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.9.3)))(typescript@5.9.3)
@@ -2362,6 +2404,23 @@ packages:
       "@nestjs/websockets":
         optional: true
 
+  "@nestjs/jwt@11.0.2":
+    resolution:
+      {
+        integrity: sha512-rK8aE/3/Ma45gAWfCksAXUNbOoSOUudU0Kn3rT39htPF7wsYXtKfjALKeKKJbFrIWbLjsbqfXX5bIJNvgBugGA==,
+      }
+    peerDependencies:
+      "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
+
+  "@nestjs/passport@11.0.5":
+    resolution:
+      {
+        integrity: sha512-ulQX6mbjlws92PIM15Naes4F4p2JoxGnIJuUsdXQPT+Oo2sqQmENEZXM7eYuimocfHnKlcfZOuyzbA33LwUlOQ==,
+      }
+    peerDependencies:
+      "@nestjs/common": ^10.0.0 || ^11.0.0
+      passport: ^0.5.0 || ^0.6.0 || ^0.7.0
+
   "@nestjs/platform-express@11.2.10":
     resolution:
       {
@@ -2418,6 +2477,17 @@ packages:
         optional: true
       "@nestjs/platform-express":
         optional: true
+
+  "@nestjs/throttler@6.8.0":
+    resolution:
+      {
+        integrity: sha512-kApHI/Ycxu3cxz7mcEhth7eeR9+L2GGb2CKpaBU+uAWz6DF4XRK68VWXFDKDA1aVwCdOf7HjYiafvQVG+eD2Gw==,
+      }
+    engines: { node: ^20.19.0 || ^22.12.0 || >=24.0.0 }
+    peerDependencies:
+      "@nestjs/common": ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      "@nestjs/core": ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
 
   "@nestjs/websockets@11.2.10":
     resolution:
@@ -3038,6 +3108,13 @@ packages:
         integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==,
       }
 
+  "@types/bcryptjs@3.0.0":
+    resolution:
+      {
+        integrity: sha512-WRZOuCuaz8UcZZE4R5HXTco2goQSI2XxjGY3hbM/xDvwmqFWd4ivooImsMx65OKM6CtNKbnZ5YL+YwAwK7c1dg==,
+      }
+    deprecated: This is a stub types definition. bcryptjs provides its own type definitions, so you do not need this installed.
+
   "@types/big.js@6.2.2":
     resolution:
       {
@@ -3061,6 +3138,14 @@ packages:
       {
         integrity: sha512-BgT2szDXnVypgpNxOK8aL5SGjUdaQbC++WZNjF1Qge3Og2+zhHj+RWhmehLhYyvQwqAmvezruVfOf8+3m74W+g==,
       }
+
+  "@types/cookie-parser@1.4.10":
+    resolution:
+      {
+        integrity: sha512-B4xqkqfZ8Wek+rCOeRxsjMS9OgvzebEzzLYw7NHYuvzb7IdxOkI0ZHGgeEBX4PUM7QGVvNSK60T3OvWj3YfBRg==,
+      }
+    peerDependencies:
+      "@types/express": "*"
 
   "@types/cookiejar@2.1.5":
     resolution:
@@ -3158,6 +3243,12 @@ packages:
         integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==,
       }
 
+  "@types/jsonwebtoken@9.0.10":
+    resolution:
+      {
+        integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==,
+      }
+
   "@types/luxon@3.7.6":
     resolution:
       {
@@ -3177,6 +3268,12 @@ packages:
       }
     deprecated: Mongoose publishes its own types, so you do not need to install this package.
 
+  "@types/ms@2.1.0":
+    resolution:
+      {
+        integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==,
+      }
+
   "@types/node@18.19.130":
     resolution:
       {
@@ -3193,6 +3290,42 @@ packages:
     resolution:
       {
         integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==,
+      }
+
+  "@types/oauth@0.9.6":
+    resolution:
+      {
+        integrity: sha512-H9TRCVKBNOhZZmyHLqFt9drPM9l+ShWiqqJijU1B8P3DX3ub84NjxDuy+Hjrz+fEca5Kwip3qPMKNyiLgNJtIA==,
+      }
+
+  "@types/passport-google-oauth20@2.0.17":
+    resolution:
+      {
+        integrity: sha512-MHNOd2l7gOTCn3iS+wInPQMiukliAUvMpODO3VlXxOiwNEMSyzV7UNvAdqxSN872o8OXx1SqPDVT6tLW74AtqQ==,
+      }
+
+  "@types/passport-jwt@4.0.1":
+    resolution:
+      {
+        integrity: sha512-Y0Ykz6nWP4jpxgEUYq8NoVZeCQPo1ZndJLfapI249g1jHChvRfZRO/LS3tqu26YgAS/laI1qx98sYGz0IalRXQ==,
+      }
+
+  "@types/passport-oauth2@1.8.0":
+    resolution:
+      {
+        integrity: sha512-6//z+4orIOy/g3zx17HyQ71GSRK4bs7Sb+zFasRoc2xzlv7ZCJ+vkDBYFci8U6HY+or6Zy7ajf4mz4rK7nsWJQ==,
+      }
+
+  "@types/passport-strategy@0.2.38":
+    resolution:
+      {
+        integrity: sha512-GC6eMqqojOooq993Tmnmp7AUTbbQSgilyvpCYQjT+H6JfG/g6RGc7nXEniZlp0zyKJ0WUdOiZWLBZft9Yug1uA==,
+      }
+
+  "@types/passport@1.0.17":
+    resolution:
+      {
+        integrity: sha512-aciLyx+wDwT2t2/kJGJR2AEeBz0nJU4WuRX04Wu9Dqc5lSUtwu0WERPHYsLhF9PtseiAMPBGNUOtFjxZ56prsg==,
       }
 
   "@types/pg@8.23.1":
@@ -3994,6 +4127,13 @@ packages:
       }
     engines: { node: ^4.5.0 || >= 5.9 }
 
+  base64url@3.0.1:
+    resolution:
+      {
+        integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==,
+      }
+    engines: { node: ">=6.0.0" }
+
   baseline-browser-mapping@2.11.37:
     resolution:
       {
@@ -4007,6 +4147,13 @@ packages:
       {
         integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==,
       }
+
+  bcryptjs@3.0.3:
+    resolution:
+      {
+        integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==,
+      }
+    hasBin: true
 
   big.js@7.0.1:
     resolution:
@@ -4517,6 +4664,19 @@ packages:
         integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==,
       }
 
+  cookie-parser@1.4.7:
+    resolution:
+      {
+        integrity: sha512-nGUvgXnotP3BsjiLX2ypbQnWoGUPIIfHQNZkkC668ntrzGWEZVW70HDEB1qnNGMicPje6EttlIgzo51YSwNQGw==,
+      }
+    engines: { node: ">= 0.8.0" }
+
+  cookie-signature@1.0.6:
+    resolution:
+      {
+        integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==,
+      }
+
   cookie-signature@1.2.2:
     resolution:
       {
@@ -4906,6 +5066,12 @@ packages:
     resolution:
       {
         integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==,
+      }
+
+  engine.io-client@6.6.8:
+    resolution:
+      {
+        integrity: sha512-DPN6+2uNi3A2cbSR3gqJepLVOnSQmbaJT4USgU+TgGPczEqLQT0i6t05jHrf4TT6rcxABrGp/1As0FyqwIZlGg==,
       }
 
   engine.io-parser@5.2.3:
@@ -6520,6 +6686,13 @@ packages:
         integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==,
       }
 
+  jsonwebtoken@9.0.3:
+    resolution:
+      {
+        integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==,
+      }
+    engines: { node: ">=12", npm: ">=6" }
+
   jwa@2.0.1:
     resolution:
       {
@@ -6642,10 +6815,40 @@ packages:
         integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==,
       }
 
+  lodash.includes@4.3.0:
+    resolution:
+      {
+        integrity: sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==,
+      }
+
+  lodash.isboolean@3.0.3:
+    resolution:
+      {
+        integrity: sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg==,
+      }
+
+  lodash.isinteger@4.0.4:
+    resolution:
+      {
+        integrity: sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==,
+      }
+
+  lodash.isnumber@3.0.3:
+    resolution:
+      {
+        integrity: sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==,
+      }
+
   lodash.isplainobject@4.0.6:
     resolution:
       {
         integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==,
+      }
+
+  lodash.isstring@4.0.1:
+    resolution:
+      {
+        integrity: sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw==,
       }
 
   lodash.kebabcase@4.1.1:
@@ -6670,6 +6873,12 @@ packages:
     resolution:
       {
         integrity: sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==,
+      }
+
+  lodash.once@4.1.1:
+    resolution:
+      {
+        integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==,
       }
 
   lodash.snakecase@4.1.1:
@@ -7239,6 +7448,12 @@ packages:
       }
     engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
 
+  oauth@0.10.2:
+    resolution:
+      {
+        integrity: sha512-JtFnB+8nxDEXgNyniwz573xxbKSOu3R8D40xQKqcjwJ2CDkYqUDI53o6IuzDJBx60Z8VKCm271+t8iFjakrl8Q==,
+      }
+
   object-assign@4.1.1:
     resolution:
       {
@@ -7455,6 +7670,40 @@ packages:
         integrity: sha512-Njv/59hHaokb/hRUjce3Hdv12wd60MtM9Z5Olmn+nehe0QDAsRtRbJPvJ0Z91TusF0SuZRIvnM+S4l6EIP8leA==,
       }
 
+  passport-google-oauth20@2.0.0:
+    resolution:
+      {
+        integrity: sha512-KSk6IJ15RoxuGq7D1UKK/8qKhNfzbLeLrG3gkLZ7p4A6DBCcv7xpyQwuXtWdpyR0+E0mwkpjY1VfPOhxQrKzdQ==,
+      }
+    engines: { node: ">= 0.4.0" }
+
+  passport-jwt@4.0.1:
+    resolution:
+      {
+        integrity: sha512-UCKMDYhNuGOBE9/9Ycuoyh7vP6jpeTp/+sfMJl7nLff/t6dps+iaeE0hhNkKN8/HZHcJ7lCdOyDxHdDoxoSvdQ==,
+      }
+
+  passport-oauth2@1.8.0:
+    resolution:
+      {
+        integrity: sha512-cjsQbOrXIDE4P8nNb3FQRCCmJJ/utnFKEz2NX209f7KOHPoX18gF7gBzBbLLsj2/je4KrgiwLLGjf0lm9rtTBA==,
+      }
+    engines: { node: ">= 0.4.0" }
+
+  passport-strategy@1.0.0:
+    resolution:
+      {
+        integrity: sha512-CB97UUvDKJde2V0KDWWB3lyf6PC3FaZP7YxZ2G8OAtn9p4HI9j9JLP9qjOGZFvyl8uwNT8qM+hGnz/n16NI7oA==,
+      }
+    engines: { node: ">= 0.4.0" }
+
+  passport@0.7.0:
+    resolution:
+      {
+        integrity: sha512-cPLl+qZpSc+ireUvt+IzqbED1cHHkDoVYMo30jbJIdOOjQ1MQYZBPiNvmi8UM6lJuOpTPXJGZQk0DtC4y61MYQ==,
+      }
+    engines: { node: ">= 0.4.0" }
+
   path-exists@4.0.0:
     resolution:
       {
@@ -7522,6 +7771,12 @@ packages:
         integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==,
       }
     engines: { node: ">=8" }
+
+  pause@0.0.1:
+    resolution:
+      {
+        integrity: sha512-KG8UEiEVkR3wGEb4m5yZkVCzigAD+cVEJck2CzYZO37ZGJfctvVptVO192MwrtPhzONn6go8ylnOdMhKqi4nfg==,
+      }
 
   pdfjs-dist@6.1.200:
     resolution:
@@ -8328,6 +8583,13 @@ packages:
       {
         integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==,
       }
+
+  socket.io-client@4.8.4:
+    resolution:
+      {
+        integrity: sha512-7wjKAvVXYOJsbmUgkWbnhPD4bFpkqrUR0++XOjpGFmqDqsqV1CI93VTraeExLxpjxEqrWgFoSRZu1ihjLWfkAA==,
+      }
+    engines: { node: ">=10.0.0" }
 
   socket.io-parser@4.2.7:
     resolution:
@@ -9245,6 +9507,12 @@ packages:
     engines: { node: ">=0.8.0" }
     hasBin: true
 
+  uid2@0.0.4:
+    resolution:
+      {
+        integrity: sha512-IevTus0SbGwQzYh3+fRsAMTVVPOoIVufzacXcHPmdlle1jUpq7BRL+mw3dgeLanvGZdwwbWhRV6XrcFNdBmjWA==,
+      }
+
   uid@2.0.2:
     resolution:
       {
@@ -9344,6 +9612,13 @@ packages:
       {
         integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==,
       }
+
+  utils-merge@1.0.1:
+    resolution:
+      {
+        integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==,
+      }
+    engines: { node: ">= 0.4.0" }
 
   uuid@11.1.1:
     resolution:
@@ -9612,6 +9887,13 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  xmlhttprequest-ssl@2.1.2:
+    resolution:
+      {
+        integrity: sha512-TEU+nJVUUnA4CYJFLvK5X9AOeH4KvDvhIfm0vV1GaQRtchnG0hgK5p8hw/xjv8cunWYCsiPCSDzObPyhEwq3KQ==,
+      }
+    engines: { node: ">=0.4.0" }
 
   xtend@4.0.2:
     resolution:
@@ -10985,6 +11267,17 @@ snapshots:
       "@nestjs/platform-express": 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(supports-color@8.1.1)
       "@nestjs/websockets": 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(@nestjs/platform-socket.io@11.2.10)(reflect-metadata@0.2.2)(rxjs@7.8.2)
 
+  "@nestjs/jwt@11.0.2(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))":
+    dependencies:
+      "@nestjs/common": 11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
+      "@types/jsonwebtoken": 9.0.10
+      jsonwebtoken: 9.0.3
+
+  "@nestjs/passport@11.0.5(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(passport@0.7.0)":
+    dependencies:
+      "@nestjs/common": 11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
+      passport: 0.7.0
+
   "@nestjs/platform-express@11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(supports-color@8.1.1)":
     dependencies:
       "@nestjs/common": 11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
@@ -11035,6 +11328,12 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       "@nestjs/platform-express": 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(supports-color@8.1.1)
+
+  "@nestjs/throttler@6.8.0(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(reflect-metadata@0.2.2)":
+    dependencies:
+      "@nestjs/common": 11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
+      "@nestjs/core": 11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/platform-express@11.2.10)(@nestjs/websockets@11.2.10)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
 
   "@nestjs/websockets@11.2.10(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(@nestjs/platform-socket.io@11.2.10)(reflect-metadata@0.2.2)(rxjs@7.8.2)":
     dependencies:
@@ -11382,6 +11681,10 @@ snapshots:
     dependencies:
       "@babel/types": 7.29.14
 
+  "@types/bcryptjs@3.0.0":
+    dependencies:
+      bcryptjs: 3.0.3
+
   "@types/big.js@6.2.2":
     optional: true
 
@@ -11397,6 +11700,10 @@ snapshots:
   "@types/conventional-commits-parser@5.0.2":
     dependencies:
       "@types/node": 26.6.6
+
+  "@types/cookie-parser@1.4.10(@types/express@5.0.6)":
+    dependencies:
+      "@types/express": 5.0.6
 
   "@types/cookiejar@2.1.5": {}
 
@@ -11463,6 +11770,11 @@ snapshots:
 
   "@types/json-schema@7.0.15": {}
 
+  "@types/jsonwebtoken@9.0.10":
+    dependencies:
+      "@types/ms": 2.1.0
+      "@types/node": 22.20.5
+
   "@types/luxon@3.7.6": {}
 
   "@types/methods@1.1.4": {}
@@ -11479,6 +11791,8 @@ snapshots:
       - snappy
       - socks
 
+  "@types/ms@2.1.0": {}
+
   "@types/node@18.19.130":
     dependencies:
       undici-types: 5.26.5
@@ -11490,6 +11804,36 @@ snapshots:
   "@types/node@26.6.6":
     dependencies:
       undici-types: 8.9.0
+
+  "@types/oauth@0.9.6":
+    dependencies:
+      "@types/node": 22.20.5
+
+  "@types/passport-google-oauth20@2.0.17":
+    dependencies:
+      "@types/express": 5.0.6
+      "@types/passport": 1.0.17
+      "@types/passport-oauth2": 1.8.0
+
+  "@types/passport-jwt@4.0.1":
+    dependencies:
+      "@types/jsonwebtoken": 9.0.10
+      "@types/passport-strategy": 0.2.38
+
+  "@types/passport-oauth2@1.8.0":
+    dependencies:
+      "@types/express": 5.0.6
+      "@types/oauth": 0.9.6
+      "@types/passport": 1.0.17
+
+  "@types/passport-strategy@0.2.38":
+    dependencies:
+      "@types/express": 5.0.6
+      "@types/passport": 1.0.17
+
+  "@types/passport@1.0.17":
+    dependencies:
+      "@types/express": 5.0.6
 
   "@types/pg@8.23.1":
     dependencies:
@@ -12038,11 +12382,15 @@ snapshots:
 
   base64id@2.0.0: {}
 
+  base64url@3.0.1: {}
+
   baseline-browser-mapping@2.11.37: {}
 
   bcrypt-pbkdf@1.0.2:
     dependencies:
       tweetnacl: 0.14.5
+
+  bcryptjs@3.0.3: {}
 
   big.js@7.0.1:
     optional: true
@@ -12112,8 +12460,7 @@ snapshots:
 
   buffer-crc32@1.0.0: {}
 
-  buffer-equal-constant-time@1.0.1:
-    optional: true
+  buffer-equal-constant-time@1.0.1: {}
 
   buffer-from@1.1.2: {}
 
@@ -12321,6 +12668,13 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
+  cookie-parser@1.4.7:
+    dependencies:
+      cookie: 0.7.2
+      cookie-signature: 1.0.6
+
+  cookie-signature@1.0.6: {}
+
   cookie-signature@1.2.2: {}
 
   cookie@0.7.2: {}
@@ -12513,7 +12867,6 @@ snapshots:
   ecdsa-sig-formatter@1.0.11:
     dependencies:
       safe-buffer: 5.2.1
-    optional: true
 
   ee-first@1.1.1: {}
 
@@ -12532,6 +12885,18 @@ snapshots:
   end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
+
+  engine.io-client@6.6.8(supports-color@8.1.1):
+    dependencies:
+      "@socket.io/component-emitter": 3.1.2
+      debug: 4.4.3(supports-color@8.1.1)
+      engine.io-parser: 5.2.3
+      ws: 8.21.3
+      xmlhttprequest-ssl: 2.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   engine.io-parser@5.2.3: {}
 
@@ -13813,18 +14178,29 @@ snapshots:
 
   jsonparse@1.3.1: {}
 
+  jsonwebtoken@9.0.3:
+    dependencies:
+      jws: 4.0.1
+      lodash.includes: 4.3.0
+      lodash.isboolean: 3.0.3
+      lodash.isinteger: 4.0.4
+      lodash.isnumber: 3.0.3
+      lodash.isplainobject: 4.0.6
+      lodash.isstring: 4.0.1
+      lodash.once: 4.1.1
+      ms: 2.1.3
+      semver: 7.8.6
+
   jwa@2.0.1:
     dependencies:
       buffer-equal-constant-time: 1.0.1
       ecdsa-sig-formatter: 1.0.11
       safe-buffer: 5.2.1
-    optional: true
 
   jws@4.0.1:
     dependencies:
       jwa: 2.0.1
       safe-buffer: 5.2.1
-    optional: true
 
   kareem@3.4.1: {}
 
@@ -13891,7 +14267,17 @@ snapshots:
 
   lodash.camelcase@4.3.0: {}
 
+  lodash.includes@4.3.0: {}
+
+  lodash.isboolean@3.0.3: {}
+
+  lodash.isinteger@4.0.4: {}
+
+  lodash.isnumber@3.0.3: {}
+
   lodash.isplainobject@4.0.6: {}
+
+  lodash.isstring@4.0.1: {}
 
   lodash.kebabcase@4.1.1: {}
 
@@ -13900,6 +14286,8 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lodash.mergewith@4.6.2: {}
+
+  lodash.once@4.1.1: {}
 
   lodash.snakecase@4.1.1: {}
 
@@ -14183,6 +14571,8 @@ snapshots:
     dependencies:
       path-key: 4.0.0
 
+  oauth@0.10.2: {}
+
   object-assign@4.1.1: {}
 
   object-hash@3.0.0: {}
@@ -14316,6 +14706,31 @@ snapshots:
 
   partial-json@0.1.7: {}
 
+  passport-google-oauth20@2.0.0:
+    dependencies:
+      passport-oauth2: 1.8.0
+
+  passport-jwt@4.0.1:
+    dependencies:
+      jsonwebtoken: 9.0.3
+      passport-strategy: 1.0.0
+
+  passport-oauth2@1.8.0:
+    dependencies:
+      base64url: 3.0.1
+      oauth: 0.10.2
+      passport-strategy: 1.0.0
+      uid2: 0.0.4
+      utils-merge: 1.0.1
+
+  passport-strategy@1.0.0: {}
+
+  passport@0.7.0:
+    dependencies:
+      passport-strategy: 1.0.0
+      pause: 0.0.1
+      utils-merge: 1.0.1
+
   path-exists@4.0.0: {}
 
   path-exists@5.0.0: {}
@@ -14341,6 +14756,8 @@ snapshots:
   path-to-regexp@8.4.2: {}
 
   path-type@4.0.0: {}
+
+  pause@0.0.1: {}
 
   pdfjs-dist@6.1.200:
     optionalDependencies:
@@ -14837,6 +15254,17 @@ snapshots:
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
       ws: 8.21.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  socket.io-client@4.8.4(supports-color@8.1.1):
+    dependencies:
+      "@socket.io/component-emitter": 3.1.2
+      debug: 4.4.3(supports-color@8.1.1)
+      engine.io-client: 6.6.8(supports-color@8.1.1)
+      socket.io-parser: 4.2.7(supports-color@8.1.1)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -15474,6 +15902,8 @@ snapshots:
   uglify-js@3.19.3:
     optional: true
 
+  uid2@0.0.4: {}
+
   uid@2.0.2:
     dependencies:
       "@lukeed/csprng": 1.1.0
@@ -15514,6 +15944,8 @@ snapshots:
       punycode: 2.3.1
 
   util-deprecate@1.0.2: {}
+
+  utils-merge@1.0.1: {}
 
   uuid@11.1.1: {}
 
@@ -15677,6 +16109,8 @@ snapshots:
   ws@8.21.3: {}
 
   ws@8.23.0: {}
+
+  xmlhttprequest-ssl@2.1.2: {}
 
   xtend@4.0.2: {}
 
