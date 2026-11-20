@@ -50,10 +50,10 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
   let adminToken: string;
 
   const sampleTicket = {
-    id: "t1000000-0000-0000-0000-000000000001",
+    id: "a1000000-0000-0000-0000-000000000001",
     eventId,
-    eventSeatId: "s1000000-0000-0000-0000-000000000001",
-    orderId: "o1000000-0000-0000-0000-000000000001",
+    eventSeatId: "c1000000-0000-0000-0000-000000000001",
+    orderId: "d1000000-0000-0000-0000-000000000001",
     ownerId,
     status: TicketStatus.ISSUED,
     seedVersion: 1,
@@ -95,6 +95,12 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
         if (criteria.status && existing.status !== criteria.status) {
           return { affected: 0 };
         }
+        if (
+          criteria.seedVersion !== undefined &&
+          existing.seedVersion !== criteria.seedVersion
+        ) {
+          return { affected: 0 };
+        }
         Object.assign(existing, partial, { updatedAt: new Date() });
         return { affected: 1 };
       }
@@ -129,6 +135,7 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
 
   const mockRedisClient = {
     get: jest.fn(async () => null),
+    exists: jest.fn(async () => 1),
     del: jest.fn(async (key: string) => {
       redisNonces.delete(key);
       return 1;
@@ -431,7 +438,7 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
     });
 
     it("should reject forged ticket via BloomService with ZERO PostgreSQL queries", async () => {
-      const forgedTicketId = "t9999999-0000-0000-0000-999999999999";
+      const forgedTicketId = "a9999999-0000-0000-0000-999999999999";
       const forgedToken = Buffer.from(
         `${forgedTicketId}.${Math.floor(Date.now() / 1000 / 30)}.forgedhmac123`,
       ).toString("base64url");

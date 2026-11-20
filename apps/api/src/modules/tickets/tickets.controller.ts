@@ -1,4 +1,11 @@
-import { Controller, Get, Patch, Param, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Patch,
+  Param,
+  UseGuards,
+  ParseUUIDPipe,
+} from "@nestjs/common";
 import { UserRole } from "@urticketbuddy/contracts";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
@@ -18,8 +25,9 @@ export class TicketsController {
    */
   @Get(":ticketId/dynamic-qr")
   async getDynamicQr(
-    @Param("ticketId") ticketId: string,
-    @CurrentUser() user: any,
+    @Param("ticketId", new ParseUUIDPipe()) ticketId: string,
+    @CurrentUser()
+    user: { id?: string; userId?: string; email?: string; role: UserRole },
   ) {
     return this.ticketsService.getDynamicQr(ticketId, user);
   }
@@ -31,7 +39,7 @@ export class TicketsController {
    */
   @Patch(":ticketId/rotate-key")
   @Roles(UserRole.ADMIN)
-  async rotateKey(@Param("ticketId") ticketId: string) {
+  async rotateKey(@Param("ticketId", new ParseUUIDPipe()) ticketId: string) {
     const updated = await this.ticketsService.rotateKey(ticketId);
     return {
       message: "Ticket key rotated successfully",
@@ -45,8 +53,16 @@ export class TicketsController {
    * Convenience route returning all tickets owned by authenticated user.
    */
   @Get("me")
-  async getMyTickets(@CurrentUser() user: any) {
+  async getMyTickets(
+    @CurrentUser()
+    user: {
+      id?: string;
+      userId?: string;
+      email?: string;
+      role: UserRole;
+    },
+  ) {
     const userId = user.id || user.userId;
-    return this.ticketsService.getUserTickets(userId);
+    return this.ticketsService.getUserTickets(userId!);
   }
 }

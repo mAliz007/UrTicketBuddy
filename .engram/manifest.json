@@ -208,8 +208,8 @@
     "hash": "2b9ae4d0d2e7955386acef154982a30f"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/config/src/env.ts": {
-    "mtime": 1794921393097.221,
-    "hash": "c33c041c49b66b8956ae2d9736bb0788"
+    "mtime": 1795182100547.943,
+    "hash": "dbf3a53d45e0d22cd29c7ab60ff20640"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/config/src/index.spec.ts": {
     "mtime": 1794919105344.5215,
@@ -612,59 +612,59 @@
     "hash": "b30236eac46f45b1328c848ab44346cf"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/common/bloom/bloom.service.ts": {
-    "mtime": 1795160981064.0266,
-    "hash": "abf11313d3f7bdd6e5a7f32ae6097304"
+    "mtime": 1795182175767.5916,
+    "hash": "16230e7bede53d22e57779e17eb9d413"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/dto/scan-ticket.dto.ts": {
     "mtime": 1795158063087.1023,
     "hash": "3512f760acf7f53f0d720367a7cc2021"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.controller.ts": {
-    "mtime": 1795161904857.3655,
-    "hash": "5f12c8f0f31ccbfbd8aee660cb987d56"
+    "mtime": 1795182743586.0835,
+    "hash": "33957b8919c90ba76e692cfd00a0b502"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.module.ts": {
     "mtime": 1795158063089.4895,
     "hash": "fdf56987329131c06de77c4c07c150a5"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.service.spec.ts": {
-    "mtime": 1795161256609.5715,
-    "hash": "cfda770207cbe2dd628cc8e63d187200"
+    "mtime": 1795182356614.8125,
+    "hash": "530b057d6dbaf9c91acbd6e7b52c39f1"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.service.ts": {
-    "mtime": 1795161910796.3237,
-    "hash": "ad4617e24db44073193a9c74cdfee072"
+    "mtime": 1795182300799.7415,
+    "hash": "dd470ad47c305ff691cbe70cb214d2f8"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/tickets.controller.ts": {
-    "mtime": 1795157551105.9265,
-    "hash": "c9a803a0392e451ca783afeca72f3397"
+    "mtime": 1795182736168.1733,
+    "hash": "80e17074d4e964198efc0a4f454d5eee"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/tickets.module.ts": {
     "mtime": 1795157551105.9265,
     "hash": "0a6ce9f258a8a30d2e0978453a36e4f7"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/tickets.service.spec.ts": {
-    "mtime": 1795161374717.3347,
-    "hash": "f9da757c751542154848c95d5014aa6c"
+    "mtime": 1795179374243.841,
+    "hash": "26b218df3ce007c87a9ce8923b497b90"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/tickets.service.ts": {
-    "mtime": 1795161174560.1,
-    "hash": "844b422c87eb550829a85c133e3efb25"
+    "mtime": 1795179374310.8452,
+    "hash": "7bc7f95eff96e197707dce5972d6c077"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/user-tickets.controller.ts": {
-    "mtime": 1795157551110.2825,
-    "hash": "5a5aa911d25c54d6f7a007bb83a05c0a"
+    "mtime": 1795182208693.0762,
+    "hash": "3f01b71320dce428ebc887d89884e728"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/test/tickets-gate.e2e-spec.ts": {
-    "mtime": 1795161303373.637,
-    "hash": "ed8a89251278855dcd844f3fddd36810"
+    "mtime": 1795182777002.6824,
+    "hash": "8f9e5433740bb6d5903ceca20f111354"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/contracts/src/tickets.ts": {
     "mtime": 1795157551116.739,
     "hash": "9c7ac93d33598bc7b3f0250656c5ef37"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/db/src/entities/gate-scan.entity.ts": {
-    "mtime": 1795160896610.8447,
+    "mtime": 1795179374522.8176,
     "hash": "8101480ce6c12c3e321a84959801501d"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/db/src/entities/ticket.entity.ts": {
@@ -672,7 +672,7 @@
     "hash": "881c74f7ff949d6aed6d2da42eea0b6c"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/db/src/migrations/1795036850000-UTB-14-init-tickets-gate-scans.ts": {
-    "mtime": 1795160921536.0935,
-    "hash": "9c63a9caa0c3a89401f698dfcf3a98fa"
+    "mtime": 1795179374545.7083,
+    "hash": "27c2c92ee39644f36d860a51b433e52a"
   }
 }

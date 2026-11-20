@@ -13,8 +13,8 @@ export class UserTicketsController {
    * Returns all tickets owned by the authenticated caller.
    */
   @Get()
-  async getUserTickets(@CurrentUser() user: any) {
+  async getUserTickets(@CurrentUser() user: { id?: string; userId?: string }) {
     const userId = user.id || user.userId;
-    return this.ticketsService.getUserTickets(userId);
+    return this.ticketsService.getUserTickets(userId!);
   }
 }

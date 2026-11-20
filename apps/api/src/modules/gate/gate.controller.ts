@@ -8,6 +8,7 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
+  ParseUUIDPipe,
 } from "@nestjs/common";
 import { UserRole, ErrorCode } from "@urticketbuddy/contracts";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
@@ -53,7 +54,7 @@ export class GateController {
   @Get("metrics")
   @Roles(UserRole.GATE_STAFF, UserRole.ORGANIZER, UserRole.ADMIN)
   async getMetrics(
-    @Query("eventId") eventId: string,
+    @Query("eventId", new ParseUUIDPipe()) eventId: string,
     @CurrentUser()
     user: {
       id?: string;
