@@ -156,12 +156,12 @@
     "hash": "46d852113356e6e612fabb4a8a810f06"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/jest.config.ts": {
-    "mtime": 1794919105094.151,
-    "hash": "e79950957f7ab6afa281f74d9a143229"
+    "mtime": 1795186077235.131,
+    "hash": "b03dbc7391ddc8c3759c35456473394e"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/src/app.module.ts": {
-    "mtime": 1794919105110.9756,
-    "hash": "2cf92034e87696a939ee80e8020be837"
+    "mtime": 1795186077239.5027,
+    "hash": "7c0d7ee91dc591dc9e94589b64255f9d"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/src/health/health.controller.spec.ts": {
     "mtime": 1794919105121.532,
@@ -180,8 +180,8 @@
     "hash": "76bfed8fb544d506a91700b097afe275"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/src/main.ts": {
-    "mtime": 1794919105142.519,
-    "hash": "095e90f7068f1aed5651ea63910ceb2a"
+    "mtime": 1795186077246.2505,
+    "hash": "fbc39521fc2e25720ca46fa4da4f620a"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/src/processors/hold-expiry.processor.ts": {
     "mtime": 1794919105152.2627,
@@ -208,8 +208,8 @@
     "hash": "2b9ae4d0d2e7955386acef154982a30f"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/config/src/env.ts": {
-    "mtime": 1795182100547.943,
-    "hash": "dbf3a53d45e0d22cd29c7ab60ff20640"
+    "mtime": 1795184896424.2795,
+    "hash": "fa82692aca5a3d2eaf34542dbe13bd14"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/config/src/index.spec.ts": {
     "mtime": 1794919105344.5215,
@@ -312,20 +312,20 @@
     "hash": "e79950957f7ab6afa281f74d9a143229"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/redis-scripts/lua/confirm_sold.lua": {
-    "mtime": 1794919105536.646,
-    "hash": "0dc88c37730837532e23b6ca317fb768"
+    "mtime": 1795186077256.558,
+    "hash": "8f896dae14d4e6dad62a45d526f54643"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/redis-scripts/lua/expire_due.lua": {
-    "mtime": 1794919105537.1538,
-    "hash": "a219eefeb44e77b1d7ab3d8396fa3f2e"
+    "mtime": 1795186077257.9932,
+    "hash": "7bb7e28d540f72ae701de50ce5c5ed00"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/redis-scripts/lua/extend_hold.lua": {
     "mtime": 1794919105538.1704,
     "hash": "c992b551c1b67863db51d1878e6421b1"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/redis-scripts/lua/hold_seats.lua": {
-    "mtime": 1794919105539.1624,
-    "hash": "31c2fe14c2436bcb445d2adb90e68a66"
+    "mtime": 1795186077259.419,
+    "hash": "166eff52cfc6f72280ec4092d2ab6d5c"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/redis-scripts/lua/release_seats.lua": {
     "mtime": 1794919105540.1665,
@@ -340,8 +340,8 @@
     "hash": "1dd56c05cc1665352bb0984df9e04f6b"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/redis-scripts/src/index.ts": {
-    "mtime": 1794919105543.7788,
-    "hash": "31c75d6e423a47790812808982d8c253"
+    "mtime": 1795186077261.623,
+    "hash": "c700e937b8449038e680e98242291910"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/redis-scripts/src/integration.spec.ts": {
     "mtime": 1794919105543.7788,
@@ -432,8 +432,8 @@
     "hash": "389a67679351c677977d471cc92ed5b6"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/pnpm-lock.yaml": {
-    "mtime": 1795105267996.1294,
-    "hash": "3bf696db2b78d1adb0432d36ed6df22e"
+    "mtime": 1795186077267.8743,
+    "hash": "d01d0aa54b00f554d0346213649675b5"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/pnpm-workspace.yaml": {
     "mtime": 1794921393107.6018,
@@ -564,8 +564,8 @@
     "hash": "9369433bb81e2732dbf5d12c00e5543e"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/orders/orders.service.ts": {
-    "mtime": 1795155872056.3013,
-    "hash": "906812014f78e8153be07dea7367407c"
+    "mtime": 1795186077232.1436,
+    "hash": "759fbb48cd1b7989e071b749b9cdffdf"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/orders/payment/mock-payment.service.ts": {
     "mtime": 1795105267480.8484,
@@ -612,32 +612,32 @@
     "hash": "b30236eac46f45b1328c848ab44346cf"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/common/bloom/bloom.service.ts": {
-    "mtime": 1795182175767.5916,
-    "hash": "16230e7bede53d22e57779e17eb9d413"
+    "mtime": 1795184647525.6409,
+    "hash": "289c1944823a0c1f83d19d1fcaf9b68e"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/dto/scan-ticket.dto.ts": {
     "mtime": 1795158063087.1023,
     "hash": "3512f760acf7f53f0d720367a7cc2021"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.controller.ts": {
-    "mtime": 1795182743586.0835,
-    "hash": "33957b8919c90ba76e692cfd00a0b502"
+    "mtime": 1795184895668.3486,
+    "hash": "49fecc2e8d2c7548c8e9640db54d186c"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.module.ts": {
     "mtime": 1795158063089.4895,
     "hash": "fdf56987329131c06de77c4c07c150a5"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.service.spec.ts": {
-    "mtime": 1795182356614.8125,
-    "hash": "530b057d6dbaf9c91acbd6e7b52c39f1"
+    "mtime": 1795184895784.9148,
+    "hash": "db762f40924c1b32a70e2c9518ab880a"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/gate/gate.service.ts": {
-    "mtime": 1795182300799.7415,
-    "hash": "dd470ad47c305ff691cbe70cb214d2f8"
+    "mtime": 1795184896017.7622,
+    "hash": "4fe96c84240794f9066f371662f9e793"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/tickets.controller.ts": {
-    "mtime": 1795182736168.1733,
-    "hash": "80e17074d4e964198efc0a4f454d5eee"
+    "mtime": 1795184896111.5388,
+    "hash": "2ae1d429c2395a5ff22f23095a89dc34"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/tickets.module.ts": {
     "mtime": 1795157551105.9265,
@@ -652,12 +652,12 @@
     "hash": "7bc7f95eff96e197707dce5972d6c077"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/src/modules/tickets/user-tickets.controller.ts": {
-    "mtime": 1795182208693.0762,
-    "hash": "3f01b71320dce428ebc887d89884e728"
+    "mtime": 1795184896215.333,
+    "hash": "6ca703c3f661447637791cc6c6bd7535"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/apps/api/test/tickets-gate.e2e-spec.ts": {
-    "mtime": 1795182777002.6824,
-    "hash": "8f9e5433740bb6d5903ceca20f111354"
+    "mtime": 1795184896319.9707,
+    "hash": "439b28ff474c10e3c659e31df28cb8a3"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/contracts/src/tickets.ts": {
     "mtime": 1795157551116.739,
@@ -674,5 +674,25 @@
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/db/src/migrations/1795036850000-UTB-14-init-tickets-gate-scans.ts": {
     "mtime": 1795179374545.7083,
     "hash": "27c2c92ee39644f36d860a51b433e52a"
+  },
+  "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/src/infrastructure/worker-infra.module.ts": {
+    "mtime": 1795186077242.6926,
+    "hash": "aa2d6b60f8995977e5d52011d137ae34"
+  },
+  "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/src/modules/expiry/expiry.module.ts": {
+    "mtime": 1795186077248.7866,
+    "hash": "2fb2e501da6621374ba1664c27f200c3"
+  },
+  "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/src/modules/expiry/expiry.service.ts": {
+    "mtime": 1795186077251.0454,
+    "hash": "053f70b2657306aefcebd9347616567a"
+  },
+  "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/test/expiry.integration.spec.ts": {
+    "mtime": 1795186077252.17,
+    "hash": "691502c2d19bce9ca07d53704e33cd2e"
+  },
+  "C:/Users/NCS/Desktop/UrTicketBuddy/apps/worker/test/expiry.service.spec.ts": {
+    "mtime": 1795186077254.5557,
+    "hash": "77fbf3de987ba40a2941066b1e8ac1e1"
   }
 }

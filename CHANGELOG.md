@@ -79,6 +79,32 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-11] - 2026-11-20
+
+### Background Hold Expiry Worker & Auto-Release Engine
+
+- **Ticket Key:** `UTB-11`
+- **Completion Date:** 2026-11-20
+- **Main Feature Branch:** `feat/UTB-11-hold-expiry-worker`
+  - Sub-task 1: `feat/UTB-11/worker-scaffold`
+  - Sub-task 2: `feat/UTB-11/expiry-cron`
+  - Sub-task 3: `feat/UTB-11/tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-11-hold-expiry-worker`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `apps/worker`, `README.md`, `CHANGELOG.md`, `pnpm-lock.yaml`, `.engram`
+- **Scope & Deliverables:**
+  - **Worker App Initialization (`apps/worker`)**:
+    - Installed `@nestjs/schedule` and wired `ScheduleModule.forRoot()` in `AppModule`.
+    - Added `WorkerInfraModule` (`apps/worker/src/infrastructure/worker-infra.module.ts`) providing `WORKER_REDIS_CLIENT` (`ioredis`), `WORKER_REDIS_SCRIPTS` (`RedisScriptsWrapper`), and optional `WORKER_DATA_SOURCE` (`AppDataSource` with graceful fallback when Postgres is unavailable).
+  - **Expiry Cron Service (`apps/worker/src/modules/expiry`)**:
+    - Implemented `ExpiryService` with `@Cron("*/5 * * * * *")` and an `isRunning` overlap guard.
+    - Scans Redis (`SCAN` on `hold_expiry:{*}`) to discover active event IDs, invokes `RedisScriptsWrapper.expireDue(eventId, nowMs)` (`expire_due.lua`), publishes `{ eventId, seatIds, state: "AVAILABLE", source: "WORKER_EXPIRY" }` to Redis Pub/Sub channel `seat-updates:{eventId}`, and optionally syncs PostgreSQL `event_seats` (`status = 'HELD'` -> `'AVAILABLE'`).
+  - **Testing & Documentation**:
+    - Added unit tests (`apps/worker/test/expiry.service.spec.ts`) covering empty scans, multi-cursor deduplication, Pub/Sub emission, per-event error isolation, and optional Postgres sync.
+    - Added Testcontainers Redis integration test (`apps/worker/test/expiry.integration.spec.ts`) verifying `expire_due.lua` lock cleanup and Redis Pub/Sub broadcast.
+    - Updated `apps/worker/README.md`, root `README.md`, and `CHANGELOG.md`.
+
+---
+
 ## [UTB-10] - 2026-11-18
 
 ### Orders, Payment Gateway Integration, & Checkout Completion API

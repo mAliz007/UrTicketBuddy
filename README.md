@@ -164,7 +164,7 @@ UrTicketBuddy/
 │   ├── api/             # NestJS modular monolith core REST API (:3000)
 │   ├── realtime/        # NestJS + Socket.io WebSocket gateway (:3001)
 │   ├── web/             # React + Vite + TypeScript + Tailwind CSS (:5173)
-│   └── worker/          # NestJS standalone BullMQ processor (:3002)
+│   └── worker/          # NestJS standalone BullMQ & hold-expiry cron worker (:3002)
 ├── packages/
 │   ├── config/          # Shared tsconfig, eslint, prettier bases + Zod env loader
 │   ├── contracts/       # DTO schemas, enums, error codes, seat hold schemas, socket & job payloads

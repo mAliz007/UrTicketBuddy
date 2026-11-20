@@ -53,11 +53,14 @@ if #expiredSeats > 0 then
   return { 0, 'HOLD_EXPIRED', expiredSeats }
 end
 
+local holdOwnersKey = 'hold_owners:{' .. eventId .. '}'
+
 for _, seatId in ipairs(seatIds) do
   redis.call('SADD', soldKey, seatId)
   redis.call('DEL', lockKeys[seatId])
   redis.call('ZREM', holdExpiryKey, seatId)
   redis.call('SREM', userHoldsKey, seatId)
+  redis.call('HDEL', holdOwnersKey, seatId)
 end
 
 return { 1, 'OK', seatIds }
