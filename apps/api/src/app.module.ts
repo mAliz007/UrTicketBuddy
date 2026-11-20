@@ -8,6 +8,7 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { CheckoutModule } from "./modules/checkout/checkout.module";
 import { OrdersModule } from "./modules/orders/orders.module";
 import { TicketsModule } from "./modules/tickets/tickets.module";
+import { GateModule } from "./modules/gate/gate.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TicketsModule } from "./modules/tickets/tickets.module";
     CheckoutModule,
     OrdersModule,
     TicketsModule,
+    GateModule,
   ],
   controllers: [],
   providers: [],
