@@ -10,6 +10,8 @@ import {
   RefreshToken,
   Ticket,
   GateScan,
+  ResaleListing,
+  LedgerEntry,
 } from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import mongoose from "mongoose";
@@ -28,6 +30,8 @@ import {
   ORDER_ITEM_REPOSITORY,
   TICKET_REPOSITORY,
   GATE_SCAN_REPOSITORY,
+  RESALE_LISTING_REPOSITORY,
+  LEDGER_ENTRY_REPOSITORY,
   MONGO_CONNECTION,
   VENUE_LAYOUT_MODEL,
   REDIS_CLIENT,
@@ -119,6 +123,20 @@ let redisClientInstance: Redis | null = null;
       inject: [DATA_SOURCE],
     },
     {
+      provide: RESALE_LISTING_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(ResaleListing);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: LEDGER_ENTRY_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(LedgerEntry);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
       provide: MONGO_CONNECTION,
       useFactory: async () => {
         const env = loadEnv();
@@ -179,6 +197,8 @@ let redisClientInstance: Redis | null = null;
     REFRESH_TOKEN_REPOSITORY,
     TICKET_REPOSITORY,
     GATE_SCAN_REPOSITORY,
+    RESALE_LISTING_REPOSITORY,
+    LEDGER_ENTRY_REPOSITORY,
     MONGO_CONNECTION,
     VENUE_LAYOUT_MODEL,
     REDIS_CLIENT,

@@ -5,8 +5,11 @@ export interface EventSeatCatalogPort {
   ): Promise<Map<string, boolean>>;
 }
 
+export const PLATFORM_SETTINGS_PORT = "PLATFORM_SETTINGS_PORT";
+
 export interface PlatformSettingsPort {
   getSetting<T>(key: string): Promise<T | null>;
+  getCommissionRateBps(): Promise<number>;
 }
 
 export interface PaymentProvider {
