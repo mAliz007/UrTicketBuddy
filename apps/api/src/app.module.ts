@@ -9,6 +9,7 @@ import { CheckoutModule } from "./modules/checkout/checkout.module";
 import { OrdersModule } from "./modules/orders/orders.module";
 import { TicketsModule } from "./modules/tickets/tickets.module";
 import { GateModule } from "./modules/gate/gate.module";
+import { ResaleModule } from "./modules/resale/resale.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { GateModule } from "./modules/gate/gate.module";
     OrdersModule,
     TicketsModule,
     GateModule,
+    ResaleModule,
   ],
   controllers: [],
   providers: [],
