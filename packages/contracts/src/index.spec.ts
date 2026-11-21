@@ -11,6 +11,12 @@ import {
   VenueLayoutSchema,
   degToRad,
   radToDeg,
+  maxResalePrice,
+  ResaleListingStatus,
+  LedgerEntryKind,
+  CreateResaleListingSchema,
+  UpdateResaleListingSchema,
+  PurchaseResaleListingSchema,
 } from "./index";
 
 describe("packages/contracts", () => {
@@ -117,5 +123,51 @@ describe("packages/contracts", () => {
   it("should properly convert degrees and radians", () => {
     expect(degToRad(180)).toBeCloseTo(Math.PI);
     expect(radToDeg(Math.PI)).toBeCloseTo(180);
+  });
+
+  it("should enforce maxResalePrice 110% ceiling across boundary, zero, and large values", () => {
+    // Exact 110% boundary
+    expect(maxResalePrice(1000)).toBe(1100);
+    expect(maxResalePrice(10000)).toBe(11000);
+    expect(maxResalePrice(105)).toBe(115); // Math.floor(115.5)
+
+    // 1 minor unit above boundary fails cap check
+    const cap = maxResalePrice(1000);
+    expect(cap + 1 <= cap).toBe(false);
+    expect(1101 <= maxResalePrice(1000)).toBe(false);
+
+    // Zero
+    expect(maxResalePrice(0)).toBe(0);
+
+    // Large values
+    expect(maxResalePrice(10_000_000)).toBe(11_000_000);
+    expect(maxResalePrice(999_999_999)).toBe(1_099_999_998);
+  });
+
+  it("should validate resale enums and schemas", () => {
+    expect(ResaleListingStatus.ACTIVE).toBe("ACTIVE");
+    expect(ResaleListingStatus.SOLD).toBe("SOLD");
+    expect(ResaleListingStatus.WITHDRAWN).toBe("WITHDRAWN");
+    expect(LedgerEntryKind.SELLER_PAYOUT).toBe("SELLER_PAYOUT");
+    expect(LedgerEntryKind.PLATFORM_COMMISSION).toBe("PLATFORM_COMMISSION");
+
+    expect(
+      CreateResaleListingSchema.safeParse({
+        ticketId: "123e4567-e89b-12d3-a456-426614174000",
+        askingPriceMinor: 5500,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      UpdateResaleListingSchema.safeParse({
+        status: ResaleListingStatus.WITHDRAWN,
+      }).success,
+    ).toBe(true);
+
+    expect(UpdateResaleListingSchema.safeParse({}).success).toBe(false);
+
+    expect(PurchaseResaleListingSchema.parse({}).paymentMethodToken).toBe(
+      "tok_visa",
+    );
   });
 });
