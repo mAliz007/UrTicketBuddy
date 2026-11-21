@@ -4,6 +4,34 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-15] - 2026-11-21
+
+### Capped P2P Resale Marketplace API
+
+- **Ticket Key:** `UTB-15`
+- **Completion Date:** 2026-11-21
+- **Main Feature Branch:** `feat/UTB-15-resale-marketplace`
+  - Sub-task 1: `feat/UTB-15-resale-marketplace-contracts-db`
+  - Sub-task 2: `feat/UTB-15-resale-marketplace-api`
+  - Sub-task 3: `feat/UTB-15-resale-marketplace-tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-15-resale-marketplace`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **Contracts & 110% Price Cap (`packages/contracts/src/resale.ts`)**:
+    - Implemented `maxResalePrice(faceValueMinor)` (`Math.floor((faceValueMinor * 110) / 100)`), `ResaleListingStatus`, `LedgerEntryKind`, `CreateResaleListingSchema`, `UpdateResaleListingSchema`, `PurchaseResaleListingSchema`, and `ErrorCode.RESALE_PRICE_CAP_EXCEEDED`.
+  - **Database Entities & Migration (`packages/db`)**:
+    - Added `ResaleListing` (`resale_listings`) and `LedgerEntry` (`ledger_entries`) TypeORM entities with covering indexes (`idx_resale_listings_ticket_id`, `idx_resale_listings_event_id`, `idx_resale_listings_seller_id`, `idx_ledger_entries_listing_id`).
+    - Created reversible migration `1795136850000-UTB-15-init-resale-ledger.ts` with exact TypeORM hashed FK constraint names (`FK_6f3aa262c5f7947d2adb51d3f36`, `FK_23c4922b768155c827d32122952`, `FK_06ca5804051219422c87e507899`).
+  - **Resale Module (`apps/api/src/modules/resale`)**:
+    - Added `PlatformSettingsPort` (`PLATFORM_SETTINGS_PORT`) + `DefaultPlatformSettingsProvider` (10% / `1000` bps).
+    - Implemented `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings` (`@Public()`), and `POST /api/v1/resale/listings/:listingId/purchase` (`Idempotency-Key`, Redis `resale_lock:<listingId>`, `PaymentProvider` charge, PostgreSQL `SELECT ... FOR UPDATE` transaction, 2-row ledger split, `ticket.ownerId` transfer, `ticket.seedVersion += 1`, and `ticket.transferred` event).
+  - **Testing & Documentation**:
+    - Added unit tests in `packages/contracts/src/index.spec.ts` and `apps/api/src/modules/resale/resale.service.spec.ts`.
+    - Added Supertest E2E suite in `apps/api/test/resale.e2e-spec.ts` covering 110% cap boundaries, checked-in rejection, concurrent buyer Redis lock race, balanced ledger entries, and post-resale QR invalidation at `/api/v1/gate/scan`.
+    - Added `apps/api/src/modules/resale/README.md` and updated `apps/api/README.md` and `CHANGELOG.md`.
+
+---
+
 ## [UTB-14] - 2026-11-20
 
 ### Dynamic QR Tickets, RedisBloom Prefilter, Ticket Wallet, & Gate Scanner API

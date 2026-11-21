@@ -21,6 +21,7 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - Orders: `POST /api/v1/orders/checkout`, `GET /api/v1/orders/:id` (see [Orders Module](src/modules/orders/README.md))
 - Dynamic QR Tickets: `GET /api/v1/tickets/:ticketId/dynamic-qr`, `PATCH /api/v1/tickets/:ticketId/rotate-key`, `GET /api/v1/users/me/tickets` (see [Tickets Module](src/modules/tickets/README.md))
 - Gate Scanner: `POST /api/v1/gate/scan`, `GET /api/v1/gate/metrics` (see [Gate Module](src/modules/gate/README.md))
+- Resale Marketplace: `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings`, `POST /api/v1/resale/listings/:listingId/purchase` (see [Resale Module](src/modules/resale/README.md))
 
 ## Persistence Model (Polyglot)
 
