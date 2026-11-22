@@ -1,14 +1,12 @@
-# Production Dockerization & Continuous Deployment Guide
+# Production Deployment & Continuous Delivery Guide
 
 This document provides a comprehensive operational guide for UrTicketBuddy's containerization architecture, production Docker Compose orchestration, and automated Continuous Deployment (CD) pipelines.
 
 ---
 
-## 1. Architectural Strategy
+## 1. Architectural Strategy & Deployment Topologies
 
-Per **Decision D-5** and **ADR-0002**, UrTicketBuddy targets live deployment on **Oracle Cloud Infrastructure (OCI) Always Free Tier** as its primary host, with full cross-platform compatibility for **Railway PaaS** and local/bare-metal environments.
-
-### Deployment Topologies
+Per **Decision D-5** and **ADR-0002**, UrTicketBuddy targets live deployment on **Oracle Cloud Infrastructure (OCI) Always Free Tier** as its primary production host, with full cross-platform compatibility for **Railway PaaS** and local Docker environments.
 
 ```mermaid
 flowchart TD
@@ -35,47 +33,81 @@ flowchart TD
 
 ---
 
-## 2. Multi-Stage Dockerfiles
+## 2. CD Workflow Architecture (`.github/workflows/cd.yml`)
 
-All NestJS backend microservices (`apps/api`, `apps/realtime`, `apps/worker`) employ a secure, three-stage build pattern defined in `apps/<service>/Dockerfile` (mirrored in `infra/docker/Dockerfile.<service>`):
+The continuous delivery pipeline triggers automatically via GitHub Actions upon completion of the `CI Pipeline` on the `main` branch (when `conclusion == 'success'`), or manually via `workflow_dispatch`.
 
-### Stage Breakdown
+```mermaid
+flowchart TD
+    subgraph CI["CI Pipeline (GitHub Actions)"]
+        A["Push to main / PR"] --> B["Lint & Typecheck"]
+        B --> C["Unit & Integration Tests"]
+        C --> D["Database Drift Check (db:check)"]
+        D --> E["Knowledge Graph Update (graphify)"]
+    end
 
-1. **Builder Stage (`node:22-alpine`)**:
-   - Enables Corepack and activates `pnpm@12.21.0`.
-   - Copies workspace configurations (`pnpm-lock.yaml`, `package.json`, `pnpm-workspace.yaml`, `turbo.json`).
-   - Copies internal workspace packages (`packages/`) and target app source code.
-   - Executes `pnpm install --frozen-lockfile` to install dependencies deterministically.
+    subgraph CD["CD Pipeline (cd.yml)"]
+        E -- "workflow_run (success on main)" --> F["Verify Credentials & Concurrency"]
+        F --> G1["Deploy to Oracle Cloud (SSH)"]
+        F --> G2["Deploy to Railway (@railway/cli)"]
+        G1 --> H1["Rolling Compose Build & Health Checks"]
+        G2 --> H2["Probe /api/v1/health (Exponential Backoff)"]
+        H1 --> I["Production Verified"]
+        H2 --> I
+    end
+```
 
-2. **Build Stage**:
-   - Compiles TypeScript into JavaScript bundles via `pnpm --filter @urticketbuddy/<service>... build`.
-   - Strips `devDependencies` via `pnpm prune --prod --no-optional`, leaving only the runtime dependencies.
+### Trigger Strategy: `workflow_run` vs `push` with Reusable `needs`
 
-3. **Runner Stage (`node:22-alpine`)**:
-   - Sets `NODE_ENV=production`.
-   - Installs `curl` for container health monitoring.
-   - Switches to the unprivileged `node` user (`USER node`, UID 1000) for least-privilege container execution.
-   - Copies only the pruned `node_modules`, compiled package manifests, and target application `dist/`.
-   - Configures native Docker `HEALTHCHECK` testing `/api/v1/health`.
+1. **Security Isolation:** Deployment credentials (`OCI_SSH_PRIVATE_KEY`, `RAILWAY_TOKEN`) are never exposed or loaded during pull request checks or intermediate feature branch runs.
+2. **Immutable Commit Integrity:** `workflow_run` receives `github.event.workflow_run.head_sha`, ensuring the exact audited and verified commit that passed all CI checks is deployed to production.
+3. **Auditability & Clean Separation:** The CD pipeline maintains an independent deployment history, run status, and audit log without interleaving test matrix noise with release tracking.
+4. **Manual Dispatch:** Supports `workflow_dispatch` with optional `target_commit` parameter for emergency manual roll-forwards or redeployments.
 
-### Local Build Verification
+---
 
-To test building any container locally:
+## 3. GitHub Secrets & Repository Variables
+
+Configure the following secrets in your GitHub repository (`Settings -> Secrets and variables -> Actions`):
+
+| Type             | Name                  | Required For        | Description                                        | Example / Default                       |
+| :--------------- | :-------------------- | :------------------ | :------------------------------------------------- | :-------------------------------------- |
+| **Secret**       | `OCI_HOST_IP`         | Oracle Cloud (Pri.) | Public IPv4 address of the OCI Compute instance.   | `129.150.x.x`                           |
+| **Secret / Var** | `OCI_USERNAME`        | Oracle Cloud (Pri.) | SSH username (`ubuntu` for Ubuntu images).         | `ubuntu`                                |
+| **Secret**       | `OCI_SSH_PRIVATE_KEY` | Oracle Cloud (Pri.) | Full private key text (`-----BEGIN ... KEY-----`). | Downloaded `.key`                       |
+| **Secret**       | `RAILWAY_TOKEN`       | Railway (Optional)  | Railway API token for microservice deployment.     | `railway_tok_...`                       |
+| **Secret / Var** | `RAILWAY_HEALTH_URL`  | Railway (Optional)  | Public base URL for the deployed API.              | `https://api-production.up.railway.app` |
+
+---
+
+## 4. Multi-Stage Dockerfiles
+
+Each backend service (`api`, `realtime`, `worker`) utilizes a standardized 4-stage multi-stage Dockerfile located under `docker/` (and mirrored in `apps/<service>/Dockerfile` and `infra/docker/Dockerfile.<service>`):
+
+1. **`deps`**: Sets up Node 22 Alpine, activates pinned `pnpm@12.21.0` via Corepack, copies package manifests across the Turborepo, and executes `pnpm install --frozen-lockfile` for deterministic caching.
+2. **`build`**: Copies workspace source code and compiles shared packages and service targets (`pnpm --filter <app>... build`).
+3. **`prod-deps`**: Runs `pnpm --filter <app> deploy --prod --prefer-offline /out/<app>` to isolate production `node_modules` and required internal workspace packages without devDependencies.
+4. **`production`**: Minimal Alpine runtime containing only compiled `dist/`, production `node_modules/`, non-root user execution (`USER node`), signal forwarding (`tini`), exposed service ports, and container-level `HEALTHCHECK` with busybox `wget -q --spider`.
+
+### Building Individual Stages Locally
 
 ```bash
-# Build API container
-docker build -f apps/api/Dockerfile -t urticketbuddy-api:latest .
+# Build dependency layer
+docker build --target deps -f docker/api.Dockerfile .
 
-# Build Realtime container
-docker build -f apps/realtime/Dockerfile -t urticketbuddy-realtime:latest .
+# Build compiled source layer
+docker build --target build -f docker/api.Dockerfile .
 
-# Build Worker container
-docker build -f apps/worker/Dockerfile -t urticketbuddy-worker:latest .
+# Extract production bundle
+docker build --target prod-deps -f docker/api.Dockerfile .
+
+# Build final minimal production image
+docker build --target production -f docker/api.Dockerfile -t urticketbuddy-api:prod .
 ```
 
 ---
 
-## 3. Production Docker Compose (`docker-compose.prod.yml`)
+## 5. Production Docker Compose Stack (`docker-compose.prod.yml`)
 
 The production Docker Compose configuration orchestrates the complete production topology:
 
@@ -108,7 +140,7 @@ docker compose -f docker-compose.prod.yml down
 
 ---
 
-## 4. Oracle Cloud Always Free Provisioning & Bootstrap
+## 6. Oracle Cloud Always Free Provisioning & Bootstrap
 
 ### 1. Provisioning Details (Console)
 
@@ -140,43 +172,37 @@ The script automatically:
 
 ---
 
-## 5. Continuous Deployment Pipeline (`.github/workflows/cd.yml`)
+## 7. Rollback Procedures
 
-The CD workflow triggers automatically upon push to the `main` branch after CI checks pass, or manually via `workflow_dispatch`.
+### Instant Railway Rollback (If using Railway)
 
-### Pipeline Stages
+```bash
+railway list
+railway rollback --service api
+railway rollback --service realtime
+railway rollback --service worker
+```
 
-1. **Pre-Deploy Quality Gate (`ci-gate`)**:
-   - Validates the codebase using `pnpm lint`, `pnpm typecheck`, and `pnpm test`.
-   - Prevents deployments on failing test suites.
+### Git Revert Rollback (Universal)
 
-2. **Oracle Cloud Deployment (`deploy-oracle`)**:
-   - Securely authenticates over SSH via `appleboy/ssh-action@v1.0.3`.
-   - Synchronizes repository code at `/opt/urticketbuddy`.
-   - Executes rolling container build & restart:
-     ```bash
-     docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
-     ```
-   - Executes automated post-deploy health check loops with retry backoff against `/api/v1/health` on ports 3000, 3001, and 3002.
+If a faulty commit was merged to `main`:
 
-3. **Railway PaaS Deployment (`deploy-railway`)**:
-   - Executes when `RAILWAY_TOKEN` secret is configured.
-   - Deploys microservices via Railway CLI:
-     ```bash
-     railway up --service api --detach
-     railway up --service realtime --detach
-     railway up --service worker --detach
-     ```
-   - Validates live endpoint responsiveness against `https://${RAILWAY_API_URL}/api/v1/health`.
+```bash
+git checkout main
+git pull origin main
+git revert <faulty-commit-sha> -m "revert: rollback failed release [UTB-18]"
+git push origin main
+```
 
-### Required GitHub Secrets
+The CD pipeline will automatically trigger after CI passes and roll out the stable codebase.
 
-Configure these in your GitHub repository under **Settings ➔ Secrets and variables ➔ Actions**:
+---
 
-| Secret Name           | Required For       | Description                                               |
-| :-------------------- | :----------------- | :-------------------------------------------------------- |
-| `OCI_HOST_IP`         | Oracle Cloud       | Public IPv4 address of the OCI Compute instance.          |
-| `OCI_USERNAME`        | Oracle Cloud       | SSH username (`ubuntu` for standard Ubuntu images).       |
-| `OCI_SSH_PRIVATE_KEY` | Oracle Cloud       | Full private key text (`-----BEGIN ... KEY-----`).        |
-| `RAILWAY_TOKEN`       | Railway (Optional) | API token generated in Railway account settings.          |
-| `RAILWAY_API_URL`     | Railway (Optional) | Custom domain or public Railway URL for API health check. |
+## 8. Troubleshooting
+
+| Issue                                        | Cause                                       | Solution                                                                                                            |
+| -------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `API Health check failed after 10 attempts`  | Service crashed or slow startup             | Check container logs with `docker compose -f docker-compose.prod.yml logs api`. Verify database migrations applied. |
+| Container exits with code 137                | Out of Memory (OOM)                         | Ensure 4GB swapfile is enabled (`swapon --show`).                                                                   |
+| Non-root permission denied writing to `/app` | Running as `node` user without write access | The container runs strictly as non-root `node:node`. Ephemeral runtime writes should be directed to `/tmp`.         |
+| Port binding collision                       | Port already in use locally                 | Ensure local background instances are stopped (`docker compose down`) before running `docker-compose.prod.yml`.     |

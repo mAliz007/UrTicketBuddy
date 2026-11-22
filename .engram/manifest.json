@@ -367,6 +367,10 @@
     "mtime": 1794919105337.8945,
     "hash": "2b9ae4d0d2e7955386acef154982a30f"
   },
+  "C:/Users/NCS/Desktop/UrTicketBuddy/packages/config/src/docker-cd.spec.ts": {
+    "mtime": 1795333179608.6235,
+    "hash": "6f02bdb195185d79b6ff6e9ad81f8718"
+  },
   "C:/Users/NCS/Desktop/UrTicketBuddy/packages/config/src/env.ts": {
     "mtime": 1795191737920.0095,
     "hash": "c33c041c49b66b8956ae2d9736bb0788"
@@ -612,8 +616,8 @@
     "hash": "5c824c6019695b1cde0293e52fe6611d"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/docker-compose.prod.yml": {
-    "mtime": 1795329308056.358,
-    "hash": "e0b563d70a2c41ca13e5a025aec4b647"
+    "mtime": 1795333214756.6272,
+    "hash": "a22545a7e99358705a4174b28c60062a"
   },
   "C:/Users/NCS/Desktop/UrTicketBuddy/docker-compose.yml": {
     "mtime": 1794919105219.8586,

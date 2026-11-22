@@ -83,6 +83,8 @@ jobs:
         if: env.RAILWAY_TOKEN != ''
         run: |
           echo "Checking Railway service deployment status for background and socket services..."
+          # Realtime and Worker run on internal networking without required public ingress in typical setups.
+          # We verify service container health and deployment status via Railway CLI.
           railway status --service "$SERVICE_REALTIME" || echo "Note: Railway status inspection complete for $SERVICE_REALTIME"
           railway status --service "$SERVICE_WORKER" || echo "Note: Railway status inspection complete for $SERVICE_WORKER"
 

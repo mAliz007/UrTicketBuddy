@@ -93,6 +93,7 @@
       "packages/config/eslint/base.js",
       "packages/config/jest.config.ts",
       "packages/config/prettier/index.js",
+      "packages/config/src/docker-cd.spec.ts",
       "packages/config/src/env.ts",
       "packages/config/src/index.spec.ts",
       "packages/config/src/index.ts",
@@ -166,8 +167,8 @@
     "image": [],
     "video": []
   },
-  "total_files": 158,
-  "total_words": 56196,
+  "total_files": 159,
+  "total_words": 56593,
   "needs_graph": true,
   "warning": null,
   "skipped_sensitive": [
@@ -181,7 +182,7 @@
   "graphifyignore_patterns": 3,
   "git": {
     "source_owner": "git",
-    "source_hash": "f64ac0cd4762ce9c9c2d2d44a13ae79853cd1cc8",
+    "source_hash": "c4e835506349790295066b37278512cf89d015c5",
     "branches": [
       "chore/UTB-1-monorepo-scaffold",
       "chore/UTB-1-monorepo-scaffold-apps",
@@ -232,9 +233,9 @@
     "source": "configured-default",
     "root": ".",
     "git_root": ".",
-    "head": "f64ac0cd4762ce9c9c2d2d44a13ae79853cd1cc8",
+    "head": "c4e835506349790295066b37278512cf89d015c5",
     "candidate_count": null,
-    "included_count": 158,
+    "included_count": 159,
     "excluded_untracked_count": 0,
     "excluded_ignored_count": 0,
     "excluded_sensitive_count": 6,
