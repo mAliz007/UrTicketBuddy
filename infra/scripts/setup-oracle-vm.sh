@@ -5,11 +5,11 @@
 # ==============================================================================
 
 set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
 
-echo "==> [1/5] Updating apt package indices and upgrading base packages..."
-sudo apt-get update -y
-sudo apt-get upgrade -y
-sudo apt-get install -y ca-certificates curl gnupg lsb-release git ufw
+echo "==> [1/5] Updating apt package indices and installing base utilities..."
+sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" ca-certificates curl gnupg lsb-release git ufw
 
 echo "==> [2/5] Configuring 4GB Swap Space for memory stability..."
 if [ ! -f /swapfile ]; then
@@ -38,10 +38,10 @@ ARCH=$(dpkg --print-architecture)
 CODENAME=$(lsb_release -cs)
 echo "deb [arch=${ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${CODENAME} stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-sudo apt-get update -y
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# Enable Docker service and add ubuntu user to docker group
+# Enable Docker service and add user to docker group
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo usermod -aG docker "$USER" || true
@@ -50,7 +50,7 @@ echo "==> [4/5] Configuring Local Firewall (iptables / ufw)..."
 # Oracle Cloud Ubuntu includes restrictive default iptables rules; ensure web ports are accepted
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT || true
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT || true
-sudo netfilter-persistent save || true
+sudo netfilter-persistent save 2>/dev/null || true
 
 echo "==> [5/5] Creating application root directory..."
 sudo mkdir -p /opt/urticketbuddy

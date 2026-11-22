@@ -169,55 +169,91 @@ jobs:
 
             cd "$APP_DIR"
 
+            AUTH_REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
             if [ ! -d ".git" ]; then
-              git clone https://github.com/${{ github.repository }}.git .
+              find . -mindepth 1 -delete 2>/dev/null || true
+              git clone "$AUTH_REPO" .
             else
+              git remote set-url origin "$AUTH_REPO"
               git fetch origin main
               git checkout main
               git reset --hard origin/main
             fi
+            git remote set-url origin "https://github.com/${{ github.repository }}.git"
 
             if [ ! -f /swapfile ] && [ -f infra/scripts/setup-oracle-vm.sh ]; then
               chmod +x infra/scripts/setup-oracle-vm.sh
               ./infra/scripts/setup-oracle-vm.sh
             fi
 
+            if [ ! -f .env ]; then
+              cp .env.example .env
+            fi
+
             echo "==> [OCI CD] Building and starting production containers..."
-            docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+            sudo docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
 
             echo "==> [OCI CD] Executing post-deploy health check pings..."
-            for i in $(seq 1 12); do
+            API_HEALTHY=0
+            for i in $(seq 1 24); do
               if curl -s -f http://127.0.0.1:3000/api/v1/health > /dev/null; then
                 echo "✓ API microservice is healthy on http://localhost:3000/api/v1/health"
+                API_HEALTHY=1
                 break
               fi
-              echo "Waiting for API service to report healthy ($i/12)..."
+              echo "Waiting for API service to report healthy ($i/24)..."
               sleep 5
             done
 
+            if [ "$API_HEALTHY" -ne 1 ]; then
+              echo "::error::API microservice failed to become healthy within 120s. Container logs:"
+              sudo docker compose -f docker-compose.prod.yml logs api
+              exit 1
+            fi
+
+            REALTIME_HEALTHY=0
             for i in $(seq 1 12); do
               if curl -s -f http://127.0.0.1:3001/api/v1/health > /dev/null; then
                 echo "✓ Realtime gateway is healthy on http://localhost:3001/api/v1/health"
+                REALTIME_HEALTHY=1
                 break
               fi
               echo "Waiting for Realtime service to report healthy ($i/12)..."
               sleep 5
             done
 
+            if [ "$REALTIME_HEALTHY" -ne 1 ]; then
+              echo "::error::Realtime service failed to become healthy. Container logs:"
+              sudo docker compose -f docker-compose.prod.yml logs realtime
+              exit 1
+            fi
+
+            WORKER_HEALTHY=0
             for i in $(seq 1 12); do
               if curl -s -f http://127.0.0.1:3002/api/v1/health > /dev/null; then
                 echo "✓ Worker engine is healthy on http://localhost:3002/api/v1/health"
+                WORKER_HEALTHY=1
                 break
               fi
               echo "Waiting for Worker service to report healthy ($i/12)..."
               sleep 5
             done
 
-            if curl -s -f http://127.0.0.1:80/healthz > /dev/null; then
-              echo "✓ Nginx edge reverse proxy is healthy on http://localhost:80/healthz"
+            if [ "$WORKER_HEALTHY" -ne 1 ]; then
+              echo "::error::Worker service failed to become healthy. Container logs:"
+              sudo docker compose -f docker-compose.prod.yml logs worker
+              exit 1
             fi
+
+            for i in $(seq 1 12); do
+              if curl -s -f http://127.0.0.1:80/healthz > /dev/null; then
+                echo "✓ Nginx edge reverse proxy is healthy on http://localhost:80/healthz"
+                break
+              fi
+              sleep 2
+            done
 
             echo "=========================================================================="
             echo "✓ Zero-downtime deployment to Oracle Cloud VM completed successfully!"
-            docker compose -f docker-compose.prod.yml ps
+            sudo docker compose -f docker-compose.prod.yml ps
             echo "=========================================================================="
