@@ -27,6 +27,10 @@ fi
 sudo sysctl vm.swappiness=20
 echo 'vm.swappiness=20' | sudo tee -a /etc/sysctl.conf
 
+# Configure vm.max_map_count for Elasticsearch
+sudo sysctl -w vm.max_map_count=262144
+echo 'vm.max_map_count=262144' | sudo tee -a /etc/sysctl.conf
+
 echo "==> [3/5] Installing Official Docker Engine & Docker Compose Plugin..."
 sudo install -m 0755 -d /etc/apt/keyrings
 if [ ! -f /etc/apt/keyrings/docker.gpg ]; then

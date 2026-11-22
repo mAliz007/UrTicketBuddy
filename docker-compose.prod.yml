@@ -131,12 +131,12 @@ services:
       test:
         [
           "CMD-SHELL",
-          'curl -s http://localhost:9200/_cluster/health | grep -vq ''"status":"red"'' || exit 1',
+          "curl -s -f http://localhost:9200/_cluster/health || exit 1",
         ]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 20s
+      retries: 6
+      start_period: 30s
     networks:
       - urticketbuddy_network
 
@@ -153,9 +153,17 @@ services:
       - NODE_ENV=production
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
+      - POSTGRES_DIRECT_PORT=5432
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRES_DB=${POSTGRES_DB:-urticketbuddy}
+      - MONGO_URI=mongodb://mongo:27017/urticketbuddy
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ELASTICSEARCH_NODE=http://elasticsearch:9200
+      - JWT_SECRET=${JWT_SECRET:-production-jwt-secret-min-16-characters}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-production-jwt-refresh-secret-min-16}
+      - MASTER_TICKET_SECRET=${MASTER_TICKET_SECRET:-prod-master-ticket-secret-32-chars-long-key}
     depends_on:
       postgres:
         condition: service_healthy

@@ -217,6 +217,9 @@ jobs:
 
             sed -i 's/^NODE_ENV=development/NODE_ENV=production/' .env
 
+            # Ensure host virtual memory map count is sufficient for Elasticsearch
+            sudo sysctl -w vm.max_map_count=262144 || true
+
             echo "==> [OCI CD] Stopping and pruning any conflicting legacy containers..."
             sudo docker compose -f docker-compose.prod.yml down --remove-orphans || true
 
@@ -224,6 +227,13 @@ jobs:
             if ! sudo docker compose -f docker-compose.prod.yml up -d --build --remove-orphans; then
               echo "::error::Docker compose up failed during container startup. Dumping full service logs:"
               sudo docker compose -f docker-compose.prod.yml ps -a
+              echo "==> [OCI CD] Migration container logs:"
+              sudo docker compose -f docker-compose.prod.yml logs migration || true
+              echo "==> [OCI CD] API container logs:"
+              sudo docker compose -f docker-compose.prod.yml logs api || true
+              echo "==> [OCI CD] Postgres container logs:"
+              sudo docker compose -f docker-compose.prod.yml logs postgres || true
+              echo "==> [OCI CD] Full tail logs:"
               sudo docker compose -f docker-compose.prod.yml logs --tail=100
               exit 1
             fi
