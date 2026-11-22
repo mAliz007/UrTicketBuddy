@@ -33,6 +33,10 @@ export default function App() {
   const [tokenNotification, setTokenNotification] = useState<string | null>(
     null,
   );
+  const [lastRegisteredCreds, setLastRegisteredCreds] = useState<{
+    email: string;
+    password?: string;
+  } | null>(null);
 
   // Initialize request state with default endpoint
   const [requestState, setRequestState] = useState<RequestState>(() => {
@@ -124,13 +128,25 @@ export default function App() {
       pathParamsMap[m[1]] = "";
     });
 
+    let defaultBody = endpoint.defaultBody || "";
+    if (endpoint.id === "auth-login" && lastRegisteredCreds) {
+      defaultBody = JSON.stringify(
+        {
+          email: lastRegisteredCreds.email,
+          password: lastRegisteredCreds.password || "Password123!",
+        },
+        null,
+        2,
+      );
+    }
+
     setRequestState({
       method: endpoint.method,
       url: endpoint.path,
       pathParams: pathParamsMap,
       queryParams: queryParamsList,
       headers: headersList,
-      body: endpoint.defaultBody || "",
+      body: defaultBody,
       authType: endpoint.requiresAuth ? "bearer" : "none",
       bearerToken: bearerToken,
     });
@@ -293,6 +309,29 @@ export default function App() {
           setBearerToken(detectedToken);
           saveStoredToken(detectedToken);
           setRequestState((prev) => ({ ...prev, bearerToken: detectedToken }));
+
+          // If registering, automatically sync the registered email and password for login
+          if (
+            requestState.url.includes("/auth/register") &&
+            requestState.body
+          ) {
+            try {
+              const bodyJson = JSON.parse(requestState.body) as Record<
+                string,
+                unknown
+              >;
+              if (typeof bodyJson.email === "string") {
+                setLastRegisteredCreds({
+                  email: bodyJson.email,
+                  password:
+                    typeof bodyJson.password === "string"
+                      ? bodyJson.password
+                      : "Password123!",
+                });
+              }
+            } catch {}
+          }
+
           setTokenNotification(
             "🔑 Success! JWT Access Token auto-captured & activated for all requests.",
           );
