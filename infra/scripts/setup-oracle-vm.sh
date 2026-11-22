@@ -44,7 +44,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--for
 # Enable Docker service and add user to docker group
 sudo systemctl enable docker
 sudo systemctl start docker
-sudo usermod -aG docker "$USER" || true
+CURRENT_USER="${USER:-$(whoami)}"
+sudo usermod -aG docker "$CURRENT_USER" || true
 
 echo "==> [4/5] Configuring Local Firewall (iptables / ufw)..."
 # Oracle Cloud Ubuntu includes restrictive default iptables rules; ensure web ports are accepted
@@ -54,7 +55,7 @@ sudo netfilter-persistent save 2>/dev/null || true
 
 echo "==> [5/5] Creating application root directory..."
 sudo mkdir -p /opt/urticketbuddy
-sudo chown -R "$USER:$USER" /opt/urticketbuddy
+sudo chown -R "$CURRENT_USER" /opt/urticketbuddy
 
 echo "=========================================================================="
 echo "✓ UrTicketBuddy Oracle Cloud host setup complete!"

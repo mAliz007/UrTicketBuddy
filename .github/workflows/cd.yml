@@ -156,40 +156,45 @@ jobs:
           username: ${{ secrets.OCI_USERNAME || 'ubuntu' }}
           key: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
           port: 22
-          script_stop: true
+          debug: true
           script: |
-            set -e
+            set -ex
+            echo "=========================================================================="
             echo "==> [OCI CD] Starting deployment on Oracle Cloud VM..."
+            echo "=========================================================================="
 
             CURRENT_USER=$(whoami)
             APP_DIR="/opt/urticketbuddy"
 
+            echo "==> [OCI CD] Ensuring application directory exists at $APP_DIR..."
             sudo mkdir -p "$APP_DIR"
-            sudo chown -R "$CURRENT_USER:$CURRENT_USER" "$APP_DIR"
+            sudo chown -R "$CURRENT_USER" "$APP_DIR"
+            git config --global --add safe.directory "$APP_DIR" || true
             git config --global --add safe.directory '*' || true
 
             cd "$APP_DIR"
+            echo "==> [OCI CD] Current working directory: $(pwd)"
 
             AUTH_REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-            if [ ! -d ".git" ]; then
-              echo "==> [OCI CD] Fresh repository clone..."
-              find . -mindepth 1 -delete 2>/dev/null || true
-              git clone "$AUTH_REPO" .
-            else
-              echo "==> [OCI CD] Fetching latest changes from origin/main..."
-              git remote set-url origin "$AUTH_REPO"
+            if [ -d ".git" ]; then
+              echo "==> [OCI CD] Existing git repo found. Syncing latest code from origin/main..."
+              git remote set-url origin "$AUTH_REPO" 2>/dev/null || git remote add origin "$AUTH_REPO"
               git fetch origin main
               git checkout -B main origin/main
               git reset --hard origin/main
+              git clean -fd
+            else
+              echo "==> [OCI CD] No git repo found. Performing fresh clone..."
+              find . -mindepth 1 -delete 2>/dev/null || true
+              git clone "$AUTH_REPO" .
             fi
-            git remote set-url origin "https://github.com/${{ github.repository }}.git"
+            git remote set-url origin "https://github.com/${{ github.repository }}.git" || true
+            echo "==> [OCI CD] Repository synced at commit: $(git rev-parse HEAD)"
 
-            if [ ! -f /swapfile ]; then
-              if [ -f infra/scripts/setup-oracle-vm.sh ]; then
-                echo "==> [OCI CD] Initializing host VM bootstrap..."
-                chmod +x infra/scripts/setup-oracle-vm.sh
-                ./infra/scripts/setup-oracle-vm.sh
-              fi
+            if [ ! -f /swapfile ] && [ -f infra/scripts/setup-oracle-vm.sh ]; then
+              echo "==> [OCI CD] Initializing host VM bootstrap..."
+              chmod +x infra/scripts/setup-oracle-vm.sh
+              ./infra/scripts/setup-oracle-vm.sh
             fi
 
             if [ ! -f .env ]; then
@@ -197,8 +202,14 @@ jobs:
               cp .env.example .env
             fi
 
+            echo "==> [OCI CD] Stopping and pruning any conflicting legacy containers..."
+            sudo docker compose -f docker-compose.prod.yml down --remove-orphans || true
+
             echo "==> [OCI CD] Building and starting production containers..."
             sudo docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+
+            echo "==> [OCI CD] Active containers immediately after launch:"
+            sudo docker compose -f docker-compose.prod.yml ps -a
 
             echo "==> [OCI CD] Executing post-deploy health check pings..."
             API_HEALTHY=0
@@ -213,8 +224,11 @@ jobs:
             done
 
             if [ "$API_HEALTHY" -ne 1 ]; then
-              echo "::error::API microservice failed to become healthy within 120s. Container logs:"
+              echo "::error::API microservice failed to become healthy within 120s. Detailed container logs:"
               sudo docker compose -f docker-compose.prod.yml logs api
+              sudo docker compose -f docker-compose.prod.yml logs postgres
+              sudo docker compose -f docker-compose.prod.yml logs pgbouncer
+              sudo docker compose -f docker-compose.prod.yml ps -a
               exit 1
             fi
 
@@ -230,8 +244,9 @@ jobs:
             done
 
             if [ "$REALTIME_HEALTHY" -ne 1 ]; then
-              echo "::error::Realtime service failed to become healthy. Container logs:"
+              echo "::error::Realtime service failed to become healthy within 60s. Detailed container logs:"
               sudo docker compose -f docker-compose.prod.yml logs realtime
+              sudo docker compose -f docker-compose.prod.yml ps -a
               exit 1
             fi
 
@@ -247,20 +262,39 @@ jobs:
             done
 
             if [ "$WORKER_HEALTHY" -ne 1 ]; then
-              echo "::error::Worker service failed to become healthy. Container logs:"
+              echo "::error::Worker service failed to become healthy within 60s. Detailed container logs:"
               sudo docker compose -f docker-compose.prod.yml logs worker
+              sudo docker compose -f docker-compose.prod.yml ps -a
               exit 1
             fi
 
-            for i in $(seq 1 12); do
+            NGINX_HEALTHY=0
+            for i in $(seq 1 15); do
               if curl -s -f http://127.0.0.1:80/healthz > /dev/null; then
                 echo "✓ Nginx edge reverse proxy is healthy on http://localhost:80/healthz"
+                NGINX_HEALTHY=1
                 break
               fi
+              echo "Waiting for Nginx edge proxy to report healthy ($i/15)..."
               sleep 2
             done
+
+            if [ "$NGINX_HEALTHY" -ne 1 ]; then
+              echo "::error::Nginx edge proxy failed to become healthy within 30s. Detailed container logs:"
+              sudo docker compose -f docker-compose.prod.yml logs nginx
+              sudo docker compose -f docker-compose.prod.yml ps -a
+              exit 1
+            fi
+
+            WEB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:80/ || echo "000")
+            echo "✓ Web SPA HTTP response code: $WEB_STATUS"
+            API_PROXY_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:80/health || echo "000")
+            echo "✓ Nginx /health proxy response code: $API_PROXY_STATUS"
 
             echo "=========================================================================="
             echo "✓ Zero-downtime deployment to Oracle Cloud VM completed successfully!"
             sudo docker compose -f docker-compose.prod.yml ps
+            echo "Public Web SPA URL: http://${{ secrets.OCI_HOST_IP }}/"
+            echo "Public Health Check: http://${{ secrets.OCI_HOST_IP }}/health"
+            echo "Public REST API: http://${{ secrets.OCI_HOST_IP }}/api/v1/"
             echo "=========================================================================="

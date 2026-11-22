@@ -15,7 +15,7 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 2: `feat/UTB-18/docker-compose`
   - Sub-task 3: `feat/UTB-18/cd-workflow`
   - Sub-task 4: `feat/UTB-18/tests`
-- **Status:** Completed (Sub-tasks merged into `feat/UTB-18-docker-cd-pipeline`; PR ready for review; `main` unmerged)
+- **Status:** Merged into `main` (Live deployment on Oracle Cloud Always Free VM at `129.221.182.252` with React SPA, NestJS REST API, Socket.io Realtime, BullMQ Worker, and Nginx edge reverse proxy)
 - **Packages & Directories Modified:** `docker/`, `apps/api/`, `apps/realtime/`, `apps/worker/`, `infra/docker/`, `infra/scripts/`, `.github/workflows/`, `packages/config/`, `docs/`, `docs/adr/`, `.dockerignore`, `docker-compose.prod.yml`, `.env.example`, `package.json`, `README.md`, `CHANGELOG.md`
 - **Scope & Deliverables:**
   - **Root `.dockerignore`**: Created comprehensive Docker ignore file excluding `node_modules`, `dist`, `.git`, `.turbo`, `.env*`, `coverage`, `docs`, and frontend application sources (`apps/web/src`, `apps/web/public`, `apps/web/dist`) to guarantee backend container build isolation.
