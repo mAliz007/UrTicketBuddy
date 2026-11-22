@@ -146,6 +146,7 @@ pnpm dev
 This starts:
 
 - **Web SPA**: [http://localhost:5173](http://localhost:5173)
+- **Endpoint Tester Workbench**: [http://localhost:5174](http://localhost:5174) (`pnpm tester`)
 - **REST API**: [http://localhost:3000](http://localhost:3000) (Health check: [http://localhost:3000/api/v1/health](http://localhost:3000/api/v1/health))
 - **Realtime Gateway**: [http://localhost:3001](http://localhost:3001) (Health check: [http://localhost:3001/api/v1/health](http://localhost:3001/api/v1/health))
 - **Worker Processors**: Health check on [http://localhost:3002/api/v1/health](http://localhost:3002/api/v1/health)
@@ -159,6 +160,7 @@ This starts:
 | :------------------- | :------ | :------------- | :------------------------------------------------------------------------------------ |
 | **Nginx Proxy**      | `80`    | External       | Unified reverse proxy routing `/` to Web, `/api` to API, and `/socket.io` to Realtime |
 | **Web SPA**          | `5173`  | Direct / Proxy | React 18 single-page application built with Vite and Tailwind CSS                     |
+| **Endpoint Tester**  | `5174`  | Direct         | Standalone Postman-like API workbench (`apps/tester`) for testing REST endpoints      |
 | **Core API**         | `3000`  | Direct / Proxy | NestJS modular monolith REST API serving endpoints under `/api/v1`                    |
 | **Realtime Service** | `3001`  | Direct / Proxy | Socket.io WebSocket gateway for live seat locks and room subscriptions                |
 | **Worker Service**   | `3002`  | Direct         | NestJS standalone BullMQ queue processor exposing `/api/v1/health`                    |
@@ -179,6 +181,7 @@ UrTicketBuddy/
 ├── apps/
 │   ├── api/             # NestJS modular monolith core REST API (:3000)
 │   ├── realtime/        # NestJS + Socket.io WebSocket gateway (:3001)
+│   ├── tester/          # Standalone Postman-like endpoint testing workbench (:5174)
 │   ├── web/             # React + Vite + TypeScript + Tailwind CSS (:5173)
 │   └── worker/          # NestJS standalone BullMQ & hold-expiry cron worker (:3002)
 ├── packages/

@@ -141,6 +141,30 @@ services:
       - urticketbuddy_network
 
   # ----------------------------------------------------------------------------
+  # Database Migration Runner
+  # ----------------------------------------------------------------------------
+  migration:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: build
+    container_name: utb_migration_prod
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-urticketbuddy}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["pnpm", "--filter", "@urticketbuddy/db", "db:migrate"]
+    restart: "no"
+    networks:
+      - urticketbuddy_network
+
+  # ----------------------------------------------------------------------------
   # Production Backend Application Services (Target: production)
   # ----------------------------------------------------------------------------
   api:
@@ -170,6 +194,8 @@ services:
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-production-jwt-refresh-secret-min-16}
       - MASTER_TICKET_SECRET=${MASTER_TICKET_SECRET:-prod-master-ticket-secret-32-chars-long-key}
     depends_on:
+      migration:
+        condition: service_completed_successfully
       pgbouncer:
         condition: service_healthy
       redis:

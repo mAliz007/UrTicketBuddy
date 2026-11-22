@@ -20,7 +20,20 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix("api/v1");
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    credentials: true,
+    allowedHeaders: [
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+      "Idempotency-Key",
+      "X-Refresh-Token",
+    ],
+  });
 
   const port = env.API_PORT || 3000;
   await app.listen(port);

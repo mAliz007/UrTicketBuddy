@@ -4,6 +4,39 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-22] - 2026-11-22
+
+### Centralized Space to Hit and Test Endpoints (Endpoint Tester Workbench)
+
+- **Ticket Key:** `UTB-22`
+- **Completion Date:** 2026-11-22
+- **Main Feature Branch:** `feat/UTB-22-endpoint-tester`
+  - Sub-task 1: `feat/UTB-22/tester-scaffold`
+  - Sub-task 2: `feat/UTB-22/endpoint-catalog`
+  - Sub-task 3: `feat/UTB-22/workbench-ui`
+  - Sub-task 4: `feat/UTB-22/token-and-qr-helpers`
+- **Status:** Completed & Integrated (Running on dedicated port 5174 via `pnpm tester`)
+- **Packages & Directories Modified:** `apps/tester/`, `apps/README.md`, `package.json`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Dedicated Postman-like Workbench (`apps/tester`)**:
+    - Created standalone React 18 + Vite + Tailwind CSS developer workspace operating on dedicated port `5174`, ensuring zero interference with the main customer-facing frontend (`apps/web` on `5173`).
+  - **Exhaustive Endpoint Catalog (`apps/tester/src/data/endpoints.ts`)**:
+    - Pre-built request collections covering Authentication & RBAC, Venues, Events & Discovery, Realtime Seat Selection, Orders & Checkout, Tickets & Wallet, Gate QR Scans, and System Health.
+  - **Auto-Token Capture & Bearer Injection**:
+    - Automatic JSON inspection of auth responses to immediately store and apply JWT access tokens across all authenticated routes.
+    - Added instant role quick-presets (`customer`, `organizer`, `admin`, `gate_staff`) to test RBAC authorization guards.
+  - **Idempotency Header & Dynamic QR Visualizer**:
+    - One-click UUID generator for `Idempotency-Key` headers.
+    - Embedded dynamic HMAC-SHA256 QR code generator rendering live SVG scannable tickets from `/api/v1/tickets/:id/qr` payload responses.
+  - **DevOps History & cURL Export**:
+    - One-click "Copy as cURL" generator formatting shell-ready commands.
+    - Persistent request/response history in `localStorage` tracking HTTP status, payload sizes, and round-trip execution latency (`ms`).
+  - **Workspace & Monorepo Integration**:
+    - Registered root script `"tester": "pnpm --filter @urticketbuddy/tester dev"`.
+    - Documented port allocation (`5174`), architecture, and testing runbook in `apps/tester/README.md` and root `README.md`.
+
+---
+
 ## [UTB-18] - 2026-11-22
 
 ### Production Dockerization & Continuous Deployment Pipeline
