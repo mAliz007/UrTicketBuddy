@@ -35,10 +35,10 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      SERVICE_API: ${{ vars.RAILWAY_SERVICE_API || secrets.RAILWAY_SERVICE_API || 'api' }}
-      SERVICE_REALTIME: ${{ vars.RAILWAY_SERVICE_REALTIME || secrets.RAILWAY_SERVICE_REALTIME || 'realtime' }}
-      SERVICE_WORKER: ${{ vars.RAILWAY_SERVICE_WORKER || secrets.RAILWAY_SERVICE_WORKER || 'worker' }}
-      HEALTH_URL: ${{ vars.RAILWAY_HEALTH_URL || secrets.RAILWAY_HEALTH_URL || 'https://api-production.up.railway.app' }}
+      SERVICE_API: ${{ secrets.RAILWAY_SERVICE_API || 'api' }}
+      SERVICE_REALTIME: ${{ secrets.RAILWAY_SERVICE_REALTIME || 'realtime' }}
+      SERVICE_WORKER: ${{ secrets.RAILWAY_SERVICE_WORKER || 'worker' }}
+      HEALTH_URL: ${{ secrets.RAILWAY_HEALTH_URL || 'https://api-production.up.railway.app' }}
 
     steps:
       - name: Validate deployment credentials
@@ -125,19 +125,31 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: http://${{ secrets.OCI_HOST_IP || '129.221.182.252' }}
+      url: http://129.221.182.252
     if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    env:
+      OCI_HOST_IP: ${{ secrets.OCI_HOST_IP }}
+      OCI_USERNAME: ${{ secrets.OCI_USERNAME || 'ubuntu' }}
+      OCI_SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
     steps:
+      - name: Validate OCI credentials
+        run: |
+          if [ -z "$OCI_HOST_IP" ]; then
+            echo "::notice::OCI_HOST_IP is not set. Skipping Oracle Cloud deployment."
+            exit 0
+          fi
+          echo "OCI host credentials verified."
+
       - name: Checkout repository
-        if: ${{ secrets.OCI_HOST_IP != '' }}
+        if: env.OCI_HOST_IP != ''
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha || inputs.target_commit || github.sha }}
 
       - name: Deploy to OCI VM via SSH
-        if: ${{ secrets.OCI_HOST_IP != '' }}
+        if: env.OCI_HOST_IP != ''
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.OCI_HOST_IP }}
