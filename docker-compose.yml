@@ -38,7 +38,7 @@ services:
       - urticketbuddy_network
 
   pgbouncer:
-    image: edoburu/pgbouncer:v1.22.1
+    image: edoburu/pgbouncer:latest
     container_name: utb_pgbouncer
     restart: unless-stopped
     ports:

@@ -40,7 +40,7 @@ services:
       - urticketbuddy_network
 
   pgbouncer:
-    image: edoburu/pgbouncer:v1.22.1
+    image: edoburu/pgbouncer:latest
     container_name: utb_pgbouncer_prod
     restart: unless-stopped
     ports:
@@ -260,5 +260,43 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      - urticketbuddy_network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: urticketbuddy/web:production
+    container_name: utb_web_prod
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - urticketbuddy_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: utb_nginx_prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -q --spider http://127.0.0.1:80/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      api:
+        condition: service_healthy
+      realtime:
+        condition: service_healthy
+      web:
+        condition: service_started
     networks:
       - urticketbuddy_network
