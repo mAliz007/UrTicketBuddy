@@ -1,0 +1,237 @@
+name: urticketbuddy-prod
+
+networks:
+  urticketbuddy_network:
+    driver: bridge
+
+volumes:
+  postgres_prod_data:
+  mongo_prod_data:
+  redis_prod_data:
+
+services:
+  # ----------------------------------------------------------------------------
+  # Data Stores & Caching Layer
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: utb_postgres_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-urticketbuddy}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-urticketbuddy}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - urticketbuddy_network
+
+  pgbouncer:
+    image: edoburu/pgbouncer:v1.22.1
+    container_name: utb_pgbouncer_prod
+    restart: unless-stopped
+    environment:
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-urticketbuddy}
+      POOL_MODE: transaction
+      LISTEN_PORT: 6432
+      AUTH_TYPE: trust
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 50
+    volumes:
+      - ./infra/docker/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./infra/docker/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h 127.0.0.1 -p 6432 -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-urticketbuddy}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - urticketbuddy_network
+
+  mongo:
+    image: mongo:7.0
+    container_name: utb_mongo_prod
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ${POSTGRES_DB:-urticketbuddy}
+    volumes:
+      - mongo_prod_data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'mongosh --quiet --eval "db.adminCommand(''ping'')" || exit 1',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - urticketbuddy_network
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: utb_redis_prod
+    restart: unless-stopped
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - urticketbuddy_network
+
+  # ----------------------------------------------------------------------------
+  # Application Microservices
+  # ----------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: urticketbuddy-api:latest
+    container_name: utb_api_prod
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_PORT: 3000
+      POSTGRES_HOST: pgbouncer
+      POSTGRES_PORT: 6432
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-urticketbuddy}
+      POSTGRES_DIRECT_PORT: 5432
+      MONGO_URI: mongodb://mongo:27017/${POSTGRES_DB:-urticketbuddy}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-production-jwt-access-secret-min-16-chars}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-production-jwt-refresh-secret-min-16}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      MASTER_TICKET_SECRET: ${MASTER_TICKET_SECRET:-production-master-ticket-secret-32-chars-long-key}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      SAFEPAY_API_KEY: ${SAFEPAY_API_KEY:-}
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:3000/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - urticketbuddy_network
+
+  realtime:
+    build:
+      context: .
+      dockerfile: apps/realtime/Dockerfile
+    image: urticketbuddy-realtime:latest
+    container_name: utb_realtime_prod
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      REALTIME_PORT: 3001
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:3001/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - urticketbuddy_network
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    image: urticketbuddy-worker:latest
+    container_name: utb_worker_prod
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      WORKER_PORT: 3002
+      POSTGRES_HOST: pgbouncer
+      POSTGRES_PORT: 6432
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-urticketbuddy}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:3002/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - urticketbuddy_network
+
+  # ----------------------------------------------------------------------------
+  # Edge Gateway & Reverse Proxy
+  # ----------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    container_name: utb_nginx_prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      api:
+        condition: service_healthy
+      realtime:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -q --spider http://127.0.0.1:80/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - urticketbuddy_network
