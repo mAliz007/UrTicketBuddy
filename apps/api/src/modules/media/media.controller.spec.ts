@@ -4,6 +4,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
+import * as crypto from "crypto";
 import { MediaController } from "./media.controller";
 import { MediaService } from "./media.service";
 import { MediaPurpose } from "@urticketbuddy/contracts";
@@ -121,7 +122,6 @@ describe("MediaController", () => {
       });
 
       // MD5 of sample-image-content
-      const crypto = require("crypto");
       const expectedEtag = `"${crypto.createHash("md5").update(fileBuffer).digest("hex")}"`;
 
       const mockReq = { headers: { "if-none-match": expectedEtag } } as any;

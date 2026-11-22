@@ -2,7 +2,6 @@ import {
   Injectable,
   BadRequestException,
   UnauthorizedException,
-  NotFoundException,
   Logger,
 } from "@nestjs/common";
 import * as crypto from "crypto";
@@ -31,7 +30,7 @@ export class MediaService {
     if (!fs.existsSync(this.localStorageDir)) {
       try {
         fs.mkdirSync(this.localStorageDir, { recursive: true });
-      } catch (err) {
+      } catch {
         this.logger.warn(
           `Could not create local media storage dir: ${this.localStorageDir}`,
         );
@@ -75,7 +74,6 @@ export class MediaService {
 
     const sanitizedFilename = dto.filename.replace(/[^a-zA-Z0-9_.-]/g, "_");
     const fileId = crypto.randomUUID();
-    const ext = path.extname(sanitizedFilename) || ".bin";
     const fileKey = `${dto.purpose.toLowerCase()}/${fileId}-${sanitizedFilename}`;
 
     const expiresInSeconds = 900; // 15 minutes
