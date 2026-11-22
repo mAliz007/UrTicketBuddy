@@ -19,6 +19,8 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - Events: `POST /api/v1/events`, `GET /api/v1/events/:id`, `POST /api/v1/events/:id/generate-seats` (see [Events Module](src/modules/events/README.md))
 - Checkout: `POST /api/v1/checkout/hold` — atomic Redis seat hold via `@urticketbuddy/redis-scripts` and Pub/Sub broadcast on `seat-updates:{eventId}` (see [Checkout Module](src/modules/checkout/README.md))
 - Orders: `POST /api/v1/orders/checkout`, `GET /api/v1/orders/:id` (see [Orders Module](src/modules/orders/README.md))
+- Dynamic QR Tickets: `GET /api/v1/tickets/:ticketId/dynamic-qr`, `PATCH /api/v1/tickets/:ticketId/rotate-key`, `GET /api/v1/users/me/tickets` (see [Tickets Module](src/modules/tickets/README.md))
+- Gate Scanner: `POST /api/v1/gate/scan`, `GET /api/v1/gate/metrics` (see [Gate Module](src/modules/gate/README.md))
 
 ## Persistence Model (Polyglot)
 

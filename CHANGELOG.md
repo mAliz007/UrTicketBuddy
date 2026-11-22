@@ -47,6 +47,81 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-14] - 2026-11-20
+
+### Dynamic QR Tickets, RedisBloom Prefilter, Ticket Wallet, & Gate Scanner API
+
+- **Ticket Key:** `UTB-14`
+- **Completion Date:** 2026-11-20
+- **Main Feature Branch:** `feat/UTB-14-dynamic-qr-gate`
+  - Sub-task 1: `feat/UTB-14-dynamic-qr-gate-db-entities`
+  - Sub-task 2: `feat/UTB-14-dynamic-qr-gate-tickets-module`
+  - Sub-task 3: `feat/UTB-14-dynamic-qr-gate-scanner-bloom`
+  - Sub-task 4: `feat/UTB-14-dynamic-qr-gate-tests`
+  - Sub-task 5: `feat/UTB-14-dynamic-qr-gate-security-hardening`
+  - Sub-task 6: `feat/UTB-14-dynamic-qr-gate-audit-fixes`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-14-dynamic-qr-gate`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **TypeORM Entities & PostgreSQL Migration (`packages/db`)**:
+    - Created `Ticket` entity: `id` (uuid PK), `eventId` (uuid FK with covering index `idx_tickets_event_id`), `eventSeatId` (uuid FK with covering index `idx_tickets_event_seat_id`), `orderId` (uuid FK with covering index `idx_tickets_order_id`), `ownerId` (varchar indexed with `idx_tickets_owner_id`), `status` (`ISSUED`, `CHECKED_IN`, `VOID`, `REVOKED`), `seedVersion` (int default 1), `faceValueMinor` (int default 100000).
+    - Created `GateScan` entity: `id` (uuid PK), `ticketId` (uuid FK nullable with `ON DELETE SET NULL`, covering index `idx_gate_scans_ticket_id`), `scannedTicketRef` (varchar nullable storing raw scanned token id without FK violations), `eventId` (uuid FK with covering index `idx_gate_scans_event_id`), `scannedBy` (varchar), `result` (`VALID`, `USED`, `INVALID`, `EXPIRED`, `WRONG_EVENT`), `scannedAt` (timestamptz), and composite index `idx_gate_scans_event_scanned_at` on `(eventId, scannedAt)`.
+    - Added reversible TypeORM migration `1795036850000-UTB-14-init-tickets-gate-scans.ts` with hashed foreign keys (`FK_8a101375d173c39a7c1d02c9d7d`, `FK_265db83fa22115be54165ab4c24`, `FK_e3e1e1e9d4ee34649da54a016e4`, `FK_594f94930d041a64fef309e6252`, `FK_eb2d496837fe287e6d5218e5fe3`) guaranteeing zero schema drift on `pnpm db:check`.
+    - Integrated ticket creation into `OrdersService.checkout()` inside the ACID TypeORM transaction and registered issued tickets into `BloomService`.
+  - **Contracts & Shared Types (`packages/contracts`)**:
+    - Added `ScanResult` enum, `DynamicQrResponseSchema`, `GateScanRequestSchema`, `GateScanResponseSchema`, `TicketResponseSchema`, `TicketListResponseSchema`, and `GateMetricsResponseSchema`.
+    - Added ticket error codes: `TICKET_NOT_FOUND`, `TICKET_ALREADY_USED`, `TICKET_EXPIRED`, `TICKET_INVALID`, `TICKET_FORGED`, `WRONG_EVENT`.
+  - **Cryptographic Dynamic QR Engine (`apps/api/src/modules/tickets`) (Decision D-3)**:
+    - 30-second time-decaying windows: `window = Math.floor(Date.now() / 1000 / 30)`.
+    - HKDF-SHA256 key derivation: `HKDF(MASTER_TICKET_SECRET, salt=0, info="${ticketId}:${seedVersion}", len=32)`.
+    - HMAC-SHA256 computation: `HMAC(derivedKey, "${ticketId}:${window}").digest("base64url")`.
+    - Token payload: `base64url("${ticketId}.${window}.${hmac}")`.
+    - Constant-time verification using `crypto.timingSafeEqual` with 1-window clock skew tolerance `[currentWindow - 1, currentWindow]`.
+    - Endpoints:
+      - `GET /api/v1/tickets/:ticketId/dynamic-qr`: Verifies caller ownership or admin, verifies `ISSUED` status, and generates rotating payload.
+      - `PATCH /api/v1/tickets/:ticketId/rotate-key`: Protected by `@Roles(UserRole.ADMIN)`, increments `seedVersion` by 1, instantly invalidating previously issued tokens.
+      - `GET /api/v1/users/me/tickets` & `GET /api/v1/tickets/me`: Returns user wallet tickets.
+  - **RedisBloom Prefilter Service (`apps/api/src/common/bloom`)**:
+    - High-throughput prefilter `BloomService` utilizing Redis key `bf:tickets`.
+    - Graceful fallback to Redis SET (`bf:tickets:fallback`) and in-memory Set when RedisBloom commands are absent in local or mock environments.
+    - Automatic filter warming from PostgreSQL on module bootstrap (`onApplicationBootstrap`).
+    - Prefilter invariant: Rejects definite non-existent/forged tickets with $O(1)$ operations with zero PostgreSQL queries executed.
+  - **Gate Scanner Module & Replay Protection (`apps/api/src/modules/gate`)**:
+    - `POST /api/v1/gate/scan`: Protected for `GATE_STAFF`, `ORGANIZER`, `ADMIN`.
+      1. Base64url payload decode.
+      2. RedisBloom prefilter validation (immediate 400 rejection for forged IDs without querying PostgreSQL).
+      3. PostgreSQL lookup and event ID match verification.
+      4. Constant-time HMAC & window expiration verification (returns 400 EXPIRED if old screenshot).
+      5. Redis replay protection (`qr_nonce:${ticketId}:${window} = SET NX EX 60`). Returns 409 Conflict if duplicate scan attempt detected.
+      6. Atomic conditional database update (`UPDATE tickets SET status = 'CHECKED_IN' WHERE id = :ticketId AND status = 'ISSUED'`).
+      7. Audit log insertion (`GateScan` -> `VALID`) and returns `200 OK`.
+    - `GET /api/v1/gate/metrics`: Real-time entry velocity, total scans, valid check-ins, and rejections.
+  - **Testing & Verification**:
+    - Unit tests for `TicketsService` (10/10 passed) and `GateService` (15/15 passed).
+    - Supertest E2E integration test suite (`apps/api/test/tickets-gate.e2e-spec.ts`) asserting dynamic QR generation, 403 authorization guards, successful check-ins, replay rejection, expired window screenshot rejection, seed rotation invalidation, and Bloom filter zero-PostgreSQL rejection (12/12 passed).
+    - Quality gates passed: `pnpm db:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm graphify`.
+  - **Security & Concurrency Hardening (Sub-task 5)**:
+    - Fixed forged token audit logging to record `ticketId: null` and `scannedTicketRef` preventing PostgreSQL Foreign Key constraint crashes.
+    - Updated `gate_scans.ticketId` FK to `ON DELETE SET NULL` preventing turnstile audit logs from being wiped if a ticket record is removed.
+    - Implemented chunked (`take: 2000`) and pipelined RedisBloom warming to prevent node heap exhaustion during startup.
+    - Added strict window constraint `[currentWindow - 1, currentWindow]` per Decision D-3, rejecting future windows.
+    - Added atomic SQL increment for `seedVersion` in `TicketsService.rotateKey` avoiding race condition overwrites.
+    - Enforced organizer tenant isolation on gate scan and metrics endpoints.
+    - Added explicit status differentiation (`CHECKED_IN`, `REVOKED`, `VOID`).
+    - Added Redis replay nonce rollback on unexpected transient database errors so patrons are not locked out for 60s on transient DB network glitches.
+    - Scoped entry velocity calculation strictly to valid scans in the trailing 5-minute sliding window.
+  - **Adversarial Security & Architecture Audit Fixes (Sub-task 6)**:
+    - Implemented distributed per-ticket turnstile scan lock (`scan_lock:${ticketId}`, TTL 5s) in Redis to eliminate race conditions between adjacent 30-second windows across concurrent turnstiles.
+    - Added atomic `seedVersion: ticket.seedVersion` guard in `ticketRepository.update` to detect concurrent key rotation and reject revoked tokens with 400 Bad Request (`TICKET_INVALID`).
+    - Implemented Redis key existence check and fail-open mechanism in `BloomService` to ensure cold starts, Redis flushes, or network partitions never falsely reject legitimate paying attendees.
+    - Added strict UUID validation via NestJS `ParseUUIDPipe` on `:ticketId` route parameters and `eventId` query parameters.
+    - Enforced safe string truncation (`substring(0, 255)`) on `scannedTicketRef` to prevent PostgreSQL VARCHAR(255) overflow errors on oversized attack payloads.
+    - Added Zod refinement in `packages/config` forbidding the default development `MASTER_TICKET_SECRET` when `NODE_ENV === "production"`.
+    - Hardened organizer tenant isolation in `GateService` to fail closed for organizer roles when event ownership cannot be verified.
+    - Corrected concurrent check-in error message to `"Ticket is no longer in ISSUED state (already checked in)"`.
+
+---
+
 ## [UTB-11] - 2026-11-20
 
 ### Background Hold Expiry Worker & Auto-Release Engine

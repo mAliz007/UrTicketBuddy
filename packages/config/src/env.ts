@@ -3,54 +3,71 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
 
-export const envSchema = z.object({
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
-  API_PORT: z.coerce.number().default(3000),
-  REALTIME_PORT: z.coerce.number().default(3001),
-  WORKER_PORT: z.coerce.number().default(3002),
-  WEB_PORT: z.coerce.number().default(5173),
+export const envSchema = z
+  .object({
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
+    API_PORT: z.coerce.number().default(3000),
+    REALTIME_PORT: z.coerce.number().default(3001),
+    WORKER_PORT: z.coerce.number().default(3002),
+    WEB_PORT: z.coerce.number().default(5173),
 
-  // Database - Postgres (through PgBouncer 6432)
-  POSTGRES_HOST: z.string().default("localhost"),
-  POSTGRES_PORT: z.coerce.number().default(6432),
-  POSTGRES_USER: z.string().default("postgres"),
-  POSTGRES_PASSWORD: z.string().default("postgres"),
-  POSTGRES_DB: z.string().default("urticketbuddy"),
-  POSTGRES_DIRECT_PORT: z.coerce.number().default(5432),
+    // Database - Postgres (through PgBouncer 6432)
+    POSTGRES_HOST: z.string().default("localhost"),
+    POSTGRES_PORT: z.coerce.number().default(6432),
+    POSTGRES_USER: z.string().default("postgres"),
+    POSTGRES_PASSWORD: z.string().default("postgres"),
+    POSTGRES_DB: z.string().default("urticketbuddy"),
+    POSTGRES_DIRECT_PORT: z.coerce.number().default(5432),
 
-  // MongoDB
-  MONGO_URI: z.string().default("mongodb://localhost:27017/urticketbuddy"),
+    // MongoDB
+    MONGO_URI: z.string().default("mongodb://localhost:27017/urticketbuddy"),
 
-  // Redis
-  REDIS_HOST: z.string().default("localhost"),
-  REDIS_PORT: z.coerce.number().default(6379),
-  REDIS_PASSWORD: z.string().optional(),
+    // Redis
+    REDIS_HOST: z.string().default("localhost"),
+    REDIS_PORT: z.coerce.number().default(6379),
+    REDIS_PASSWORD: z.string().optional(),
 
-  // Elasticsearch
-  ELASTICSEARCH_NODE: z.string().default("http://localhost:9200"),
+    // Elasticsearch
+    ELASTICSEARCH_NODE: z.string().default("http://localhost:9200"),
 
-  // Secrets & Auth
-  JWT_SECRET: z
-    .string()
-    .min(16)
-    .default("development-jwt-secret-min-16-characters"),
-  JWT_EXPIRES_IN: z.string().default("15m"),
-  JWT_REFRESH_SECRET: z
-    .string()
-    .min(16)
-    .default("development-jwt-refresh-secret-min-16"),
-  JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
-  MASTER_TICKET_SECRET: z
-    .string()
-    .min(32)
-    .default("dev-master-ticket-secret-32-chars-long-key"),
+    // Secrets & Auth
+    JWT_SECRET: z
+      .string()
+      .min(16)
+      .default("development-jwt-secret-min-16-characters"),
+    JWT_EXPIRES_IN: z.string().default("15m"),
+    JWT_REFRESH_SECRET: z
+      .string()
+      .min(16)
+      .default("development-jwt-refresh-secret-min-16"),
+    JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
+    MASTER_TICKET_SECRET: z
+      .string()
+      .min(32)
+      .default("dev-master-ticket-secret-32-chars-long-key"),
 
-  // Payment Providers
-  STRIPE_SECRET_KEY: z.string().optional(),
-  SAFEPAY_API_KEY: z.string().optional(),
-});
+    // Payment Providers
+    STRIPE_SECRET_KEY: z.string().optional(),
+    SAFEPAY_API_KEY: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.NODE_ENV === "production") {
+        return (
+          data.MASTER_TICKET_SECRET !==
+          "dev-master-ticket-secret-32-chars-long-key"
+        );
+      }
+      return true;
+    },
+    {
+      message:
+        "Production deployment must set a unique, non-default MASTER_TICKET_SECRET in environment",
+      path: ["MASTER_TICKET_SECRET"],
+    },
+  );
 
 export type Env = z.infer<typeof envSchema>;
 

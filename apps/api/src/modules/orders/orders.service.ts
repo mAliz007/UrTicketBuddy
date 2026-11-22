@@ -1,6 +1,7 @@
 import {
   Injectable,
   Inject,
+  Optional,
   BadRequestException,
   ConflictException,
   NotFoundException,
@@ -8,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { Repository, DataSource, In } from "typeorm";
 import Redis from "ioredis";
-import { Order, OrderItem, EventSeat } from "@urticketbuddy/db";
+import { Order, OrderItem, EventSeat, Ticket } from "@urticketbuddy/db";
 import { RedisScriptsWrapper, RedisKeys } from "@urticketbuddy/redis-scripts";
 import {
   ErrorCode,
@@ -24,6 +25,7 @@ import {
   REDIS_SCRIPTS_WRAPPER,
 } from "../../database/database.tokens";
 import { MockPaymentService } from "./payment/mock-payment.service";
+import { BloomService } from "../../common/bloom/bloom.service";
 import { CheckoutDto } from "./dto/checkout.dto";
 
 export const DEFAULT_SEAT_PRICE = 1000;
@@ -46,6 +48,8 @@ export class OrdersService {
     @Inject(REDIS_SCRIPTS_WRAPPER)
     private readonly redisScripts: RedisScriptsWrapper,
     private readonly paymentService: MockPaymentService,
+    @Optional()
+    private readonly bloomService?: BloomService,
   ) {}
 
   async checkout(dto: CheckoutDto): Promise<{
@@ -197,9 +201,30 @@ export class OrdersService {
         { status: "SOLD" },
       );
 
+      // Create and save Ticket records for each purchased seat
+      const tickets = seats.map((seat) =>
+        manager.create(Ticket, {
+          eventId,
+          eventSeatId: seat.id,
+          orderId: savedOrder.id,
+          ownerId: effectiveUserId,
+          status: "ISSUED",
+          seedVersion: 1,
+          faceValueMinor: seatPrice * 100,
+        }),
+      );
+      const savedTickets = await manager.save(Ticket, tickets);
+
       savedOrder.items = orderItems;
-      return savedOrder;
+      return { order: savedOrder, tickets: savedTickets };
     });
+
+    // Register tickets in RedisBloom ticket prefilter
+    if (this.bloomService && createdOrder.tickets) {
+      for (const ticket of createdOrder.tickets) {
+        await this.bloomService.add(ticket.id);
+      }
+    }
 
     // Step 5: Publish a Redis Pub/Sub event on seat-updates:{eventId} with state SOLD
     for (const seatId of seatIds) {
@@ -221,26 +246,26 @@ export class OrdersService {
     }
 
     this.logger.log(
-      `Order ${createdOrder.id} completed successfully for user ${effectiveUserId}, total ${totalAmount} PKR`,
+      `Order ${createdOrder.order.id} completed successfully for user ${effectiveUserId}, total ${totalAmount} PKR`,
     );
 
     // Step 6: Return the completed Order details
     return {
-      id: createdOrder.id,
-      userId: createdOrder.userId,
-      eventId: createdOrder.eventId,
-      totalAmount: Number(createdOrder.totalAmount),
-      currency: createdOrder.currency,
-      status: createdOrder.status,
-      paymentGatewayRef: createdOrder.paymentGatewayRef,
-      items: (createdOrder.items || []).map((item) => ({
+      id: createdOrder.order.id,
+      userId: createdOrder.order.userId,
+      eventId: createdOrder.order.eventId,
+      totalAmount: Number(createdOrder.order.totalAmount),
+      currency: createdOrder.order.currency,
+      status: createdOrder.order.status,
+      paymentGatewayRef: createdOrder.order.paymentGatewayRef,
+      items: (createdOrder.order.items || []).map((item) => ({
         id: item.id,
         orderId: item.orderId,
         eventSeatId: item.eventSeatId,
         price: Number(item.price),
       })),
-      createdAt: createdOrder.createdAt,
-      updatedAt: createdOrder.updatedAt,
+      createdAt: createdOrder.order.createdAt,
+      updatedAt: createdOrder.order.updatedAt,
     };
   }
 

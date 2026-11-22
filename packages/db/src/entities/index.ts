@@ -5,3 +5,5 @@ export * from "./order.entity";
 export * from "./order-item.entity";
 export * from "./user.entity";
 export * from "./refresh-token.entity";
+export * from "./ticket.entity";
+export * from "./gate-scan.entity";
