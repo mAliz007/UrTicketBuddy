@@ -34,10 +34,8 @@ docs
 **/*.md
 !**/package.json
 
-# Frontend web application build artifacts and sources
+# Frontend web application build artifacts (preserve source files for container builds)
 apps/web/dist
-apps/web/src
-apps/web/public
 
 # Docker compose overrides and temporary manifests
 docker-compose.override.yml
