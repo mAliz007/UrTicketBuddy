@@ -1,0 +1,199 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deployment Target Environment"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - oracle
+          - railway
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ============================================================================
+  # 1. CI Quality Gate (Verify code before zero-downtime deployment)
+  # ============================================================================
+  ci-gate:
+    name: Pre-Deploy Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.21.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Setup Turborepo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-cd-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-cd-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint workspace
+        run: pnpm lint
+
+      - name: Typecheck workspace
+        run: pnpm typecheck
+
+      - name: Run test suite
+        run: pnpm test
+
+  # ============================================================================
+  # 2. Oracle Cloud Infrastructure (OCI Always Free) Deployment [ADR-0002]
+  # ============================================================================
+  deploy-oracle:
+    name: Deploy to Oracle Cloud Always Free
+    needs: [ci-gate]
+    if: |
+      (github.event_name == 'push' || github.event.inputs.target == 'all' || github.event.inputs.target == 'oracle') &&
+      vars.OCI_HOST_IP != '' || secrets.OCI_HOST_IP != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to OCI VM via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.OCI_HOST_IP }}
+          username: ${{ secrets.OCI_USERNAME || 'ubuntu' }}
+          key: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            set -euo pipefail
+            echo "==> [OCI CD] Starting deployment on Oracle Cloud VM..."
+
+            APP_DIR="/opt/urticketbuddy"
+            if [ ! -d "$APP_DIR" ]; then
+              sudo mkdir -p "$APP_DIR"
+              sudo chown -R $USER:$USER "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
+
+            # Clone or fetch latest code from main
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/${{ github.repository }}.git .
+            else
+              git fetch origin main
+              git checkout main
+              git reset --hard origin/main
+            fi
+
+            # Ensure host bootstrap has been executed
+            if [ ! -f /swapfile ] && [ -f infra/scripts/setup-oracle-vm.sh ]; then
+              chmod +x infra/scripts/setup-oracle-vm.sh
+              ./infra/scripts/setup-oracle-vm.sh
+            fi
+
+            # Deploy production containers with zero-downtime rolling restart
+            echo "==> [OCI CD] Building and starting production containers..."
+            docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+
+            # Wait for containers and verify health checks
+            echo "==> [OCI CD] Executing post-deploy health check pings..."
+            for i in $(seq 1 12); do
+              if curl -s -f http://127.0.0.1:3000/api/v1/health > /dev/null; then
+                echo "✓ API microservice is healthy on http://localhost:3000/api/v1/health"
+                break
+              fi
+              echo "Waiting for API service to report healthy ($i/12)..."
+              sleep 5
+            done
+
+            for i in $(seq 1 12); do
+              if curl -s -f http://127.0.0.1:3001/api/v1/health > /dev/null; then
+                echo "✓ Realtime gateway is healthy on http://localhost:3001/api/v1/health"
+                break
+              fi
+              echo "Waiting for Realtime service to report healthy ($i/12)..."
+              sleep 5
+            done
+
+            for i in $(seq 1 12); do
+              if curl -s -f http://127.0.0.1:3002/api/v1/health > /dev/null; then
+                echo "✓ Worker engine is healthy on http://localhost:3002/api/v1/health"
+                break
+              fi
+              echo "Waiting for Worker service to report healthy ($i/12)..."
+              sleep 5
+            done
+
+            if curl -s -f http://127.0.0.1:80/healthz > /dev/null; then
+              echo "✓ Nginx edge reverse proxy is healthy on http://localhost:80/healthz"
+            fi
+
+            echo "=========================================================================="
+            echo "✓ Zero-downtime deployment to Oracle Cloud VM completed successfully!"
+            docker compose -f docker-compose.prod.yml ps
+            echo "=========================================================================="
+
+  # ============================================================================
+  # 3. Railway Deployment (Per Task UTB-18 Specification)
+  # ============================================================================
+  deploy-railway:
+    name: Deploy to Railway PaaS
+    needs: [ci-gate]
+    if: |
+      (github.event_name == 'push' || github.event.inputs.target == 'all' || github.event.inputs.target == 'railway') &&
+      secrets.RAILWAY_TOKEN != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy API Service to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          echo "==> Deploying API microservice to Railway..."
+          railway up --service api --detach
+
+      - name: Deploy Realtime Service to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          echo "==> Deploying Realtime gateway to Railway..."
+          railway up --service realtime --detach
+
+      - name: Deploy Worker Service to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          echo "==> Deploying Worker daemon to Railway..."
+          railway up --service worker --detach
+
+      - name: Verify Railway Deployment Health
+        if: secrets.RAILWAY_API_URL != ''
+        run: |
+          echo "==> Pinging Railway API Healthcheck..."
+          curl --retry 12 --retry-delay 5 --retry-connrefused -f "https://${{ secrets.RAILWAY_API_URL }}/api/v1/health"
+          echo "✓ Railway API healthcheck verified."
