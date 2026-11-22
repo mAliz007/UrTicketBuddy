@@ -203,20 +203,7 @@ All common workflow tasks are orchestrated via Turborepo:
 | **Generate Migration** | `pnpm db:generate` | Automatically generate a migration based on entity changes      |
 | **Start Infra**        | `pnpm up`          | Start all infrastructure containers via Docker Compose          |
 | **Stop Infra**         | `pnpm down`        | Stop and remove all infrastructure containers                   |
-| **Start Prod Stack**   | `pnpm up:prod`     | Build and start all production containers with health checks    |
-| **Stop Prod Stack**    | `pnpm down:prod`   | Stop and remove all production containers                       |
 | **Architecture Graph** | `pnpm graphify`    | Generate architectural knowledge graph and visual studio report |
-
----
-
-## Continuous Deployment & Production Dockerization
-
-Automated Continuous Deployment runs on push to `main` via GitHub Actions (`.github/workflows/cd.yml`). Full architectural and provisioning procedures are documented in [`docs/deployment.md`](docs/deployment.md) and [`docs/adr/0002-oracle-cloud-free-tier-deployment.md`](docs/adr/0002-oracle-cloud-free-tier-deployment.md):
-
-- **Live Deployment Target**: Oracle Cloud Infrastructure (OCI) Always Free Tier (Ampere A1 / AMD Compute with 4GB NVMe swapfile) and Railway PaaS.
-- **Microservices Dockerization**: Production-optimized, multi-stage Alpine Dockerfiles (`apps/api`, `apps/realtime`, `apps/worker`) running as unprivileged `node` user with stripped `devDependencies`.
-- **Production Orchestration**: [`docker-compose.prod.yml`](docker-compose.prod.yml) tying together API, Realtime, Worker, PostgreSQL, PgBouncer, MongoDB, Redis Stack (RedisBloom), and Nginx reverse proxy.
-- **Zero-Downtime Pipeline**: Automated SSH deployment executing rolling restarts and post-deploy health check pings on `GET /api/v1/health`.
 
 ---
 
@@ -229,38 +216,6 @@ Automated CI checks run on every pull request and push to `main` via GitHub Acti
 - **Integration Tests**: Live service verification against PostgreSQL, MongoDB, and Redis Stack containers.
 - **Docker Builds**: Matrix container compilation for `api`, `realtime`, `worker`, and `web`.
 - **Migrations & DB Consistency**: Automated 5-step test sequence (Migrate Up $\rightarrow$ Revert $\rightarrow$ Migrate Up $\rightarrow$ Schema Drift Check $\rightarrow$ DB Consistency Checks). See [`packages/db/README.md`](packages/db/README.md) for details.
-
----
-
-## Production Dockerization & Continuous Delivery (CD)
-
-UrTicketBuddy provides an automated production continuous delivery pipeline targeting [Railway](https://railway.app) and a standalone production Docker Compose stack. Detailed instructions, architecture diagrams, rollback playbooks, and troubleshooting procedures are in [`docs/deployment.md`](docs/deployment.md).
-
-### 1. Multi-Stage Dockerfiles
-
-Each backend service (`api`, `realtime`, `worker`) features an optimized 4-stage multi-stage Dockerfile located in `docker/` (and mirrored in `apps/<service>/Dockerfile`):
-
-- `deps`: Caches workspace dependencies (`pnpm install --frozen-lockfile`) using Corepack-pinned `pnpm@12.21.0` on Node 22 Alpine.
-- `build`: Builds shared workspace packages and target application bundles.
-- `prod-deps`: Isolates production-only dependencies and runtime workspace links via `pnpm deploy --prod`.
-- `production`: Minimal runtime running as non-root `USER node`, managed by `tini` for signal handling, with container health checks (`wget -q --spider`).
-
-### 2. Local Production Stack
-
-Run the full production-like environment with all infrastructure and compiled containers:
-
-```bash
-docker compose -f docker-compose.prod.yml up --build
-```
-
-### 3. Continuous Delivery Pipeline
-
-The CD workflow ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) automatically triggers after the `CI Pipeline` successfully passes on the `main` branch (`workflow_run` event):
-
-- **Deployment**: Deploys `api`, `realtime`, and `worker` to Railway sequentially using the Railway CLI and `RAILWAY_TOKEN`.
-- **Status Check**: Verifies Railway deployment status for background worker and WebSocket services.
-- **Health Verification**: Probes `GET /api/v1/health` with exponential backoff (10 attempts, 10s intervals) before declaring the release successful.
-- **Rollback**: Supports instant Railway rollback via `railway rollback --service <name>` or git revert.
 
 ---
 

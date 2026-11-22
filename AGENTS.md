@@ -12,7 +12,7 @@ D-1 Backend is NestJS + TypeScript. Frontend is React + Vite + Tailwind (no Next
 D-2 Ticket status: ISSUED -> CHECKED_IN, plus VOID and REVOKED.
 D-3 QR token is HMAC-SHA256 over ticketId + 30-second window. Key = HKDF (MASTER_TICKET_SECRET, ticketId + seed_version). Rotating = increment seed_version.
 D-4 Payments go through the PaymentProvider interface (Stripe test mode, Safepay, FakeProvider).
-D-5 Live deploy on Oracle Cloud Infrastructure (OCI) Always Free Tier (Ampere A1 ARM64 / Docker Compose & K3s per ADR-0002); Kubernetes manifests validated on kind; Railway and AWS optional.
+D-5 Live deploy on Railway; Kubernetes manifests validated on kind; AWS optional.
 D-6 Three backend services only: api (modular monolith), realtime (Socket.io), worker (BullMQ).
 D-7 Libraries: TypeORM (Postgres), Mongoose (MongoDB), ioredis, BullMQ, zod, Jest + Supertest + Testcontainers, k6, Vitest + Playwright on the web, pnpm + Turborepo.
 Money is always integer minor units. Time is UTC. IDs are UUIDs except seat IDs (<sectionId>-<row>-<number>).

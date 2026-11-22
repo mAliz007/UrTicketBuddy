@@ -1,13 +1,13 @@
-# Graph Report - . (2026-11-22)
+# Graph Report - . (2026-11-20)
 
 ## Corpus Check
 
-- 176 files · ~64,677 words
+- 174 files · ~63,744 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 588 nodes · 764 edges · 58 communities detected
+- 587 nodes · 764 edges · 58 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 - Edge kinds: contains: 241 · references: 233 · method: 145 · calls: 53 · imports_from: 42 · imports: 29 · implements: 19 · inherits: 2
@@ -16,12 +16,12 @@
 
 - Requested: all
 - Resolved: all (source: configured-default)
-- Included files: 176 · Candidates: recursive
+- Included files: 174 · Candidates: recursive
 - Excluded: 0 untracked · 0 ignored · 6 sensitive · 0 missing committed
 
 ## Graph Freshness
 
-- Built from Git commit: `204964c`
+- Built from Git commit: `5a3a13e`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
