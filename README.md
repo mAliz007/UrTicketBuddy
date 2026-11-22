@@ -6,7 +6,7 @@ High-concurrency event ticketing platform featuring a parametric venue builder (
 
 ## Live Production Deployment
 
-UrTicketBuddy is deployed and live on **Oracle Cloud Infrastructure (OCI) Always Free Tier** (Ubuntu host, Ampere A1 / AMD Compute with 4GB NVMe swap space, ADR-0002):
+UrTicketBuddy is deployed and live on **Oracle Cloud Infrastructure (OCI)** (Ubuntu host, Ampere A1 / AMD Compute with 4GB NVMe swap space, ADR-0002):
 
 | Resource                | Public URL                                                                   | Description                                                                        |
 | :---------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
