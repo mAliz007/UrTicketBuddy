@@ -33,8 +33,8 @@ UrTicketBuddy is a high-concurrency event ticketing platform supporting parametr
 
 ### D-5: Deployment Strategy
 
-- Primary live deployment on Railway.
-- Containerized Kubernetes manifests validated using local `kind` clusters. AWS infrastructure is optional.
+- Primary live deployment on Oracle Cloud Infrastructure (OCI) Always Free Tier (Ampere A1 ARM64 / Docker Compose & K3s) per ADR-0002.
+- Containerized Kubernetes manifests validated using local `kind` clusters. Railway and AWS infrastructure remain optional.
 
 ### D-6: Backend Service Boundaries
 
