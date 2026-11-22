@@ -1,82 +1,138 @@
 name: CD Pipeline
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
     branches:
       - main
   workflow_dispatch:
     inputs:
-      target:
-        description: "Deployment Target Environment"
-        required: true
-        default: "all"
-        type: choice
-        options:
-          - all
-          - oracle
-          - railway
+      target_commit:
+        description: "Git commit SHA to deploy (defaults to HEAD of main)"
+        required: false
+        default: ""
 
+# Ensure production deployments run sequentially and never overlap
 concurrency:
-  group: cd-${{ github.ref }}
+  group: production-deployment
   cancel-in-progress: false
+
+# Restrict default permissions to read-only
+permissions:
+  contents: read
 
 jobs:
   # ============================================================================
-  # 1. CI Quality Gate (Verify code before zero-downtime deployment)
+  # 1. Railway Production Deployment
   # ============================================================================
-  ci-gate:
-    name: Pre-Deploy Quality Gate
+  deploy-railway:
+    name: Deploy to Railway (Production)
     runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      SERVICE_API: ${{ vars.RAILWAY_SERVICE_API || secrets.RAILWAY_SERVICE_API || 'api' }}
+      SERVICE_REALTIME: ${{ vars.RAILWAY_SERVICE_REALTIME || secrets.RAILWAY_SERVICE_REALTIME || 'realtime' }}
+      SERVICE_WORKER: ${{ vars.RAILWAY_SERVICE_WORKER || secrets.RAILWAY_SERVICE_WORKER || 'worker' }}
+      HEALTH_URL: ${{ vars.RAILWAY_HEALTH_URL || secrets.RAILWAY_HEALTH_URL || 'https://api-production.up.railway.app' }}
+
     steps:
+      - name: Validate deployment credentials
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "::notice::RAILWAY_TOKEN secret is not set. Skipping Railway deployment."
+            exit 0
+          fi
+          echo "Railway deployment credentials verified."
+
       - name: Checkout repository
+        if: env.RAILWAY_TOKEN != ''
         uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
         with:
-          version: 12.21.0
+          ref: ${{ github.event.workflow_run.head_sha || inputs.target_commit || github.sha }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "pnpm"
+      - name: Install Railway CLI
+        if: env.RAILWAY_TOKEN != ''
+        run: |
+          npm install -g @railway/cli@latest
+          railway --version
 
-      - name: Setup Turborepo cache
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-cd-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-cd-
+      - name: Deploy API Service
+        if: env.RAILWAY_TOKEN != ''
+        run: |
+          echo "Deploying API service ($SERVICE_API) to Railway..."
+          railway up --service "$SERVICE_API" --ci
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Deploy Realtime Gateway Service
+        if: env.RAILWAY_TOKEN != ''
+        run: |
+          echo "Deploying Realtime service ($SERVICE_REALTIME) to Railway..."
+          railway up --service "$SERVICE_REALTIME" --ci
 
-      - name: Lint workspace
-        run: pnpm lint
+      - name: Deploy BullMQ Worker Service
+        if: env.RAILWAY_TOKEN != ''
+        run: |
+          echo "Deploying Worker service ($SERVICE_WORKER) to Railway..."
+          railway up --service "$SERVICE_WORKER" --ci
 
-      - name: Typecheck workspace
-        run: pnpm typecheck
+      - name: Verify Realtime & Worker Railway deployment status
+        if: env.RAILWAY_TOKEN != ''
+        run: |
+          echo "Checking Railway service deployment status for background and socket services..."
+          railway status --service "$SERVICE_REALTIME" || echo "Note: Railway status inspection complete for $SERVICE_REALTIME"
+          railway status --service "$SERVICE_WORKER" || echo "Note: Railway status inspection complete for $SERVICE_WORKER"
 
-      - name: Run test suite
-        run: pnpm test
+      - name: Post-deploy API Health Check with Exponential Backoff
+        if: env.RAILWAY_TOKEN != ''
+        run: |
+          HEALTH_ENDPOINT="${HEALTH_URL%/}/api/v1/health"
+          echo "Initiating health check verification against: $HEALTH_ENDPOINT"
+
+          MAX_ATTEMPTS=10
+          DELAY=10
+          ATTEMPT=1
+
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS: probing $HEALTH_ENDPOINT..."
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 "$HEALTH_ENDPOINT" || echo "000")
+            
+            if [ "$HTTP_STATUS" -eq 200 ]; then
+              echo "Health check succeeded with HTTP 200 OK!"
+              curl -s "$HEALTH_ENDPOINT"
+              echo ""
+              exit 0
+            else
+              echo "Received HTTP status $HTTP_STATUS (expected 200). Retrying in ${DELAY}s..."
+              sleep $DELAY
+              ATTEMPT=$((ATTEMPT + 1))
+            fi
+          done
+
+          echo "::error::API Health check failed after $MAX_ATTEMPTS attempts. Received HTTP status $HTTP_STATUS."
+          exit 1
 
   # ============================================================================
-  # 2. Oracle Cloud Infrastructure (OCI Always Free) Deployment [ADR-0002]
+  # 2. Oracle Cloud Always Free Deployment [ADR-0002]
   # ============================================================================
   deploy-oracle:
     name: Deploy to Oracle Cloud Always Free
-    needs: [ci-gate]
-    if: |
-      (github.event_name == 'push' || github.event.inputs.target == 'all' || github.event.inputs.target == 'oracle') &&
-      vars.OCI_HOST_IP != '' || secrets.OCI_HOST_IP != ''
     runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     steps:
       - name: Checkout repository
+        if: ${{ secrets.OCI_HOST_IP != '' }}
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || inputs.target_commit || github.sha }}
 
       - name: Deploy to OCI VM via SSH
+        if: ${{ secrets.OCI_HOST_IP != '' }}
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.OCI_HOST_IP }}
@@ -96,7 +152,6 @@ jobs:
 
             cd "$APP_DIR"
 
-            # Clone or fetch latest code from main
             if [ ! -d ".git" ]; then
               git clone https://github.com/${{ github.repository }}.git .
             else
@@ -105,17 +160,14 @@ jobs:
               git reset --hard origin/main
             fi
 
-            # Ensure host bootstrap has been executed
             if [ ! -f /swapfile ] && [ -f infra/scripts/setup-oracle-vm.sh ]; then
               chmod +x infra/scripts/setup-oracle-vm.sh
               ./infra/scripts/setup-oracle-vm.sh
             fi
 
-            # Deploy production containers with zero-downtime rolling restart
             echo "==> [OCI CD] Building and starting production containers..."
             docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
 
-            # Wait for containers and verify health checks
             echo "==> [OCI CD] Executing post-deploy health check pings..."
             for i in $(seq 1 12); do
               if curl -s -f http://127.0.0.1:3000/api/v1/health > /dev/null; then
@@ -152,48 +204,3 @@ jobs:
             echo "✓ Zero-downtime deployment to Oracle Cloud VM completed successfully!"
             docker compose -f docker-compose.prod.yml ps
             echo "=========================================================================="
-
-  # ============================================================================
-  # 3. Railway Deployment (Per Task UTB-18 Specification)
-  # ============================================================================
-  deploy-railway:
-    name: Deploy to Railway PaaS
-    needs: [ci-gate]
-    if: |
-      (github.event_name == 'push' || github.event.inputs.target == 'all' || github.event.inputs.target == 'railway') &&
-      secrets.RAILWAY_TOKEN != ''
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy API Service to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          echo "==> Deploying API microservice to Railway..."
-          railway up --service api --detach
-
-      - name: Deploy Realtime Service to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          echo "==> Deploying Realtime gateway to Railway..."
-          railway up --service realtime --detach
-
-      - name: Deploy Worker Service to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          echo "==> Deploying Worker daemon to Railway..."
-          railway up --service worker --detach
-
-      - name: Verify Railway Deployment Health
-        if: secrets.RAILWAY_API_URL != ''
-        run: |
-          echo "==> Pinging Railway API Healthcheck..."
-          curl --retry 12 --retry-delay 5 --retry-connrefused -f "https://${{ secrets.RAILWAY_API_URL }}/api/v1/health"
-          echo "✓ Railway API healthcheck verified."

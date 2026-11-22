@@ -20,3 +20,4 @@ coverage
 Dockerfile*
 docker-compose*.yml
 docs
+apps/web/dist
