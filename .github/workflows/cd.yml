@@ -158,35 +158,42 @@ jobs:
           port: 22
           script_stop: true
           script: |
-            set -euo pipefail
+            set -e
             echo "==> [OCI CD] Starting deployment on Oracle Cloud VM..."
 
+            CURRENT_USER=$(whoami)
             APP_DIR="/opt/urticketbuddy"
-            if [ ! -d "$APP_DIR" ]; then
-              sudo mkdir -p "$APP_DIR"
-              sudo chown -R $USER:$USER "$APP_DIR"
-            fi
+
+            sudo mkdir -p "$APP_DIR"
+            sudo chown -R "$CURRENT_USER:$CURRENT_USER" "$APP_DIR"
+            git config --global --add safe.directory '*' || true
 
             cd "$APP_DIR"
 
             AUTH_REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
             if [ ! -d ".git" ]; then
+              echo "==> [OCI CD] Fresh repository clone..."
               find . -mindepth 1 -delete 2>/dev/null || true
               git clone "$AUTH_REPO" .
             else
+              echo "==> [OCI CD] Fetching latest changes from origin/main..."
               git remote set-url origin "$AUTH_REPO"
               git fetch origin main
-              git checkout main
+              git checkout -B main origin/main
               git reset --hard origin/main
             fi
             git remote set-url origin "https://github.com/${{ github.repository }}.git"
 
-            if [ ! -f /swapfile ] && [ -f infra/scripts/setup-oracle-vm.sh ]; then
-              chmod +x infra/scripts/setup-oracle-vm.sh
-              ./infra/scripts/setup-oracle-vm.sh
+            if [ ! -f /swapfile ]; then
+              if [ -f infra/scripts/setup-oracle-vm.sh ]; then
+                echo "==> [OCI CD] Initializing host VM bootstrap..."
+                chmod +x infra/scripts/setup-oracle-vm.sh
+                ./infra/scripts/setup-oracle-vm.sh
+              fi
             fi
 
             if [ ! -f .env ]; then
+              echo "==> [OCI CD] Initializing default production environment..."
               cp .env.example .env
             fi
 
