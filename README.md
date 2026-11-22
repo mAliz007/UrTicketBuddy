@@ -203,7 +203,20 @@ All common workflow tasks are orchestrated via Turborepo:
 | **Generate Migration** | `pnpm db:generate` | Automatically generate a migration based on entity changes      |
 | **Start Infra**        | `pnpm up`          | Start all infrastructure containers via Docker Compose          |
 | **Stop Infra**         | `pnpm down`        | Stop and remove all infrastructure containers                   |
+| **Start Prod Stack**   | `pnpm up:prod`     | Build and start all production containers with health checks    |
+| **Stop Prod Stack**    | `pnpm down:prod`   | Stop and remove all production containers                       |
 | **Architecture Graph** | `pnpm graphify`    | Generate architectural knowledge graph and visual studio report |
+
+---
+
+## Continuous Deployment & Production Dockerization
+
+Automated Continuous Deployment runs on push to `main` via GitHub Actions (`.github/workflows/cd.yml`). Full architectural and provisioning procedures are documented in [`docs/deployment.md`](docs/deployment.md) and [`docs/adr/0002-oracle-cloud-free-tier-deployment.md`](docs/adr/0002-oracle-cloud-free-tier-deployment.md):
+
+- **Live Deployment Target**: Oracle Cloud Infrastructure (OCI) Always Free Tier (Ampere A1 / AMD Compute with 4GB NVMe swapfile) and Railway PaaS.
+- **Microservices Dockerization**: Production-optimized, multi-stage Alpine Dockerfiles (`apps/api`, `apps/realtime`, `apps/worker`) running as unprivileged `node` user with stripped `devDependencies`.
+- **Production Orchestration**: [`docker-compose.prod.yml`](docker-compose.prod.yml) tying together API, Realtime, Worker, PostgreSQL, PgBouncer, MongoDB, Redis Stack (RedisBloom), and Nginx reverse proxy.
+- **Zero-Downtime Pipeline**: Automated SSH deployment executing rolling restarts and post-deploy health check pings on `GET /api/v1/health`.
 
 ---
 
