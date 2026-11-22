@@ -13,6 +13,7 @@
     "db:revert": "pnpm --filter @urticketbuddy/db db:revert",
     "db:generate": "pnpm --filter @urticketbuddy/db db:generate",
     "db:check": "pnpm --filter @urticketbuddy/db db:check",
+    "tester": "pnpm --filter @urticketbuddy/tester dev",
     "up": "docker compose up -d",
     "up:prod": "docker compose -f docker-compose.prod.yml up --build -d",
     "down": "docker compose down",
