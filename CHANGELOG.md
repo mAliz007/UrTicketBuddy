@@ -4,6 +4,46 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-18] - 2026-11-22
+
+### Production Dockerization & Continuous Deployment Pipeline
+
+- **Ticket Key:** `UTB-18`
+- **Completion Date:** 2026-11-22
+- **Main Feature Branch:** `feat/UTB-18-docker-cd-pipeline`
+  - Sub-task 1: `feat/UTB-18/dockerfiles`
+  - Sub-task 2: `feat/UTB-18/docker-compose`
+  - Sub-task 3: `feat/UTB-18/cd-workflow`
+  - Sub-task 4: `feat/UTB-18/tests`
+- **Status:** Completed (Sub-tasks merged into `feat/UTB-18-docker-cd-pipeline`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `apps/api`, `apps/realtime`, `apps/worker`, `infra/docker`, `infra/scripts`, `.github/workflows`, `docs/adr`, `docs/`, `package.json`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Multi-Stage Production Dockerfiles (`apps/api`, `apps/realtime`, `apps/worker`, `infra/docker`)**:
+    - Created lean, 3-stage Dockerfiles (`node:22-alpine` builder $\rightarrow$ build $\rightarrow$ runner).
+    - Enabled Corepack and activated `pnpm@12.21.0` with `--frozen-lockfile` installations.
+    - Stripped `devDependencies` via `pnpm prune --prod --no-optional` to maintain minimal attack surface and runtime image footprints.
+    - Configured secure non-root permissions using built-in unprivileged `node` user (UID 1000).
+    - Added container `HEALTHCHECK` instructions querying `/api/v1/health` with retry and timeout parameters.
+    - Added comprehensive root `.dockerignore` preventing bloated build contexts.
+  - **Production Docker Compose (`docker-compose.prod.yml`)**:
+    - Created production orchestration manifest coordinating all 3 NestJS microservices alongside PostgreSQL 16 (with transaction pooler PgBouncer), MongoDB 7, Redis Stack (with RedisBloom & Lua), and Nginx reverse proxy.
+    - Defined dependency chains with `condition: service_healthy` to guarantee ordered bootstrap.
+    - Added `up:prod` and `down:prod` convenience scripts to root `package.json`.
+  - **Oracle Cloud Always Free Deployment Architecture (`docs/adr/0002-oracle-cloud-free-tier-deployment.md`)**:
+    - Formalized **ADR-0002** superseding Decision D-5, establishing Oracle Cloud Infrastructure (OCI) Always Free Tier (Ampere A1 / AMD Compute) as primary production host.
+    - Added automated host bootstrap script `infra/scripts/setup-oracle-vm.sh` configuring Docker, Compose plugin, 4GB NVMe swap space, and iptables port rules.
+  - **GitHub Actions CD Pipeline (`.github/workflows/cd.yml`)**:
+    - Automated zero-downtime deployment triggering on push to `main` and `workflow_dispatch`.
+    - Integrated pre-deployment quality gate verifying lint, typecheck, and unit/integration tests before rollout.
+    - Implemented secure SSH deployment to OCI instances via `appleboy/ssh-action` executing rolling container restarts.
+    - Integrated multi-service deployment for Railway CLI (`railway up --service`) with post-deploy `/api/v1/health` verification loops.
+  - **Documentation & Verification**:
+    - Authored comprehensive operations playbook in `docs/deployment.md`.
+    - Updated root `README.md` and `infra/docker/README.md`.
+    - Passed all quality gates: `pnpm db:check`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm graphify`.
+
+---
+
 ## [UTB-11] - 2026-11-20
 
 ### Background Hold Expiry Worker & Auto-Release Engine
