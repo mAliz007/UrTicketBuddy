@@ -180,7 +180,9 @@ jobs:
               echo "==> [OCI CD] Existing git repo found. Syncing latest code from origin/main..."
               git remote set-url origin "$AUTH_REPO" 2>/dev/null || git remote add origin "$AUTH_REPO"
               git fetch origin main
-              git checkout -B main origin/main
+              git reset --hard HEAD || true
+              git clean -fd || true
+              git checkout -B main origin/main --force
               git reset --hard origin/main
               git clean -fd
             else
