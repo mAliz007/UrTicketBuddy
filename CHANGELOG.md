@@ -15,35 +15,37 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 2: `feat/UTB-18/docker-compose`
   - Sub-task 3: `feat/UTB-18/cd-workflow`
   - Sub-task 4: `feat/UTB-18/tests`
-- **Status:** Merged into `main` (Live deployment on Oracle Cloud Always Free VM at `129.221.182.252` with React SPA, NestJS REST API, Socket.io Realtime, BullMQ Worker, and Nginx edge reverse proxy)
-- **Packages & Directories Modified:** `docker/`, `apps/api/`, `apps/realtime/`, `apps/worker/`, `infra/docker/`, `infra/scripts/`, `.github/workflows/`, `packages/config/`, `docs/`, `docs/adr/`, `.dockerignore`, `docker-compose.prod.yml`, `.env.example`, `package.json`, `README.md`, `CHANGELOG.md`
+- **Status:** Merged into `main` & Verified Live (Deployment operational on Oracle Cloud Always Free VM at `129.221.182.252` serving React SPA, NestJS REST API, Socket.io Realtime, BullMQ Worker, and Nginx reverse proxy)
+- **Packages & Directories Modified:** `docker/`, `apps/api/`, `apps/realtime/`, `apps/worker/`, `apps/web/`, `infra/docker/`, `infra/nginx/`, `infra/scripts/`, `.github/workflows/`, `packages/config/`, `docs/`, `docs/adr/`, `.dockerignore`, `docker-compose.prod.yml`, `.env.example`, `package.json`, `README.md`, `CHANGELOG.md`
 - **Scope & Deliverables:**
-  - **Root `.dockerignore`**: Created comprehensive Docker ignore file excluding `node_modules`, `dist`, `.git`, `.turbo`, `.env*`, `coverage`, `docs`, and frontend application sources (`apps/web/src`, `apps/web/public`, `apps/web/dist`) to guarantee backend container build isolation.
-  - **Multi-Stage Dockerfiles (`docker/*.Dockerfile`, `apps/*/Dockerfile`, `infra/docker/*`)**:
-    - Implemented standardized 4-stage multi-stage Docker builds across all three backend microservices:
-      1. `deps`: Node 22 Alpine, Corepack-pinned `pnpm@12.21.0`, layer-cached package manifests, and frozen lockfile installation.
-      2. `build`: Compiles shared workspace packages and service targets (`pnpm --filter <app>... build`).
-      3. `prod-deps`: Produces production-only dependencies and isolated workspace symlinks using `pnpm deploy --prod --prefer-offline`.
-      4. `production`: Minimal runtime Alpine image executing as non-root `USER node` with `--chown=node:node`, process signal handling via `tini`, container health check with busybox `wget -q --spider`, proper `EXPOSE` port, and `CMD ["node", "dist/main.js"]`.
+  - **Live Production Deployment (`http://129.221.182.252/`)**:
+    - Complete full-stack live deployment verified on Oracle Cloud Infrastructure (OCI) Always Free VM (Ubuntu host, 4GB NVMe swap space, Docker Compose).
+    - Production edge ingress served via Nginx reverse proxy on ports 80/443:
+      - React SPA: `http://129.221.182.252/` (HTTP 200 OK)
+      - System Health Check: `http://129.221.182.252/health` (HTTP 200 OK)
+      - REST API Microservice: `http://129.221.182.252/api/v1/health` (HTTP 200 OK)
+      - Socket.io Realtime Gateway: `ws://129.221.182.252/socket.io/` (HTTP 200 OK handshake)
+      - Nginx Proxy Health: `http://129.221.182.252/healthz` (HTTP 200 OK)
+  - **Frontend Containerization (`apps/web/Dockerfile` & `infra/docker/Dockerfile.web`)**:
+    - Vite + Tailwind React SPA compiled in multi-stage Docker build and served via lightweight Nginx Alpine container.
+    - Configured client-side SPA fallback routing (`try_files $uri $uri/ /index.html;`).
+    - Wired into `docker-compose.prod.yml` as `web` service on internal port 80.
+  - **Production Secrets & Environment Hardening**:
+    - Added automated production secret generation (`openssl rand -hex 32`) in `.github/workflows/cd.yml` to replace development placeholders for `MASTER_TICKET_SECRET`.
+    - Mapped `JWT_SECRET`, `JWT_REFRESH_SECRET`, and `MASTER_TICKET_SECRET` to all microservices (`api`, `realtime`, `worker`), preventing Zod refine validation startup failures.
+  - **Root `.dockerignore`**: Created comprehensive Docker ignore file excluding `node_modules`, `dist`, `.git`, `.turbo`, `.env*`, `coverage`, `docs`, and frontend build artifacts (`apps/web/dist`) while preserving source code for container compilation.
+  - **Multi-Stage Backend Dockerfiles (`docker/*.Dockerfile`, `apps/*/Dockerfile`, `infra/docker/*`)**:
+    - Standardized 4-stage multi-stage Docker builds across all three backend microservices (`deps`, `build`, `prod-deps`, `production`).
+    - Runs as non-root `USER node` with process signal handling via `tini`, container health check with busybox `wget -q --spider`, and stripped `devDependencies`.
   - **Production Docker Compose Stack (`docker-compose.prod.yml`)**:
-    - Defines standalone production orchestration for `api`, `realtime`, and `worker` targeting `production` image stages.
-    - Wires infrastructure services (`postgres`, `pgbouncer`, `mongo`, `redis`, `elasticsearch`) with healthcheck-based `depends_on`.
-    - Configured restart policies (`unless-stopped`), port bindings, and environment variables referencing `.env.example`.
-    - Added `up:prod` and `down:prod` convenience scripts to root `package.json`.
-  - **Oracle Cloud Always Free Deployment Architecture (`docs/adr/0002-oracle-cloud-free-tier-deployment.md`)**:
-    - Formalized **ADR-0002** superseding Decision D-5, establishing Oracle Cloud Infrastructure (OCI) Always Free Tier (Ampere A1 / AMD Compute) as primary production host.
-    - Added automated host bootstrap script `infra/scripts/setup-oracle-vm.sh` configuring Docker, Compose plugin, 4GB NVMe swap space, and iptables port rules.
-  - **GitHub Actions CD Pipeline (`.github/workflows/cd.yml`)**:
-    - Automated zero-downtime deployment triggering on `workflow_run` (successful CI on `main`) and `workflow_dispatch`.
-    - Integrated pre-deployment quality gate verifying lint, typecheck, and unit/integration tests before rollout.
-    - Dual deployment jobs:
-      1. Secure SSH deployment to OCI instances via `appleboy/ssh-action` executing rolling container builds, container restarts, and endpoint health verification.
-      2. Automated deployment to Railway via `@railway/cli` for API, Realtime, and Worker services with post-deploy `/api/v1/health` verification loops.
+    - Defines standalone production orchestration for `api`, `realtime`, `worker`, `web`, and `nginx`.
+    - Wires infrastructure services (`postgres`, `pgbouncer:latest`, `mongo`, `redis`, `elasticsearch`) with healthcheck-based `depends_on`.
+  - **Automated CD Pipeline (`.github/workflows/cd.yml`)**:
+    - Hardened SSH deployment against non-interactive shell unbound variables, git working tree dirty conflicts, and `appleboy/ssh-action` line-splitting bugs.
+    - Automated failure diagnostics dumping container status and service logs on startup errors.
   - **Documentation & Verification Suite**:
-    - Authored comprehensive operations playbook in `docs/deployment.md`.
-    - Updated root `README.md` and `infra/docker/README.md`.
-    - Added automated Jest validation suite (`packages/config/src/docker-cd.spec.ts`) verifying Dockerfile stage contracts, compose dependencies, and workflow configurations.
-    - Passed all quality gates: `pnpm db:check`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm graphify`.
+    - Authored and updated documentation in `README.md`, `apps/README.md`, `apps/web/README.md`, `infra/README.md`, `infra/docker/README.md`, `packages/config/README.md`, and `docs/deployment.md`.
+    - Passed all 22 tests in `@urticketbuddy/config` validation suite.
 
 ---
 

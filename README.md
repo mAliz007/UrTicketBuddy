@@ -4,14 +4,29 @@ High-concurrency event ticketing platform featuring a parametric venue builder (
 
 ---
 
+## Live Production Deployment
+
+UrTicketBuddy is deployed and live on **Oracle Cloud Infrastructure (OCI) Always Free Tier** (Ubuntu host, Ampere A1 / AMD Compute with 4GB NVMe swap space, ADR-0002):
+
+| Resource                | Public URL                                                                   | Description                                                                        |
+| :---------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| **Web SPA (Frontend)**  | [http://129.221.182.252/](http://129.221.182.252/)                           | React 18 single-page app served via Nginx with client-side SPA routing             |
+| **System Health Check** | [http://129.221.182.252/health](http://129.221.182.252/health)               | Unified health probe reporting dependency connectivity (`postgres`, `redis`, etc.) |
+| **REST API Base**       | [http://129.221.182.252/api/v1/health](http://129.221.182.252/api/v1/health) | Core NestJS REST API endpoints                                                     |
+| **Realtime Gateway**    | `ws://129.221.182.252/socket.io/`                                            | Socket.io WebSocket gateway with Redis adapter                                     |
+| **Edge Proxy Health**   | [http://129.221.182.252/healthz](http://129.221.182.252/healthz)             | Nginx edge reverse proxy listener status                                           |
+
+---
+
 ## Architecture Overview
 
 ```mermaid
 graph TD
-    Client["Web Client (:5173)"] --> Nginx["Nginx Reverse Proxy (:80)"]
-    Nginx -->|/api/*| API["NestJS API (:3000)"]
-    Nginx -->|/socket.io/*| Realtime["Socket.io Realtime (:3001)"]
-    Nginx -->|/*| Web["Vite React SPA (:5173)"]
+    Client["Client Browser (:80, :443)"] --> Nginx["Nginx Reverse Proxy (:80)"]
+    Nginx -->|/| Web["Vite React SPA (web:80)"]
+    Nginx -->|/api/*| API["NestJS API (api:3000)"]
+    Nginx -->|/health| API
+    Nginx -->|/socket.io/*| Realtime["Socket.io Realtime (realtime:3001)"]
 
     API -->|Port 6432| PgBouncer["PgBouncer Pooler (:6432)"]
     PgBouncer --> Postgres[("PostgreSQL 16 (:5432)")]
@@ -20,7 +35,8 @@ graph TD
     API --> Elastic[("Elasticsearch 8 (:9200)")]
 
     Realtime --> Redis
-    Worker["NestJS Worker (:3002)"] --> Redis
+    Worker["NestJS Worker (worker:3002)"] --> Redis
+    Worker --> PgBouncer
 ```
 
 ---

@@ -11,13 +11,15 @@ Per **Decision D-5** and **ADR-0002**, UrTicketBuddy targets live deployment on 
 ```mermaid
 flowchart TD
     subgraph Edge["Edge & Ingress Layer"]
-        User["Client Browser / Mobile"] -->|HTTPS / 443| Nginx["Nginx Reverse Proxy (:80, :443)"]
+        User["Client Browser / Mobile"] -->|HTTP :80 / HTTPS :443| Nginx["Nginx Reverse Proxy (:80, :443)"]
     end
 
-    subgraph AppTier["Microservices (Docker Network)"]
-        Nginx -->|/api/*| API["NestJS Core API (:3000)"]
-        Nginx -->|/socket.io/*| Realtime["Socket.io Gateway (:3001)"]
-        Worker["BullMQ Worker (:3002)"]
+    subgraph AppTier["Application Services (Docker Network)"]
+        Nginx -->|/| Web["React SPA Container (web:80)"]
+        Nginx -->|/api/*| API["NestJS Core API (api:3000)"]
+        Nginx -->|/health| API
+        Nginx -->|/socket.io/*| Realtime["Socket.io Gateway (realtime:3001)"]
+        Worker["BullMQ Worker (worker:3002)"]
     end
 
     subgraph DataTier["Data & Caching Layer"]
@@ -127,20 +129,34 @@ docker compose -f docker-compose.prod.yml down
 
 ### Services Matrix
 
-| Service         | Container Name       | Port             | Healthcheck Target       | Dependencies                            |
-| :-------------- | :------------------- | :--------------- | :----------------------- | :-------------------------------------- |
-| **PostgreSQL**  | `utb_postgres_prod`  | 5432 (Internal)  | `pg_isready -U postgres` | -                                       |
-| **PgBouncer**   | `utb_pgbouncer_prod` | 6432 (Internal)  | `pg_isready -p 6432`     | `postgres` (healthy)                    |
-| **MongoDB**     | `utb_mongo_prod`     | 27017 (Internal) | `mongosh ping`           | -                                       |
-| **Redis Stack** | `utb_redis_prod`     | 6379 (Internal)  | `redis-cli ping`         | -                                       |
-| **API**         | `utb_api_prod`       | 3000 (Internal)  | `GET /api/v1/health`     | `pgbouncer`, `mongo`, `redis` (healthy) |
-| **Realtime**    | `utb_realtime_prod`  | 3001 (Internal)  | `GET /api/v1/health`     | `redis` (healthy)                       |
-| **Worker**      | `utb_worker_prod`    | 3002 (Internal)  | `GET /api/v1/health`     | `pgbouncer`, `redis` (healthy)          |
-| **Nginx**       | `utb_nginx_prod`     | 80, 443 (Host)   | `GET /healthz`           | `api`, `realtime` (healthy)             |
+| Service         | Container Name       | Port             | Healthcheck Target       | Dependencies                                             |
+| :-------------- | :------------------- | :--------------- | :----------------------- | :------------------------------------------------------- |
+| **PostgreSQL**  | `utb_postgres_prod`  | 5432 (Internal)  | `pg_isready -U postgres` | -                                                        |
+| **PgBouncer**   | `utb_pgbouncer_prod` | 6432 (Internal)  | `pg_isready -p 6432`     | `postgres` (healthy)                                     |
+| **MongoDB**     | `utb_mongo_prod`     | 27017 (Internal) | `mongosh ping`           | -                                                        |
+| **Redis Stack** | `utb_redis_prod`     | 6379 (Internal)  | `redis-cli ping`         | -                                                        |
+| **API**         | `utb_api_prod`       | 3000 (Internal)  | `GET /api/v1/health`     | `pgbouncer`, `mongo`, `redis`, `elasticsearch` (healthy) |
+| **Realtime**    | `utb_realtime_prod`  | 3001 (Internal)  | `GET /api/v1/health`     | `redis` (healthy)                                        |
+| **Worker**      | `utb_worker_prod`    | 3002 (Internal)  | `GET /api/v1/health`     | `pgbouncer`, `redis` (healthy)                           |
+| **Web SPA**     | `utb_web_prod`       | 80 (Internal)    | Process check            | -                                                        |
+| **Nginx**       | `utb_nginx_prod`     | 80, 443 (Host)   | `GET /healthz`           | `api`, `realtime` (healthy), `web` (started)             |
 
 ---
 
-## 6. Oracle Cloud Always Free Provisioning & Bootstrap
+## 6. Live Production Deployment on Oracle Cloud
+
+UrTicketBuddy is live and serving traffic from the OCI Always Free instance:
+
+- **Public IPv4**: `129.221.182.252`
+- **Web SPA**: [http://129.221.182.252/](http://129.221.182.252/)
+- **Unified Health**: [http://129.221.182.252/health](http://129.221.182.252/health)
+- **API Health**: [http://129.221.182.252/api/v1/health](http://129.221.182.252/api/v1/health)
+- **WebSockets**: `ws://129.221.182.252/socket.io/`
+- **Proxy Status**: [http://129.221.182.252/healthz](http://129.221.182.252/healthz)
+
+---
+
+## 7. Oracle Cloud Always Free Provisioning & Bootstrap
 
 ### 1. Provisioning Details (Console)
 
@@ -172,7 +188,7 @@ The script automatically:
 
 ---
 
-## 7. Rollback Procedures
+## 8. Rollback Procedures
 
 ### Instant Railway Rollback (If using Railway)
 
@@ -198,11 +214,14 @@ The CD pipeline will automatically trigger after CI passes and roll out the stab
 
 ---
 
-## 8. Troubleshooting
+## 9. Troubleshooting & Operational Runbook
 
-| Issue                                        | Cause                                       | Solution                                                                                                            |
-| -------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `API Health check failed after 10 attempts`  | Service crashed or slow startup             | Check container logs with `docker compose -f docker-compose.prod.yml logs api`. Verify database migrations applied. |
-| Container exits with code 137                | Out of Memory (OOM)                         | Ensure 4GB swapfile is enabled (`swapon --show`).                                                                   |
-| Non-root permission denied writing to `/app` | Running as `node` user without write access | The container runs strictly as non-root `node:node`. Ephemeral runtime writes should be directed to `/tmp`.         |
-| Port binding collision                       | Port already in use locally                 | Ensure local background instances are stopped (`docker compose down`) before running `docker-compose.prod.yml`.     |
+| Issue                                                                       | Cause                                                                                                            | Solution                                                                                                                                                                  |
+| :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Production deployment must set a unique, non-default MASTER_TICKET_SECRET` | Zod schema validation refinement fails in `NODE_ENV=production` if using the development default key.            | Generate a strong random key (`openssl rand -hex 32`) and save it to `.env` as `MASTER_TICKET_SECRET=<key>`. The CD workflow automatically injects this on fresh deploys. |
+| `dependency failed to start: container utb_realtime_prod is unhealthy`      | Realtime or API container crashed during startup due to missing environment variable or bad database connection. | Check container logs with `docker compose -f docker-compose.prod.yml logs realtime` or `logs api`. Verify all secrets exist in `/opt/urticketbuddy/.env`.                 |
+| `Your local changes would be overwritten by checkout`                       | Local files on the VM were modified (e.g. `chmod +x` or debug edits).                                            | The CD workflow now runs `git reset --hard HEAD && git clean -fd && git checkout -B main origin/main --force` before syncing.                                             |
+| SSH Action `Process exited with status 1` immediately                       | `script_stop: true` injected exit-status wrappers that broke multi-line `if/else` statements.                    | Removed `script_stop: true` in favor of native `set -e` and enabled `debug: true`.                                                                                        |
+| Container exits with code 137                                               | Out of Memory (OOM) killer invoked.                                                                              | Ensure the 4GB swapfile is enabled (`swapon --show`).                                                                                                                     |
+| Non-root permission denied writing to `/app`                                | Running as unprivileged `node` user without write access.                                                        | Container runs strictly as non-root `node:node`. Runtime ephemeral writes must use `/tmp`.                                                                                |
+| Port binding collision                                                      | Local ports 80, 3000, 3001, or 5432 already bound.                                                               | Run `docker compose down` on conflicting dev stacks before starting `docker-compose.prod.yml`.                                                                            |
