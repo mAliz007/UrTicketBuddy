@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { EnvironmentConfig } from "../types";
 import { DEFAULT_ENVIRONMENTS } from "../utils/storage";
 
@@ -25,6 +25,37 @@ export const Header: React.FC<HeaderProps> = ({
   const [tokenInput, setTokenInput] = useState(bearerToken);
   const [copiedCurl, setCopiedCurl] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const [connStatus, setConnStatus] = useState<
+    "checking" | "online" | "offline"
+  >("checking");
+
+  useEffect(() => {
+    let active = true;
+    setConnStatus("checking");
+    const checkHealth = async () => {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 2500);
+        const res = await fetch(
+          `${environment.baseUrl.replace(/\/+$/, "")}/api/v1/health`,
+          {
+            method: "GET",
+            signal: controller.signal,
+          },
+        );
+        clearTimeout(timer);
+        if (active) {
+          setConnStatus(res.ok ? "online" : "offline");
+        }
+      } catch {
+        if (active) setConnStatus("offline");
+      }
+    };
+    checkHealth();
+    return () => {
+      active = false;
+    };
+  }, [environment.baseUrl]);
 
   const handleSaveToken = () => {
     onUpdateToken(tokenInput.trim());
@@ -103,6 +134,35 @@ export const Header: React.FC<HeaderProps> = ({
               </option>
             ))}
           </select>
+          {connStatus === "online" && (
+            <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-medium px-2 py-0.5 bg-emerald-500/10 rounded border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Online
+            </span>
+          )}
+          {connStatus === "offline" && (
+            <span
+              onClick={() => {
+                const prod = DEFAULT_ENVIRONMENTS.find(
+                  (e) => e.type === "production",
+                );
+                if (prod) onSelectEnvironment(prod);
+              }}
+              className="flex items-center gap-1 text-[10px] text-amber-400 font-medium px-2 py-0.5 bg-amber-500/10 rounded border border-amber-500/20 cursor-pointer hover:bg-amber-500/20 transition-colors"
+              title="Target server unreachable. Click to switch to Live OCI Production."
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              Offline{" "}
+              {environment.baseUrl.includes("localhost")
+                ? "(Switch to Live)"
+                : ""}
+            </span>
+          )}
+          {connStatus === "checking" && (
+            <span className="text-[10px] text-slate-500 px-1.5">
+              Checking...
+            </span>
+          )}
         </div>
 
         {/* Role Presets Dropdown */}

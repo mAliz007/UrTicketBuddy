@@ -23,7 +23,12 @@ export const ResponseViewer: React.FC<ResponseViewerProps> = ({
       const d = response.data as Record<string, unknown>;
       if (typeof d.qrPayload === "string") detectedQrData = d.qrPayload;
       else if (typeof d.qrToken === "string") detectedQrData = d.qrToken;
-      else if (typeof d.token === "string" && d.window) {
+      else if (
+        typeof d.token === "string" &&
+        (d.window !== undefined ||
+          d.windowSeconds !== undefined ||
+          d.expiresAt !== undefined)
+      ) {
         detectedQrData = d.token;
       }
     }

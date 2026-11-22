@@ -9,6 +9,13 @@ const STORAGE_KEYS = {
 
 export const DEFAULT_ENVIRONMENTS: EnvironmentConfig[] = [
   {
+    type: "production",
+    name: "Live OCI Production",
+    baseUrl: "http://129.221.182.252",
+    description:
+      "Live production cluster deployed on Oracle Cloud Always Free VM",
+  },
+  {
     type: "local",
     name: "Local API Direct",
     baseUrl: "http://localhost:3000",
@@ -19,13 +26,6 @@ export const DEFAULT_ENVIRONMENTS: EnvironmentConfig[] = [
     name: "Local Edge Proxy",
     baseUrl: "http://localhost:80",
     description: "Routes through local Nginx reverse proxy on port 80",
-  },
-  {
-    type: "production",
-    name: "Live OCI Production",
-    baseUrl: "http://129.221.182.252",
-    description:
-      "Live production cluster deployed on Oracle Cloud Always Free VM",
   },
 ];
 

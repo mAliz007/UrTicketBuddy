@@ -324,9 +324,19 @@ export default function App() {
           ? err.message
           : "Network request failed. Is the API server or CORS enabled?";
 
+      const isLocal =
+        environment.baseUrl.includes("localhost") ||
+        environment.baseUrl.includes("127.0.0.1");
+
+      const diagnosticDetails = isLocal
+        ? `Target ${environment.baseUrl} is unreachable. The local backend API server is not running on port 3000.\n\nQuick Fixes:\n1. Switch Environment in the top bar to 'Live OCI Production (http://129.221.182.252)' to test against the 24/7 cloud cluster.\n2. Or start your local backend with: 'pnpm dev' or 'pnpm --filter @urticketbuddy/api dev'.`
+        : `Could not reach ${environment.baseUrl}. Check your internet connection or verify the remote server status.`;
+
       const resObj: ResponseState = {
         status: 0,
-        statusText: "Network / CORS Error",
+        statusText: isLocal
+          ? "Connection Refused (Local API Offline)"
+          : "Network / CORS Error",
         durationMs,
         sizeBytes: 0,
         headers: {},
@@ -334,11 +344,14 @@ export default function App() {
           error: {
             code: "NETWORK_ERROR",
             message: errorMsg,
-            details:
-              "Check if target server is reachable, or if CORS permits requests from http://localhost:5174.",
+            targetUrl: fullUrl,
+            details: diagnosticDetails,
+            recommendation: isLocal
+              ? "Switch environment in the top header to 'Live OCI Production' (http://129.221.182.252) which is running live 24/7."
+              : "Verify remote host connectivity and CORS configuration.",
           },
         },
-        rawText: errorMsg,
+        rawText: `${errorMsg}\n\n${diagnosticDetails}`,
         timestamp: new Date().toLocaleTimeString(),
         isError: true,
       };
