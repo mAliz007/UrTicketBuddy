@@ -20,6 +20,7 @@ export const envSchema = z
     POSTGRES_PASSWORD: z.string().default("postgres"),
     POSTGRES_DB: z.string().default("urticketbuddy"),
     POSTGRES_DIRECT_PORT: z.coerce.number().default(5432),
+    POSTGRES_SSL: z.coerce.boolean().default(false),
 
     // MongoDB
     MONGO_URI: z.string().default("mongodb://localhost:27017/urticketbuddy"),

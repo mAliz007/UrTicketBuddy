@@ -13,6 +13,11 @@ import { GateScan } from "./entities/gate-scan.entity";
 
 const env = loadEnv();
 
+const useSsl =
+  Boolean(env.POSTGRES_SSL) ||
+  process.env.POSTGRES_SSL === "true" ||
+  Boolean(env.POSTGRES_HOST?.includes("neon.tech"));
+
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: env.POSTGRES_HOST,
@@ -20,6 +25,7 @@ export const AppDataSource = new DataSource({
   username: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
   database: env.POSTGRES_DB,
+  ssl: useSsl ? { rejectUnauthorized: false } : false,
   synchronize: false,
   logging: env.NODE_ENV === "development",
   entities: [
