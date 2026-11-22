@@ -204,11 +204,29 @@ jobs:
               cp .env.example .env
             fi
 
+            # Ensure production secrets and settings are non-default
+            PROD_RAND_SECRET=$(openssl rand -hex 32)
+            if grep -q "dev-master-ticket-secret-32-chars-long-key" .env; then
+              echo "==> [OCI CD] Replacing dev MASTER_TICKET_SECRET with unique production secret..."
+              sed -i "s/MASTER_TICKET_SECRET=dev-master-ticket-secret-32-chars-long-key/MASTER_TICKET_SECRET=${PROD_RAND_SECRET}/" .env
+            fi
+
+            if ! grep -q "^MASTER_TICKET_SECRET=" .env; then
+              echo "MASTER_TICKET_SECRET=${PROD_RAND_SECRET}" >> .env
+            fi
+
+            sed -i 's/^NODE_ENV=development/NODE_ENV=production/' .env
+
             echo "==> [OCI CD] Stopping and pruning any conflicting legacy containers..."
             sudo docker compose -f docker-compose.prod.yml down --remove-orphans || true
 
             echo "==> [OCI CD] Building and starting production containers..."
-            sudo docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+            if ! sudo docker compose -f docker-compose.prod.yml up -d --build --remove-orphans; then
+              echo "::error::Docker compose up failed during container startup. Dumping full service logs:"
+              sudo docker compose -f docker-compose.prod.yml ps -a
+              sudo docker compose -f docker-compose.prod.yml logs --tail=100
+              exit 1
+            fi
 
             echo "==> [OCI CD] Active containers immediately after launch:"
             sudo docker compose -f docker-compose.prod.yml ps -a

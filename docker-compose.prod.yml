@@ -208,6 +208,8 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD:-}
       - JWT_SECRET=${JWT_SECRET:-production-jwt-secret-min-16-characters}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-production-jwt-refresh-secret-min-16}
+      - MASTER_TICKET_SECRET=${MASTER_TICKET_SECRET:-prod-master-ticket-secret-32-chars-long-key}
     depends_on:
       redis:
         condition: service_healthy
@@ -245,6 +247,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRES_DB=${POSTGRES_DB:-urticketbuddy}
+      - JWT_SECRET=${JWT_SECRET:-production-jwt-secret-min-16-characters}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-production-jwt-refresh-secret-min-16}
+      - MASTER_TICKET_SECRET=${MASTER_TICKET_SECRET:-prod-master-ticket-secret-32-chars-long-key}
     depends_on:
       redis:
         condition: service_healthy
