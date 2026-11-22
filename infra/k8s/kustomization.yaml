@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: urticketbuddy
+
+resources:
+  - 00-namespace.yaml
+  - 01-configmap.yaml
+  - 02-secrets.yaml
+  - 03-services.yaml
+  - 04-api-deployment.yaml
+  - 05-realtime-deployment.yaml
+  - 06-worker-deployment.yaml
+  - 07-web-deployment.yaml
+  - 08-ingress.yaml
+  - 09-hpa.yaml
+  - 10-cronjobs.yaml

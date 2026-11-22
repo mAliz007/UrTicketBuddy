@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: utb-ingress
+  namespace: urticketbuddy
+  labels:
+    app.kubernetes.io/name: urticketbuddy
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "15m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "86400"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "86400"
+    nginx.ingress.kubernetes.io/websocket-services: "realtime-service"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
+spec:
+  rules:
+    - http:
+        paths:
+          # Edge API routing
+          - path: /api/
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 3000
+          # API Health check routing
+          - path: /health
+            pathType: Exact
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 3000
+          # WebSocket Realtime Gateway routing
+          - path: /socket.io/
+            pathType: Prefix
+            backend:
+              service:
+                name: realtime-service
+                port:
+                  number: 3001
+          # Frontend Web SPA fallback routing
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80

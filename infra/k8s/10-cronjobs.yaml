@@ -1,0 +1,124 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: utb-backup-cronjob
+  namespace: urticketbuddy
+  labels:
+    app.kubernetes.io/name: utb-backup
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: "0 2 * * *" # Daily at 02:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: utb-backup-job
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup-runner
+              image: urticketbuddy/infra-tools:latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/bash
+                - -c
+                - "/scripts/backup-all.sh && /scripts/prune-backups.sh"
+              envFrom:
+                - configMapRef:
+                    name: utb-config
+                - secretRef:
+                    name: utb-secrets
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: utb-nightly-data-check-cronjob
+  namespace: urticketbuddy
+  labels:
+    app.kubernetes.io/name: utb-data-check
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: "0 3 * * *" # Nightly at 03:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: utb-data-check-job
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: data-checker
+              image: urticketbuddy/api:latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - pnpm
+                - db:check:data
+              envFrom:
+                - configMapRef:
+                    name: utb-config
+                - secretRef:
+                    name: utb-secrets
+              resources:
+                requests:
+                  cpu: 150m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: utb-restore-drill-cronjob
+  namespace: urticketbuddy
+  labels:
+    app.kubernetes.io/name: utb-restore-drill
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: "0 4 * * 0" # Weekly on Sunday at 04:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: utb-restore-drill-job
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: drill-runner
+              image: urticketbuddy/infra-tools:latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/bash
+                - -c
+                - "/scripts/restore-drill.sh"
+              envFrom:
+                - configMapRef:
+                    name: utb-config
+                - secretRef:
+                    name: utb-secrets
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
