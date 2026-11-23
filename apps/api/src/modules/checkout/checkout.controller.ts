@@ -13,7 +13,9 @@ import {
   HoldResponse,
 } from "@urticketbuddy/contracts";
 import { CheckoutService } from "./checkout.service";
+import { Public } from "../auth/decorators/public.decorator";
 
+@Public()
 @Controller("checkout")
 export class CheckoutController {
   constructor(private readonly checkoutService: CheckoutService) {}
