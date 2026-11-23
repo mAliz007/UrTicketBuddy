@@ -10,7 +10,9 @@ import {
 } from "@nestjs/common";
 import { OrdersService } from "./orders.service";
 import { CheckoutDto } from "./dto/checkout.dto";
+import { Public } from "../auth/decorators/public.decorator";
 
+@Public()
 @Controller("orders")
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
