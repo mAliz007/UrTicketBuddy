@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { Repository } from "typeorm";
+import { Repository, EntityManager } from "typeorm";
 import { AuditLog } from "@urticketbuddy/db";
 import { AuditService } from "./audit.service";
 import { AUDIT_LOG_REPOSITORY } from "../../database/database.tokens";
@@ -102,6 +102,31 @@ describe("AuditService (Unit Tests)", () => {
     });
     expect(resultFiltered.total).toBe(1);
     expect(resultFiltered.items[0].entityId).toBe("order-1");
+  });
+
+  it("should record log using the provided EntityManager when passed", async () => {
+    const customRepo = {
+      create: jest.fn((dto) => ({ id: "tx-log-1", ...dto })),
+      save: jest.fn(async (log) => log),
+    };
+    const mockEntityManager = {
+      getRepository: jest.fn().mockReturnValue(customRepo),
+    } as unknown as EntityManager;
+
+    const entry = await service.recordLog(
+      {
+        actorId: "admin-tx",
+        actorRole: "ADMIN",
+        action: "ORDER_FLAGGED",
+        entityType: "Order",
+        entityId: "order-tx",
+      },
+      mockEntityManager,
+    );
+
+    expect(mockEntityManager.getRepository).toHaveBeenCalledWith(AuditLog);
+    expect(customRepo.save).toHaveBeenCalled();
+    expect(entry.id).toBe("tx-log-1");
   });
 
   it("should enforce immutability by not exposing update or delete methods", () => {

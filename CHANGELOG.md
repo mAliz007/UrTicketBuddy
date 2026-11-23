@@ -16,7 +16,8 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 3: `feat/UTB-16-admin-analytics-audit-analytics` (Organizer analytics, tenant isolation, velocity buckets)
   - Sub-task 4: `feat/UTB-16-admin-analytics-audit-tests` (Unit and Supertest E2E verification)
   - Sub-task 5: `feat/UTB-16-admin-analytics-audit-tester-docs` (Tester app catalog, CI/CD trigger sync, and docs)
-- **Status:** Completed & Verified (Backend Phase Only: 16 unit tests, 5 Supertest E2E assertions, 100% monorepo pass)
+  - Sub-task 6: `feat/UTB-16-admin-analytics-audit-fixes` (Transaction manager atomicity in AuditService, order flagging idempotency guard, and unit/E2E coverage)
+- **Status:** Completed & Verified (Backend Phase Only: 18 unit tests, 5 Supertest E2E assertions, 100% monorepo pass)
 - **Packages & Directories Modified:** `packages/contracts/`, `packages/db/`, `apps/api/`, `apps/tester/`, `apps/worker/`, `.github/workflows/`, `docker/`, `README.md`, `CHANGELOG.md`
 - **Scope & Deliverables:**
   - **Endpoint Workbench Catalog Integration (`apps/tester`)**:

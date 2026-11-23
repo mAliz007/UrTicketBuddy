@@ -105,6 +105,18 @@ export class AdminService {
     }
 
     const previousStatus = order.status;
+    if (previousStatus === OrderStatus.FLAGGED) {
+      this.logger.warn(
+        `Order ${orderId} is already flagged. Skipping redundant invalidation.`,
+      );
+      return {
+        success: true,
+        orderId,
+        status: OrderStatus.FLAGGED,
+        invalidatedTicketsCount: 0,
+      };
+    }
+
     order.status = OrderStatus.FLAGGED;
 
     // Find and invalidate all tickets belonging to this order
@@ -123,22 +135,25 @@ export class AdminService {
       if (tickets.length > 0) {
         await manager.save(Ticket, tickets);
       }
-      await this.auditService.recordLog({
-        actorId,
-        actorRole,
-        action: "ORDER_FLAGGED",
-        entityType: "Order",
-        entityId: orderId,
-        summary:
-          reason ||
-          `Order ${orderId} flagged as fraudulent. Incremented seedVersion on ${tickets.length} ticket(s) to invalidate signatures.`,
-        beforeState: { status: previousStatus },
-        afterState: {
-          status: OrderStatus.FLAGGED,
-          invalidatedTicketsCount: tickets.length,
+      await this.auditService.recordLog(
+        {
+          actorId,
+          actorRole,
+          action: "ORDER_FLAGGED",
+          entityType: "Order",
+          entityId: orderId,
+          summary:
+            reason ||
+            `Order ${orderId} flagged as fraudulent. Incremented seedVersion on ${tickets.length} ticket(s) to invalidate signatures.`,
+          beforeState: { status: previousStatus },
+          afterState: {
+            status: OrderStatus.FLAGGED,
+            invalidatedTicketsCount: tickets.length,
+          },
+          ipAddress: ipAddress || null,
         },
-        ipAddress: ipAddress || null,
-      });
+        manager,
+      );
     });
 
     this.logger.warn(
@@ -218,26 +233,29 @@ export class AdminService {
       if (seatEntity) {
         await manager.save(EventSeat, seatEntity);
       }
-      await this.auditService.recordLog({
-        actorId,
-        actorRole,
-        action: "TICKET_REVOKED",
-        entityType: "Ticket",
-        entityId: ticketId,
-        summary:
-          reason ||
-          `Ticket ${ticketId} revoked. Seat ${seatIdStr} marked AVAILABLE and removed from sold set.`,
-        beforeState: {
-          status: previousStatus,
-          seedVersion: previousSeedVersion,
+      await this.auditService.recordLog(
+        {
+          actorId,
+          actorRole,
+          action: "TICKET_REVOKED",
+          entityType: "Ticket",
+          entityId: ticketId,
+          summary:
+            reason ||
+            `Ticket ${ticketId} revoked. Seat ${seatIdStr} marked AVAILABLE and removed from sold set.`,
+          beforeState: {
+            status: previousStatus,
+            seedVersion: previousSeedVersion,
+          },
+          afterState: {
+            status: TicketStatus.REVOKED,
+            seedVersion: ticket.seedVersion,
+            seatId: seatIdStr,
+          },
+          ipAddress: ipAddress || null,
         },
-        afterState: {
-          status: TicketStatus.REVOKED,
-          seedVersion: ticket.seedVersion,
-          seatId: seatIdStr,
-        },
-        ipAddress: ipAddress || null,
-      });
+        manager,
+      );
     });
 
     // 3. Remove seat from Redis sold set (seat_sold:{eventId})

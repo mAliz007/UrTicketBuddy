@@ -1,5 +1,5 @@
 import { Injectable, Inject, Logger } from "@nestjs/common";
-import { Repository, FindOptionsWhere } from "typeorm";
+import { Repository, FindOptionsWhere, EntityManager } from "typeorm";
 import { AuditLog } from "@urticketbuddy/db";
 import {
   AuditLogQuery,
@@ -34,8 +34,16 @@ export class AuditService {
    * Note: The underlying PostgreSQL database table has trigger trg_audit_logs_immutable
    * which forbids any UPDATE or DELETE operations.
    */
-  async recordLog(params: RecordAuditLogParams): Promise<AuditLogDto> {
-    const entry = this.auditLogRepository.create({
+  async recordLog(
+    params: RecordAuditLogParams,
+    entityManager?: EntityManager,
+  ): Promise<AuditLogDto> {
+    const repo =
+      entityManager && typeof entityManager.getRepository === "function"
+        ? entityManager.getRepository(AuditLog)
+        : this.auditLogRepository;
+
+    const entry = repo.create({
       actorId: params.actorId,
       actorRole: params.actorRole,
       action: params.action,
@@ -47,7 +55,7 @@ export class AuditService {
       ipAddress: params.ipAddress || null,
     });
 
-    const saved = await this.auditLogRepository.save(entry);
+    const saved = await repo.save(entry);
     this.logger.log(
       `[AuditLog] ${saved.action} on ${saved.entityType}:${saved.entityId} by ${saved.actorRole}:${saved.actorId}`,
     );

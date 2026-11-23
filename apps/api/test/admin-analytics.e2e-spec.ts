@@ -294,6 +294,15 @@ describe("Admin Suite & Organizer Analytics API (e2e - Supertest)", () => {
               return entity;
             }),
             update: jest.fn(async () => ({ affected: 1 })),
+            getRepository: jest.fn((entityTarget: any) => {
+              if (
+                entityTarget?.name === "AuditLog" ||
+                entityTarget === AUDIT_LOG_REPOSITORY
+              ) {
+                return mockAuditLogRepo;
+              }
+              return mockOrderRepo;
+            }),
           }),
         ),
       })

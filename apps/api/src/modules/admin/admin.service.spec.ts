@@ -139,7 +139,22 @@ describe("AdminService (Unit Tests)", () => {
           entityType: "Order",
           entityId: "order-1",
         }),
+        mockTransactionManager,
       );
+    });
+
+    it("should return early and be idempotent if order is already FLAGGED", async () => {
+      const order = { id: "order-1", status: OrderStatus.FLAGGED };
+      mockOrderRepo.findOne.mockResolvedValue(order);
+
+      const result = await service.flagOrder("order-1", adminActor);
+
+      expect(result.success).toBe(true);
+      expect(result.status).toBe(OrderStatus.FLAGGED);
+      expect(result.invalidatedTicketsCount).toBe(0);
+      expect(mockTicketRepo.find).not.toHaveBeenCalled();
+      expect(mockDataSource.transaction).not.toHaveBeenCalled();
+      expect(mockAuditService.recordLog).not.toHaveBeenCalled();
     });
 
     it("should throw NotFoundException if order does not exist", async () => {
@@ -198,6 +213,7 @@ describe("AdminService (Unit Tests)", () => {
           entityType: "Ticket",
           entityId: "ticket-123",
         }),
+        mockTransactionManager,
       );
     });
 
