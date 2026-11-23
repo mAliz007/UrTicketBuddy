@@ -1,19 +1,17 @@
 name: CI Pipeline
 
 on:
-  # Paused automated triggers to conserve GitHub Actions credits.
-  # Trigger manually via GitHub Actions UI -> "Run workflow" when needed.
+  push:
+    branches:
+      - main
+      - "ci/**"
+      - "feat/**"
+      - "fix/**"
+      - "chore/**"
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
-  #     - "ci/**"
-  #     - "feat/**"
-  #     - "fix/**"
-  #     - "chore/**"
-  # pull_request:
-  #   branches:
-  #     - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

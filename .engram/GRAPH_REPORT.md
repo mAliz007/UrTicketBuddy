@@ -2,15 +2,15 @@
 
 ## Corpus Check
 
-- 209 files · ~79,825 words
+- 209 files · ~80,375 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 717 nodes · 991 edges · 65 communities detected
+- 718 nodes · 992 edges · 65 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
-- Edge kinds: contains: 302 · references: 301 · method: 178 · imports: 64 · imports_from: 63 · calls: 59 · implements: 22 · inherits: 2
+- Edge kinds: contains: 303 · references: 301 · method: 178 · imports: 64 · imports_from: 63 · calls: 59 · implements: 22 · inherits: 2
 
 ## Input Scope
 
@@ -21,7 +21,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `c90ccf6`
+- Built from Git commit: `5cbdda3`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
@@ -69,8 +69,8 @@ Nodes (30): Header(), HeaderProps, QRVisualizer(), QRVisualizerProps, RequestEdi
 
 ### Community 3 - "Community 3"
 
-Cohesion: 0.06
-Nodes (35): AuthResponse, AuthResponseSchema, AuthUser, AuthUserSchema, CreateGateStaffRequest, CreateGateStaffRequestSchema, LoginRequest, LoginRequestSchema (+27 more)
+Cohesion: 0.05
+Nodes (36): AuthResponse, AuthResponseSchema, AuthUser, AuthUserSchema, CreateGateStaffRequest, CreateGateStaffRequestSchema, LoginRequest, LoginRequestSchema (+28 more)
 
 ### Community 4 - "Community 4"
 
@@ -379,7 +379,7 @@ Nodes (1): config
 
 ## Knowledge Gaps
 
-- **157 isolated node(s):** `config`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester`, `CurrentUser` (+152 more)
+- **158 isolated node(s):** `config`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester`, `CurrentUser` (+153 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 8`** (1 nodes): `AuthService`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -463,7 +463,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `AuthService` connect `Community 8` to `Community 17`, `Community 18`?**
   _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **What connects `config`, `AdminActor`, `RecordAuditLogParams` to the rest of the system?**
-  _157 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _158 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.050645007166746296 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
@@ -471,6 +471,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.09191583610188261 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.0553306342780027 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05384615384615385 - nodes in this community are weakly interconnected._
 - **Should `Community 5` be split into smaller, more focused modules?**
   _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._

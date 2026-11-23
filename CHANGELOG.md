@@ -15,9 +15,18 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 2: `feat/UTB-16-admin-analytics-audit-admin` (Admin module, fraud flag, ticket revocation, platform settings)
   - Sub-task 3: `feat/UTB-16-admin-analytics-audit-analytics` (Organizer analytics, tenant isolation, velocity buckets)
   - Sub-task 4: `feat/UTB-16-admin-analytics-audit-tests` (Unit and Supertest E2E verification)
-- **Status:** Completed & Verified (Backend Phase Only: 16 unit tests and 5 Supertest E2E assertions passing)
-- **Packages & Directories Modified:** `packages/contracts/`, `packages/db/`, `apps/api/`, `README.md`, `CHANGELOG.md`
+  - Sub-task 5: `feat/UTB-16-admin-analytics-audit-tester-docs` (Tester app catalog, CI/CD trigger sync, and docs)
+- **Status:** Completed & Verified (Backend Phase Only: 16 unit tests, 5 Supertest E2E assertions, 100% monorepo pass)
+- **Packages & Directories Modified:** `packages/contracts/`, `packages/db/`, `apps/api/`, `apps/tester/`, `apps/worker/`, `.github/workflows/`, `docker/`, `README.md`, `CHANGELOG.md`
 - **Scope & Deliverables:**
+  - **Endpoint Workbench Catalog Integration (`apps/tester`)**:
+    - Expanded REST catalog with **Admin Suite & Fraud Control** (`/api/v1/admin/orders/:orderId/flag`, `/api/v1/admin/tickets/:ticketId`, `/api/v1/admin/settings/commission` GET/PUT, `/api/v1/admin/users/:userId/suspend`, `/api/v1/admin/organizers/:userId/approve`, `/api/v1/admin/audit-logs`).
+    - Added **Organizer Analytics** endpoint (`/api/v1/organizer/analytics/:eventId`) to tester workbench with pre-configured parameters and payload samples.
+    - Updated `apps/tester/README.md` and verified clean production build (`pnpm --filter @urticketbuddy/tester build`).
+  - **CI/CD Triggers & Dockerfile Integrity**:
+    - Synced `.github/workflows/ci.yml` and `.github/workflows/cd.yml` with `origin/main` commit `83a294e`, restoring automated CI testing across `feat/**` branches and post-CI CD deployment triggers.
+    - Added `COPY apps/tester/package.json ./apps/tester/` across all multi-stage Dockerfiles (`docker/api.Dockerfile`, `docker/realtime.Dockerfile`, `docker/worker.Dockerfile`, `apps/api/Dockerfile`, `apps/realtime/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/Dockerfile`) to prevent Docker layer lockfile discrepancies.
+    - Added clean `moduleRef.close()` teardown in `apps/worker/test/expiry.integration.spec.ts` preventing open handle warnings in CI.
   - **Database Immutability & Entities (`packages/db`)**:
     - Created `PlatformSetting` entity (`platform_settings`) with unique index `idx_platform_settings_key` and default `commission_rate_percent = '10'`.
     - Created `AuditLog` entity (`audit_logs`) with covering indices `idx_audit_logs_actor_id`, `idx_audit_logs_action`, and `idx_audit_logs_created_at`.

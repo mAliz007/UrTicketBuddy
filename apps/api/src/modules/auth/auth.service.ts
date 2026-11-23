@@ -20,7 +20,6 @@ import {
   ErrorCode,
   UserRole,
   RegisterRequestSchema,
-  RegisterRequest,
   RegisterRequestInput,
   LoginRequestSchema,
   LoginRequest,

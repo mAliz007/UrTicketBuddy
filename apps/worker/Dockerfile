@@ -16,6 +16,7 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/realtime/package.json ./apps/realtime/
 COPY apps/worker/package.json ./apps/worker/
 COPY apps/web/package.json ./apps/web/
+COPY apps/tester/package.json ./apps/tester/
 
 RUN pnpm install --frozen-lockfile
 
