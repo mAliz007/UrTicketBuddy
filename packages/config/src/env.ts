@@ -62,6 +62,11 @@ export const envSchema = z
     S3_SECRET_ACCESS_KEY: z.string().optional(),
     S3_FORCE_PATH_STYLE: z.coerce.boolean().default(true),
     CDN_BASE_URL: z.string().default("http://localhost:3000/media"),
+
+    // CORS Allowed Origins (comma-separated origins)
+    CORS_ORIGINS: z
+      .string()
+      .default("http://localhost:5173,http://localhost:3000"),
   })
   .refine(
     (data) => {
