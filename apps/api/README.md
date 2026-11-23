@@ -35,3 +35,13 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 
 - `src/modules/<module>`: Domain modules (auth, users, admin, analytics, search, venues, events, seats, checkout, orders, tickets, gate, resale)
 - `src/common`: Ports, Zod schemas, DTO types, enums, error codes, and guards
+
+## Security Hardening & Production Safeguards
+
+- **HTTP Security Headers**: Powered by `helmet` with secure defaults (HSTS, X-Content-Type-Options, X-Frame-Options, DNS Prefetch Control).
+- **Strict CORS Policy**: Origin allowlist dynamically populated from comma-delimited `CORS_ORIGINS` environment variable (e.g., `http://localhost:5173,http://localhost:5174,http://129.221.182.252`). Wildcard origins are rejected in production.
+- **Request Body Size Limits**: JSON and URL-encoded body limits restricted to `100kb` to thwart body-parser DoS attacks.
+- **RFC 6585 Rate Limiting & 429 Handling**: `GlobalHttpExceptionFilter` intercepts NestJS `ThrottlerException` and maps it to the standard error envelope `{ error: { code: ErrorCode.TOO_MANY_REQUESTS, message, requestId } }` with an HTTP `Retry-After: 60` header.
+- **Zero-Trust Log Redaction**: `LogRedactionInterceptor` recursively scrubs sensitive tokens and credentials (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`, `totpSecret`) from log payloads before output.
+- **Tenant Isolation**: `OwnershipGuard` verifies organizer resource tenancy (`event.organizerId === user.organizerTenantId || event.organizerId === user.id`) across multi-tenant administrative and analytics operations.
+- **Route Authorization Verification**: Automated route metadata scanner and persona matrix in `test/security-audit.e2e-spec.ts` guaranteeing zero unprotected or misconfigured endpoints.
