@@ -4,14 +4,29 @@ High-concurrency event ticketing platform featuring a parametric venue builder (
 
 ---
 
+## Live Production Deployment
+
+UrTicketBuddy is deployed and live on **Oracle Cloud Infrastructure (OCI)** (Ubuntu host, Ampere A1 / AMD Compute with 4GB NVMe swap space, ADR-0002):
+
+| Resource                | Public URL                                                                   | Description                                                                        |
+| :---------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| **Web SPA (Frontend)**  | [http://129.221.182.252/](http://129.221.182.252/)                           | React 18 single-page app served via Nginx with client-side SPA routing             |
+| **System Health Check** | [http://129.221.182.252/health](http://129.221.182.252/health)               | Unified health probe reporting dependency connectivity (`postgres`, `redis`, etc.) |
+| **REST API Base**       | [http://129.221.182.252/api/v1/health](http://129.221.182.252/api/v1/health) | Core NestJS REST API endpoints                                                     |
+| **Realtime Gateway**    | `ws://129.221.182.252/socket.io/`                                            | Socket.io WebSocket gateway with Redis adapter                                     |
+| **Edge Proxy Health**   | [http://129.221.182.252/healthz](http://129.221.182.252/healthz)             | Nginx edge reverse proxy listener status                                           |
+
+---
+
 ## Architecture Overview
 
 ```mermaid
 graph TD
-    Client["Web Client (:5173)"] --> Nginx["Nginx Reverse Proxy (:80)"]
-    Nginx -->|/api/*| API["NestJS API (:3000)"]
-    Nginx -->|/socket.io/*| Realtime["Socket.io Realtime (:3001)"]
-    Nginx -->|/*| Web["Vite React SPA (:5173)"]
+    Client["Client Browser (:80, :443)"] --> Nginx["Nginx Reverse Proxy (:80)"]
+    Nginx -->|/| Web["Vite React SPA (web:80)"]
+    Nginx -->|/api/*| API["NestJS API (api:3000)"]
+    Nginx -->|/health| API
+    Nginx -->|/socket.io/*| Realtime["Socket.io Realtime (realtime:3001)"]
 
     API -->|Port 6432| PgBouncer["PgBouncer Pooler (:6432)"]
     PgBouncer --> Postgres[("PostgreSQL 16 (:5432)")]
@@ -20,7 +35,8 @@ graph TD
     API --> Elastic[("Elasticsearch 8 (:9200)")]
 
     Realtime --> Redis
-    Worker["NestJS Worker (:3002)"] --> Redis
+    Worker["NestJS Worker (worker:3002)"] --> Redis
+    Worker --> PgBouncer
 ```
 
 ---
@@ -130,6 +146,7 @@ pnpm dev
 This starts:
 
 - **Web SPA**: [http://localhost:5173](http://localhost:5173)
+- **Endpoint Tester Workbench**: [http://localhost:5174](http://localhost:5174) (`pnpm tester`)
 - **REST API**: [http://localhost:3000](http://localhost:3000) (Health check: [http://localhost:3000/api/v1/health](http://localhost:3000/api/v1/health))
 - **Realtime Gateway**: [http://localhost:3001](http://localhost:3001) (Health check: [http://localhost:3001/api/v1/health](http://localhost:3001/api/v1/health))
 - **Worker Processors**: Health check on [http://localhost:3002/api/v1/health](http://localhost:3002/api/v1/health)
@@ -143,6 +160,7 @@ This starts:
 | :------------------- | :------ | :------------- | :------------------------------------------------------------------------------------ |
 | **Nginx Proxy**      | `80`    | External       | Unified reverse proxy routing `/` to Web, `/api` to API, and `/socket.io` to Realtime |
 | **Web SPA**          | `5173`  | Direct / Proxy | React 18 single-page application built with Vite and Tailwind CSS                     |
+| **Endpoint Tester**  | `5174`  | Direct         | Standalone Postman-like API workbench (`apps/tester`) for testing REST endpoints      |
 | **Core API**         | `3000`  | Direct / Proxy | NestJS modular monolith REST API serving endpoints under `/api/v1`                    |
 | **Realtime Service** | `3001`  | Direct / Proxy | Socket.io WebSocket gateway for live seat locks and room subscriptions                |
 | **Worker Service**   | `3002`  | Direct         | NestJS standalone BullMQ queue processor exposing `/api/v1/health`                    |
@@ -163,6 +181,7 @@ UrTicketBuddy/
 ├── apps/
 │   ├── api/             # NestJS modular monolith core REST API (:3000)
 │   ├── realtime/        # NestJS + Socket.io WebSocket gateway (:3001)
+│   ├── tester/          # Standalone Postman-like endpoint testing workbench (:5174)
 │   ├── web/             # React + Vite + TypeScript + Tailwind CSS (:5173)
 │   └── worker/          # NestJS standalone BullMQ & hold-expiry cron worker (:3002)
 ├── packages/
@@ -203,7 +222,20 @@ All common workflow tasks are orchestrated via Turborepo:
 | **Generate Migration** | `pnpm db:generate` | Automatically generate a migration based on entity changes      |
 | **Start Infra**        | `pnpm up`          | Start all infrastructure containers via Docker Compose          |
 | **Stop Infra**         | `pnpm down`        | Stop and remove all infrastructure containers                   |
+| **Start Prod Stack**   | `pnpm up:prod`     | Build and start all production containers with health checks    |
+| **Stop Prod Stack**    | `pnpm down:prod`   | Stop and remove all production containers                       |
 | **Architecture Graph** | `pnpm graphify`    | Generate architectural knowledge graph and visual studio report |
+
+---
+
+## Continuous Deployment & Production Dockerization
+
+Automated Continuous Deployment runs on push to `main` via GitHub Actions (`.github/workflows/cd.yml`). Full architectural and provisioning procedures are documented in [`docs/deployment.md`](docs/deployment.md) and [`docs/adr/0002-oracle-cloud-free-tier-deployment.md`](docs/adr/0002-oracle-cloud-free-tier-deployment.md):
+
+- **Live Deployment Target**: Oracle Cloud Infrastructure (OCI) Always Free Tier (Ampere A1 / AMD Compute with 4GB NVMe swapfile) and Railway PaaS.
+- **Microservices Dockerization**: Production-optimized, multi-stage Alpine Dockerfiles (`apps/api`, `apps/realtime`, `apps/worker`) running as unprivileged `node` user with stripped `devDependencies`.
+- **Production Orchestration**: [`docker-compose.prod.yml`](docker-compose.prod.yml) tying together API, Realtime, Worker, PostgreSQL, PgBouncer, MongoDB, Redis Stack (RedisBloom), and Nginx reverse proxy.
+- **Zero-Downtime Pipeline**: Automated SSH deployment executing rolling restarts and post-deploy health check pings on `GET /api/v1/health`.
 
 ---
 
@@ -216,6 +248,38 @@ Automated CI checks run on every pull request and push to `main` via GitHub Acti
 - **Integration Tests**: Live service verification against PostgreSQL, MongoDB, and Redis Stack containers.
 - **Docker Builds**: Matrix container compilation for `api`, `realtime`, `worker`, and `web`.
 - **Migrations & DB Consistency**: Automated 5-step test sequence (Migrate Up $\rightarrow$ Revert $\rightarrow$ Migrate Up $\rightarrow$ Schema Drift Check $\rightarrow$ DB Consistency Checks). See [`packages/db/README.md`](packages/db/README.md) for details.
+
+---
+
+## Production Dockerization & Continuous Delivery (CD)
+
+UrTicketBuddy provides an automated production continuous delivery pipeline targeting [Railway](https://railway.app) and a standalone production Docker Compose stack. Detailed instructions, architecture diagrams, rollback playbooks, and troubleshooting procedures are in [`docs/deployment.md`](docs/deployment.md).
+
+### 1. Multi-Stage Dockerfiles
+
+Each backend service (`api`, `realtime`, `worker`) features an optimized 4-stage multi-stage Dockerfile located in `docker/` (and mirrored in `apps/<service>/Dockerfile`):
+
+- `deps`: Caches workspace dependencies (`pnpm install --frozen-lockfile`) using Corepack-pinned `pnpm@12.21.0` on Node 22 Alpine.
+- `build`: Builds shared workspace packages and target application bundles.
+- `prod-deps`: Isolates production-only dependencies and runtime workspace links via `pnpm deploy --prod`.
+- `production`: Minimal runtime running as non-root `USER node`, managed by `tini` for signal handling, with container health checks (`wget -q --spider`).
+
+### 2. Local Production Stack
+
+Run the full production-like environment with all infrastructure and compiled containers:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build
+```
+
+### 3. Continuous Delivery Pipeline
+
+The CD workflow ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) automatically triggers after the `CI Pipeline` successfully passes on the `main` branch (`workflow_run` event):
+
+- **Deployment**: Deploys `api`, `realtime`, and `worker` to Railway sequentially using the Railway CLI and `RAILWAY_TOKEN`.
+- **Status Check**: Verifies Railway deployment status for background worker and WebSocket services.
+- **Health Verification**: Probes `GET /api/v1/health` with exponential backoff (10 attempts, 10s intervals) before declaring the release successful.
+- **Rollback**: Supports instant Railway rollback via `railway rollback --service <name>` or git revert.
 
 ---
 

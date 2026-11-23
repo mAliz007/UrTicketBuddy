@@ -4,6 +4,84 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-22] - 2026-11-22
+
+### Centralized Space to Hit and Test Endpoints (Endpoint Tester Workbench)
+
+- **Ticket Key:** `UTB-22`
+- **Completion Date:** 2026-11-22
+- **Main Feature Branch:** `feat/UTB-22-endpoint-tester`
+  - Sub-task 1: `feat/UTB-22/tester-scaffold`
+  - Sub-task 2: `feat/UTB-22/endpoint-catalog`
+  - Sub-task 3: `feat/UTB-22/workbench-ui`
+  - Sub-task 4: `feat/UTB-22/token-and-qr-helpers`
+- **Status:** Completed & Integrated (Running on dedicated port 5174 via `pnpm tester`)
+- **Packages & Directories Modified:** `apps/tester/`, `apps/README.md`, `package.json`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Dedicated Postman-like Workbench (`apps/tester`)**:
+    - Created standalone React 18 + Vite + Tailwind CSS developer workspace operating on dedicated port `5174`, ensuring zero interference with the main customer-facing frontend (`apps/web` on `5173`).
+  - **Exhaustive Endpoint Catalog (`apps/tester/src/data/endpoints.ts`)**:
+    - Pre-built request collections covering Authentication & RBAC, Venues, Events & Discovery, Realtime Seat Selection, Orders & Checkout, Tickets & Wallet, Gate QR Scans, and System Health.
+  - **Auto-Token Capture & Bearer Injection**:
+    - Automatic JSON inspection of auth responses to immediately store and apply JWT access tokens across all authenticated routes.
+    - Added instant role quick-presets (`customer`, `organizer`, `admin`, `gate_staff`) to test RBAC authorization guards.
+  - **Idempotency Header & Dynamic QR Visualizer**:
+    - One-click UUID generator for `Idempotency-Key` headers.
+    - Embedded dynamic HMAC-SHA256 QR code generator rendering live SVG scannable tickets from `/api/v1/tickets/:id/qr` payload responses.
+  - **DevOps History & cURL Export**:
+    - One-click "Copy as cURL" generator formatting shell-ready commands.
+    - Persistent request/response history in `localStorage` tracking HTTP status, payload sizes, and round-trip execution latency (`ms`).
+  - **Workspace & Monorepo Integration**:
+    - Registered root script `"tester": "pnpm --filter @urticketbuddy/tester dev"`.
+    - Documented port allocation (`5174`), architecture, and testing runbook in `apps/tester/README.md` and root `README.md`.
+
+---
+
+## [UTB-18] - 2026-11-22
+
+### Production Dockerization & Continuous Deployment Pipeline
+
+- **Ticket Key:** `UTB-18`
+- **Completion Date:** 2026-11-22
+- **Main Feature Branch:** `feat/UTB-18-docker-cd-pipeline`
+  - Sub-task 1: `feat/UTB-18/dockerfiles`
+  - Sub-task 2: `feat/UTB-18/docker-compose`
+  - Sub-task 3: `feat/UTB-18/cd-workflow`
+  - Sub-task 4: `feat/UTB-18/tests`
+- **Status:** Merged into `main` & Verified Live (Deployment operational on Oracle Cloud Always Free VM at `129.221.182.252` serving React SPA, NestJS REST API, Socket.io Realtime, BullMQ Worker, and Nginx reverse proxy)
+- **Packages & Directories Modified:** `docker/`, `apps/api/`, `apps/realtime/`, `apps/worker/`, `apps/web/`, `infra/docker/`, `infra/nginx/`, `infra/scripts/`, `.github/workflows/`, `packages/config/`, `docs/`, `docs/adr/`, `.dockerignore`, `docker-compose.prod.yml`, `.env.example`, `package.json`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Live Production Deployment (`http://129.221.182.252/`)**:
+    - Complete full-stack live deployment verified on Oracle Cloud Infrastructure (OCI) Always Free VM (Ubuntu host, 4GB NVMe swap space, Docker Compose).
+    - Production edge ingress served via Nginx reverse proxy on ports 80/443:
+      - React SPA: `http://129.221.182.252/` (HTTP 200 OK)
+      - System Health Check: `http://129.221.182.252/health` (HTTP 200 OK)
+      - REST API Microservice: `http://129.221.182.252/api/v1/health` (HTTP 200 OK)
+      - Socket.io Realtime Gateway: `ws://129.221.182.252/socket.io/` (HTTP 200 OK handshake)
+      - Nginx Proxy Health: `http://129.221.182.252/healthz` (HTTP 200 OK)
+  - **Frontend Containerization (`apps/web/Dockerfile` & `infra/docker/Dockerfile.web`)**:
+    - Vite + Tailwind React SPA compiled in multi-stage Docker build and served via lightweight Nginx Alpine container.
+    - Configured client-side SPA fallback routing (`try_files $uri $uri/ /index.html;`).
+    - Wired into `docker-compose.prod.yml` as `web` service on internal port 80.
+  - **Production Secrets & Environment Hardening**:
+    - Added automated production secret generation (`openssl rand -hex 32`) in `.github/workflows/cd.yml` to replace development placeholders for `MASTER_TICKET_SECRET`.
+    - Mapped `JWT_SECRET`, `JWT_REFRESH_SECRET`, and `MASTER_TICKET_SECRET` to all microservices (`api`, `realtime`, `worker`), preventing Zod refine validation startup failures.
+  - **Root `.dockerignore`**: Created comprehensive Docker ignore file excluding `node_modules`, `dist`, `.git`, `.turbo`, `.env*`, `coverage`, `docs`, and frontend build artifacts (`apps/web/dist`) while preserving source code for container compilation.
+  - **Multi-Stage Backend Dockerfiles (`docker/*.Dockerfile`, `apps/*/Dockerfile`, `infra/docker/*`)**:
+    - Standardized 4-stage multi-stage Docker builds across all three backend microservices (`deps`, `build`, `prod-deps`, `production`).
+    - Runs as non-root `USER node` with process signal handling via `tini`, container health check with busybox `wget -q --spider`, and stripped `devDependencies`.
+  - **Production Docker Compose Stack (`docker-compose.prod.yml`)**:
+    - Defines standalone production orchestration for `api`, `realtime`, `worker`, `web`, and `nginx`.
+    - Wires infrastructure services (`postgres`, `pgbouncer:latest`, `mongo`, `redis`, `elasticsearch`) with healthcheck-based `depends_on`.
+  - **Automated CD Pipeline (`.github/workflows/cd.yml`)**:
+    - Hardened SSH deployment against non-interactive shell unbound variables, git working tree dirty conflicts, and `appleboy/ssh-action` line-splitting bugs.
+    - Automated failure diagnostics dumping container status and service logs on startup errors.
+  - **Documentation & Verification Suite**:
+    - Authored and updated documentation in `README.md`, `apps/README.md`, `apps/web/README.md`, `infra/README.md`, `infra/docker/README.md`, `packages/config/README.md`, and `docs/deployment.md`.
+    - Passed all 22 tests in `@urticketbuddy/config` validation suite.
+
+---
+
 ## [UTB-15] - 2026-11-21
 
 ### Capped P2P Resale Marketplace API
@@ -20,11 +98,11 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - **Contracts & 110% Price Cap (`packages/contracts/src/resale.ts`)**:
     - Implemented `maxResalePrice(faceValueMinor)` (`Math.floor((faceValueMinor * 110) / 100)`), `ResaleListingStatus`, `LedgerEntryKind`, `CreateResaleListingSchema`, `UpdateResaleListingSchema`, `PurchaseResaleListingSchema`, and `ErrorCode.RESALE_PRICE_CAP_EXCEEDED`.
   - **Database Entities & Migration (`packages/db`)**:
-    - Added `ResaleListing` (`resale_listings`) and `LedgerEntry` (`ledger_entries`) TypeORM entities with covering indexes (`idx_resale_listings_ticket_id`, `idx_resale_listings_event_id`, `idx_resale_listings_seller_id`, `idx_ledger_entries_listing_id`).
-    - Created reversible migration `1795136850000-UTB-15-init-resale-ledger.ts` with exact TypeORM hashed FK constraint names (`FK_6f3aa262c5f7947d2adb51d3f36`, `FK_23c4922b768155c827d32122952`, `FK_06ca5804051219422c87e507899`).
+    - Added `ResaleListing` (`resale_listings`) and `LedgerEntry` (`ledger_entries`) TypeORM entities with covering indexes (`idx_resale_listings_ticket_id`, `uq_resale_listings_active_ticket`, `idx_resale_listings_event_id`, `idx_resale_listings_seller_id`, `idx_ledger_entries_listing_id`).
+    - Created reversible migration `1795136850000-UTB-15-init-resale-ledger.ts` with exact TypeORM hashed FK constraint names (`FK_6f3aa262c5f7947d2adb51d3f36`, `FK_23c4922b768155c827d32122952`, `FK_06ca5804051219422c87e507899`) and `ON DELETE RESTRICT` on `ledger_entries`.
   - **Resale Module (`apps/api/src/modules/resale`)**:
     - Added `PlatformSettingsPort` (`PLATFORM_SETTINGS_PORT`) + `DefaultPlatformSettingsProvider` (10% / `1000` bps).
-    - Implemented `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings` (`@Public()`), and `POST /api/v1/resale/listings/:listingId/purchase` (`Idempotency-Key`, Redis `resale_lock:<listingId>`, `PaymentProvider` charge, PostgreSQL `SELECT ... FOR UPDATE` transaction, 2-row ledger split, `ticket.ownerId` transfer, `ticket.seedVersion += 1`, and `ticket.transferred` event).
+    - Implemented `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings` (`@Public()`), and `POST /api/v1/resale/listings/:listingId/purchase` (`Idempotency-Key` deduplication, Redis `resale_lock:<listingId>`, `PaymentProvider` charge + compensating refund, PostgreSQL `SELECT ... FOR UPDATE` transaction, 2-row ledger split, `ticket.ownerId` transfer, `ticket.seedVersion += 1`, and `ticket.transferred` event).
   - **Testing & Documentation**:
     - Added unit tests in `packages/contracts/src/index.spec.ts` and `apps/api/src/modules/resale/resale.service.spec.ts`.
     - Added Supertest E2E suite in `apps/api/test/resale.e2e-spec.ts` covering 110% cap boundaries, checked-in rejection, concurrent buyer Redis lock race, balanced ledger entries, and post-resale QR invalidation at `/api/v1/gate/scan`.

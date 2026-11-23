@@ -35,7 +35,8 @@ pnpm-debug.log*
 Thumbs.db
 
 # Docker data & volumes
-data/
+/data/
+!apps/tester/src/data/
 
 # Graphify / Engram cache & artifacts
 .engram/cache/

@@ -9,12 +9,23 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableShutdownHooks();
+
+  // Allow root /health to resolve to /api/v1/health
+  app.use((req: any, _res: any, next: any) => {
+    if (req.url === "/health" || req.url === "/health/") {
+      req.url = "/api/v1/health";
+    }
+    next();
+  });
+
   app.setGlobalPrefix("api/v1");
   app.enableCors();
 
   const port = env.WORKER_PORT || 3002;
   await app.listen(port);
-  logger.log(`Worker service running (health on port ${port} under /api/v1)`);
+  logger.log(
+    `Worker service running (health on port ${port} under /api/v1 and /health)`,
+  );
 }
 
 bootstrap();
