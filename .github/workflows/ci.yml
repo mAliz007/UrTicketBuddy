@@ -74,8 +74,19 @@ jobs:
           node-version: 22
           cache: "pnpm"
 
+      - name: Setup Turborepo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
 
       - name: Supply-Chain Dependency Audit
         run: pnpm audit --audit-level=high || echo "Supply-chain audit completed with warnings"
@@ -89,7 +100,7 @@ jobs:
           echo "No exposed secrets or hardcoded production private keys detected."
 
       - name: Run Automated Route Authorization & Security Suite
-        run: pnpm --filter @urticketbuddy/api test apps/api/test/security-audit.e2e-spec.ts
+        run: pnpm --filter @urticketbuddy/api test -- test/security-audit.e2e-spec.ts
 
   unit:
     name: Unit Tests
