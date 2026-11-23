@@ -292,6 +292,21 @@ The CD workflow ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) automat
 
 ---
 
+## Security Hardening, Rate Limiting & OWASP Top 10 Audit
+
+UrTicketBuddy enforces production-grade zero-trust security controls across all application layers. Complete threat model mappings, cryptographic verifications, and compliance findings are documented in [`docs/security-audit.md`](docs/security-audit.md):
+
+- **Edge & Application Rate Limiting**: Dedicated Nginx `limit_req_zone` buckets protect high-traffic entry points (`/api/v1/auth` at 10 r/s, `/api/v1/checkout` at 20 r/s, `/api/v1/orders` at 15 r/s, `/api/v1/gate/scan` at 50 r/s, and `/api/v1/resale` at 20 r/s) alongside NestJS Throttler enforcing RFC 6585 `Retry-After: 60` headers on HTTP 429 errors.
+- **HTTP Hardening & Payload Guard**: Integrated `helmet` security headers (HSTS, CSP, X-Frame-Options), strict CORS allowlist validated against `CORS_ORIGINS`, and a strict `100kb` request body limit to eliminate DoS attack vectors.
+- **Automated Route Authorization Matrix**: Comprehensive automated security suite in `apps/api/test/security-audit.e2e-spec.ts` (52 assertions):
+  - _Route Table Metadata Scanner_: Programmatically audits all registered controllers via `Reflector` asserting explicit `@Public()` opt-outs or mandatory `JwtAuthGuard` / `@Roles(...)` enforcement.
+  - _Role $\times$ Route Matrix_: Validates 5 distinct personas (`Unauthenticated`, `CUSTOMER`, `GATE_STAFF`, `ORGANIZER`, `ADMIN`) across 12+ API route groups, verifying exact 401, 403, and 200/201 HTTP responses.
+  - _Tenant Isolation & Replay Protection_: Asserts multi-tenant event boundary enforcement via `OwnershipGuard` and token family revocation upon refresh token reuse detection.
+- **Zero-Trust Log Redaction**: `LogRedactionInterceptor` strips sensitive keys (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`) before any log payload reaches stdout or disk.
+- **CI Supply-Chain Gates**: Automated supply-chain vulnerability scans (`pnpm audit --audit-level=high`) and secret scanning configured in [`.github/workflows/security.yml`](.github/workflows/security.yml).
+
+---
+
 ## Code Ownership & Engineering Standards
 
 - **Ownership Matrix**: Directory and module ownership is defined in [`.github/CODEOWNERS`](.github/CODEOWNERS) following the three-member team distribution.
