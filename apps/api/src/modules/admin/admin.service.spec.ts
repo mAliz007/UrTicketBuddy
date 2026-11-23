@@ -4,6 +4,7 @@ import { AdminService } from "./admin.service";
 import { AuditService } from "./audit.service";
 import { PlatformSettingsService } from "./platform-settings.service";
 import {
+  DATA_SOURCE,
   ORDER_REPOSITORY,
   TICKET_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
@@ -47,6 +48,16 @@ describe("AdminService (Unit Tests)", () => {
     update: jest.fn().mockResolvedValue({ affected: 2 }),
   };
 
+  const mockTransactionManager = {
+    save: jest.fn((_, entityOrEntities) => Promise.resolve(entityOrEntities)),
+  };
+
+  const mockDataSource = {
+    transaction: jest.fn(async (cb: (mgr: any) => Promise<any>) =>
+      cb(mockTransactionManager),
+    ),
+  };
+
   const mockRedisClient = {
     publish: jest.fn().mockResolvedValue(1),
   };
@@ -79,6 +90,7 @@ describe("AdminService (Unit Tests)", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminService,
+        { provide: DATA_SOURCE, useValue: mockDataSource },
         { provide: ORDER_REPOSITORY, useValue: mockOrderRepo },
         { provide: TICKET_REPOSITORY, useValue: mockTicketRepo },
         { provide: EVENT_SEAT_REPOSITORY, useValue: mockEventSeatRepo },
@@ -120,8 +132,7 @@ describe("AdminService (Unit Tests)", () => {
       expect(order.status).toBe(OrderStatus.FLAGGED);
       expect(tickets[0].seedVersion).toBe(2);
       expect(tickets[1].seedVersion).toBe(3);
-      expect(mockOrderRepo.save).toHaveBeenCalledWith(order);
-      expect(mockTicketRepo.save).toHaveBeenCalledWith(tickets);
+      expect(mockTransactionManager.save).toHaveBeenCalled();
       expect(mockAuditService.recordLog).toHaveBeenCalledWith(
         expect.objectContaining({
           action: "ORDER_FLAGGED",
@@ -168,7 +179,7 @@ describe("AdminService (Unit Tests)", () => {
       expect(ticket.status).toBe(TicketStatus.REVOKED);
       expect(ticket.seedVersion).toBe(2);
       expect(ticket.eventSeat.status).toBe(SeatState.AVAILABLE);
-      expect(mockEventSeatRepo.save).toHaveBeenCalledWith(ticket.eventSeat);
+      expect(mockTransactionManager.save).toHaveBeenCalled();
       expect(mockRedisScriptsWrapper.unsellSeats).toHaveBeenCalledWith(
         "event-1",
         ["A-1-5"],
@@ -196,6 +207,17 @@ describe("AdminService (Unit Tests)", () => {
       await expect(
         service.revokeTicket("non-existent", adminActor),
       ).rejects.toThrow(NotFoundException);
+    });
+
+    it("should throw BadRequestException if ticket is already REVOKED", async () => {
+      mockTicketRepo.findOne.mockResolvedValue({
+        id: "revoked-ticket",
+        status: TicketStatus.REVOKED,
+      });
+
+      await expect(
+        service.revokeTicket("revoked-ticket", adminActor),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -231,6 +253,7 @@ describe("AdminService (Unit Tests)", () => {
         id: "user-suspend",
         email: "baduser@example.com",
         role: UserRole.CUSTOMER,
+        isSuspended: false,
       };
 
       mockUserRepo.findOne.mockResolvedValue(user);
@@ -239,6 +262,8 @@ describe("AdminService (Unit Tests)", () => {
 
       expect(result.success).toBe(true);
       expect(result.suspended).toBe(true);
+      expect(user.isSuspended).toBe(true);
+      expect(mockUserRepo.save).toHaveBeenCalledWith(user);
       expect(mockRefreshTokenRepo.update).toHaveBeenCalledWith(
         { userId: "user-suspend", isRevoked: false },
         { isRevoked: true },

@@ -13,6 +13,11 @@ import { AuditLogInterceptor } from "./audit-log.interceptor";
     PlatformSettingsService,
     AuditLogInterceptor,
   ],
-  exports: [AdminService, AuditService, PlatformSettingsService],
+  exports: [
+    AdminService,
+    AuditService,
+    PlatformSettingsService,
+    AuditLogInterceptor,
+  ],
 })
 export class AdminModule {}

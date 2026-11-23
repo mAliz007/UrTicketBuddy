@@ -10,6 +10,7 @@ export const RegisterRequestSchema = z.object({
 });
 
 export type RegisterRequest = z.infer<typeof RegisterRequestSchema>;
+export type RegisterRequestInput = z.input<typeof RegisterRequestSchema>;
 
 export const LoginRequestSchema = z.object({
   email: z.string().email(),

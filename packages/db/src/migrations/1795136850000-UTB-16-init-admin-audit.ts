@@ -79,6 +79,11 @@ export class Utb16InitAdminAudit1795136850000 implements MigrationInterface {
     await queryRunner.query(`
       CREATE INDEX IF NOT EXISTS "idx_events_organizer_id" ON "events" ("organizerId");
     `);
+
+    // 5. Add isSuspended to users table
+    await queryRunner.query(`
+      ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "isSuspended" boolean NOT NULL DEFAULT false;
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -105,6 +110,11 @@ export class Utb16InitAdminAudit1795136850000 implements MigrationInterface {
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_events_organizer_id";`);
     await queryRunner.query(
       `ALTER TABLE "events" DROP COLUMN IF EXISTS "organizerId";`,
+    );
+
+    // 5. Drop isSuspended on users
+    await queryRunner.query(
+      `ALTER TABLE "users" DROP COLUMN IF EXISTS "isSuspended";`,
     );
   }
 }

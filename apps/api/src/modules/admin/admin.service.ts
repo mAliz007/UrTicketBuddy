@@ -5,7 +5,7 @@ import {
   BadRequestException,
   Logger,
 } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { Repository, DataSource } from "typeorm";
 import Redis from "ioredis";
 import { randomUUID } from "crypto";
 import {
@@ -29,6 +29,7 @@ import {
 } from "@urticketbuddy/contracts";
 import { RedisScriptsWrapper } from "@urticketbuddy/redis-scripts";
 import {
+  DATA_SOURCE,
   ORDER_REPOSITORY,
   TICKET_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
@@ -52,6 +53,8 @@ export class AdminService {
   private readonly logger = new Logger(AdminService.name);
 
   constructor(
+    @Inject(DATA_SOURCE)
+    private readonly dataSource: DataSource,
     @Inject(ORDER_REPOSITORY)
     private readonly orderRepository: Repository<Order>,
     @Inject(TICKET_REPOSITORY)
@@ -103,7 +106,6 @@ export class AdminService {
 
     const previousStatus = order.status;
     order.status = OrderStatus.FLAGGED;
-    await this.orderRepository.save(order);
 
     // Find and invalidate all tickets belonging to this order
     const tickets = await this.ticketRepository.find({
@@ -114,26 +116,29 @@ export class AdminService {
       ticket.seedVersion += 1;
     }
 
-    if (tickets.length > 0) {
-      await this.ticketRepository.save(tickets);
-    }
-
     const { actorId, actorRole } = this.extractActor(adminUser);
-    await this.auditService.recordLog({
-      actorId,
-      actorRole,
-      action: "ORDER_FLAGGED",
-      entityType: "Order",
-      entityId: orderId,
-      summary:
-        reason ||
-        `Order ${orderId} flagged as fraudulent. Incremented seedVersion on ${tickets.length} ticket(s) to invalidate signatures.`,
-      beforeState: { status: previousStatus },
-      afterState: {
-        status: OrderStatus.FLAGGED,
-        invalidatedTicketsCount: tickets.length,
-      },
-      ipAddress: ipAddress || null,
+
+    await this.dataSource.transaction(async (manager) => {
+      await manager.save(Order, order);
+      if (tickets.length > 0) {
+        await manager.save(Ticket, tickets);
+      }
+      await this.auditService.recordLog({
+        actorId,
+        actorRole,
+        action: "ORDER_FLAGGED",
+        entityType: "Order",
+        entityId: orderId,
+        summary:
+          reason ||
+          `Order ${orderId} flagged as fraudulent. Incremented seedVersion on ${tickets.length} ticket(s) to invalidate signatures.`,
+        beforeState: { status: previousStatus },
+        afterState: {
+          status: OrderStatus.FLAGGED,
+          invalidatedTicketsCount: tickets.length,
+        },
+        ipAddress: ipAddress || null,
+      });
     });
 
     this.logger.warn(
@@ -174,19 +179,26 @@ export class AdminService {
       });
     }
 
+    if (ticket.status === TicketStatus.REVOKED) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: `Ticket ${ticketId} is already revoked`,
+      });
+    }
+
     const previousStatus = ticket.status;
     const previousSeedVersion = ticket.seedVersion;
 
     // 1. Mark ticket as REVOKED and rotate seedVersion
     ticket.status = TicketStatus.REVOKED;
     ticket.seedVersion += 1;
-    await this.ticketRepository.save(ticket);
 
     // 2. Identify seat and mark EventSeat AVAILABLE in Postgres
     let seatIdStr = "";
+    let seatEntity: EventSeat | null = null;
     if (ticket.eventSeat) {
       ticket.eventSeat.status = SeatState.AVAILABLE;
-      await this.eventSeatRepository.save(ticket.eventSeat);
+      seatEntity = ticket.eventSeat;
       seatIdStr = ticket.eventSeat.seatId;
     } else if (ticket.eventSeatId) {
       const seat = await this.eventSeatRepository.findOne({
@@ -194,10 +206,39 @@ export class AdminService {
       });
       if (seat) {
         seat.status = SeatState.AVAILABLE;
-        await this.eventSeatRepository.save(seat);
+        seatEntity = seat;
         seatIdStr = seat.seatId;
       }
     }
+
+    const { actorId, actorRole } = this.extractActor(adminUser);
+
+    await this.dataSource.transaction(async (manager) => {
+      await manager.save(Ticket, ticket);
+      if (seatEntity) {
+        await manager.save(EventSeat, seatEntity);
+      }
+      await this.auditService.recordLog({
+        actorId,
+        actorRole,
+        action: "TICKET_REVOKED",
+        entityType: "Ticket",
+        entityId: ticketId,
+        summary:
+          reason ||
+          `Ticket ${ticketId} revoked. Seat ${seatIdStr} marked AVAILABLE and removed from sold set.`,
+        beforeState: {
+          status: previousStatus,
+          seedVersion: previousSeedVersion,
+        },
+        afterState: {
+          status: TicketStatus.REVOKED,
+          seedVersion: ticket.seedVersion,
+          seatId: seatIdStr,
+        },
+        ipAddress: ipAddress || null,
+      });
+    });
 
     // 3. Remove seat from Redis sold set (seat_sold:{eventId})
     if (seatIdStr && ticket.eventId) {
@@ -226,29 +267,6 @@ export class AdminService {
         this.logger.warn(`Redis Pub/Sub broadcast encountered warning: ${err}`);
       }
     }
-
-    // 5. Audit log
-    const { actorId, actorRole } = this.extractActor(adminUser);
-    await this.auditService.recordLog({
-      actorId,
-      actorRole,
-      action: "TICKET_REVOKED",
-      entityType: "Ticket",
-      entityId: ticketId,
-      summary:
-        reason ||
-        `Ticket ${ticketId} revoked. Seat ${seatIdStr} marked AVAILABLE and removed from sold set.`,
-      beforeState: {
-        status: previousStatus,
-        seedVersion: previousSeedVersion,
-      },
-      afterState: {
-        status: TicketStatus.REVOKED,
-        seedVersion: ticket.seedVersion,
-        seatId: seatIdStr,
-      },
-      ipAddress: ipAddress || null,
-    });
 
     return {
       success: true,
@@ -333,6 +351,9 @@ export class AdminService {
         message: `User ${userId} not found`,
       });
     }
+
+    user.isSuspended = true;
+    await this.userRepository.save(user);
 
     // Revoke all active refresh tokens for the suspended user
     await this.refreshTokenRepository.update(

@@ -281,6 +281,9 @@ The CD workflow ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) automat
 - **Health Verification**: Probes `GET /api/v1/health` with exponential backoff (10 attempts, 10s intervals) before declaring the release successful.
 - **Rollback**: Supports instant Railway rollback via `railway rollback --service <name>` or git revert.
 
+- **Admin Suite & Revocation Engine**: `PATCH /api/v1/admin/orders/:id/flag`, `DELETE /api/v1/admin/tickets/:id`, `GET|PUT /api/v1/admin/settings/commission`, `PATCH /api/v1/admin/users/:id/suspend`, `PATCH /api/v1/admin/organizers/:id/approve`, `GET /api/v1/admin/audit-logs` (see [Admin Module](apps/api/src/modules/admin/README.md))
+- **Organizer Analytics API**: `GET /api/v1/organizer/analytics/:eventId` (see [Analytics Module](apps/api/src/modules/analytics/README.md))
+
 ---
 
 ## Code Ownership & Engineering Standards

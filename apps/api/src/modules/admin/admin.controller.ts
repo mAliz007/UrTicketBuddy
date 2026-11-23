@@ -12,13 +12,17 @@ import {
   HttpStatus,
   Req,
   ParseUUIDPipe,
+  BadRequestException,
 } from "@nestjs/common";
 import type { Request } from "express";
 import {
   UserRole,
+  ErrorCode,
   AuditLogQuery,
+  AuditLogQuerySchema,
   UpdateCommissionRateDto,
   UpdateCommissionRateSchema,
+  AdminReasonSchema,
 } from "@urticketbuddy/contracts";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
@@ -41,14 +45,22 @@ export class AdminController {
   async flagOrder(
     @Param("orderId", new ParseUUIDPipe()) orderId: string,
     @CurrentUser() adminUser: AdminActor,
-    @Body() body: { reason?: string },
+    @Body() body: unknown,
     @Req() req: Request,
   ) {
+    const parsed = AdminReasonSchema.safeParse(body || {});
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid reason payload",
+        details: parsed.error.issues,
+      });
+    }
     const ipAddress = (req.headers["x-forwarded-for"] as string) || req.ip;
     return this.adminService.flagOrder(
       orderId,
       adminUser,
-      body?.reason,
+      parsed.data.reason,
       ipAddress,
     );
   }
@@ -62,14 +74,22 @@ export class AdminController {
   async revokeTicket(
     @Param("ticketId", new ParseUUIDPipe()) ticketId: string,
     @CurrentUser() adminUser: AdminActor,
-    @Body() body: { reason?: string },
+    @Body() body: unknown,
     @Req() req: Request,
   ) {
+    const parsed = AdminReasonSchema.safeParse(body || {});
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid reason payload",
+        details: parsed.error.issues,
+      });
+    }
     const ipAddress = (req.headers["x-forwarded-for"] as string) || req.ip;
     return this.adminService.revokeTicket(
       ticketId,
       adminUser,
-      body?.reason,
+      parsed.data.reason,
       ipAddress,
     );
   }
@@ -83,14 +103,22 @@ export class AdminController {
   async approveOrganizer(
     @Param("userId", new ParseUUIDPipe()) userId: string,
     @CurrentUser() adminUser: AdminActor,
-    @Body() body: { reason?: string },
+    @Body() body: unknown,
     @Req() req: Request,
   ) {
+    const parsed = AdminReasonSchema.safeParse(body || {});
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid reason payload",
+        details: parsed.error.issues,
+      });
+    }
     const ipAddress = (req.headers["x-forwarded-for"] as string) || req.ip;
     return this.adminService.approveOrganizer(
       userId,
       adminUser,
-      body?.reason,
+      parsed.data.reason,
       ipAddress,
     );
   }
@@ -104,14 +132,22 @@ export class AdminController {
   async suspendUser(
     @Param("userId", new ParseUUIDPipe()) userId: string,
     @CurrentUser() adminUser: AdminActor,
-    @Body() body: { reason?: string },
+    @Body() body: unknown,
     @Req() req: Request,
   ) {
+    const parsed = AdminReasonSchema.safeParse(body || {});
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid reason payload",
+        details: parsed.error.issues,
+      });
+    }
     const ipAddress = (req.headers["x-forwarded-for"] as string) || req.ip;
     return this.adminService.suspendUser(
       userId,
       adminUser,
-      body?.reason,
+      parsed.data.reason,
       ipAddress,
     );
   }
@@ -137,9 +173,19 @@ export class AdminController {
     @CurrentUser() adminUser: AdminActor,
     @Req() req: Request,
   ) {
-    const parsed = UpdateCommissionRateSchema.parse(body);
+    const parsed = UpdateCommissionRateSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message:
+          "Invalid commission rate payload: must be between 0 and 50 percent",
+        details: parsed.error.issues,
+      });
+    }
     const rate =
-      parsed.commissionRatePercent ?? parsed.commissionRate ?? parsed.value;
+      parsed.data.commissionRatePercent ??
+      parsed.data.commissionRate ??
+      parsed.data.value;
     const ipAddress = (req.headers["x-forwarded-for"] as string) || req.ip;
     return this.adminService.updateCommissionRate(
       rate as number,
@@ -155,6 +201,14 @@ export class AdminController {
   @Get("audit-logs")
   @HttpCode(HttpStatus.OK)
   async getAuditLogs(@Query() query: AuditLogQuery) {
-    return this.adminService.getAuditLogs(query);
+    const parsed = AuditLogQuerySchema.safeParse(query);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid audit log query parameters",
+        details: parsed.error.issues,
+      });
+    }
+    return this.adminService.getAuditLogs(parsed.data);
   }
 }

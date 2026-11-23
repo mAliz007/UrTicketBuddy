@@ -272,7 +272,27 @@ describe("Admin Suite & Organizer Analytics API (e2e - Supertest)", () => {
         transaction: jest.fn(async (cb: (mgr: any) => Promise<any>) =>
           cb({
             create: jest.fn((_, dto: any) => dto),
-            save: jest.fn(async (_, entity: any) => entity),
+            save: jest.fn(async (_, entity: any) => {
+              if (Array.isArray(entity)) {
+                entity.forEach((e) => {
+                  if (e.orderId) ticketsStore.set(e.id, { ...e });
+                });
+                return entity;
+              }
+              if (entity) {
+                if (entity.seatId !== undefined) {
+                  seatsStore.set(entity.id, { ...entity });
+                } else if (
+                  entity.orderId !== undefined ||
+                  entity.seedVersion !== undefined
+                ) {
+                  ticketsStore.set(entity.id, { ...entity });
+                } else if (entity.totalAmount !== undefined) {
+                  ordersStore.set(entity.id, { ...entity });
+                }
+              }
+              return entity;
+            }),
             update: jest.fn(async () => ({ affected: 1 })),
           }),
         ),
@@ -426,6 +446,14 @@ describe("Admin Suite & Organizer Analytics API (e2e - Supertest)", () => {
     expect(revocationAudit).toBeDefined();
     expect(revocationAudit.actorId).toBe(adminId);
     expect(revocationAudit.summary).toContain("Chargeback");
+
+    // Verify duplicate revocation attempt returns 400 Bad Request
+    const duplicateRevokeRes = await request(app.getHttpServer())
+      .delete(`/api/v1/admin/tickets/${ticket1Id}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ reason: "Repeat attempt" });
+
+    expect(duplicateRevokeRes.status).toBe(400);
   });
 
   /**
@@ -433,7 +461,7 @@ describe("Admin Suite & Organizer Analytics API (e2e - Supertest)", () => {
    */
   it("Assertion 2: Flagging an order marks order FLAGGED and increments seedVersion on its tickets", async () => {
     // Add second ticket to order1
-    const ticket2Id = "t2000000-0000-0000-0000-000000000002";
+    const ticket2Id = "22000000-0000-0000-0000-000000000002";
     ticketsStore.set(ticket2Id, {
       id: ticket2Id,
       eventId: event1Id,
@@ -581,5 +609,14 @@ describe("Admin Suite & Organizer Analytics API (e2e - Supertest)", () => {
     );
     expect(commissionAudit).toBeDefined();
     expect(commissionAudit.afterState).toEqual({ commissionRatePercent: 18 });
+
+    // Verify out-of-range commission rate returns 400 Bad Request (not 500)
+    const invalidRateRes = await request(app.getHttpServer())
+      .put("/api/v1/admin/settings/commission")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ commissionRatePercent: 55 });
+
+    expect(invalidRateRes.status).toBe(400);
+    expect(invalidRateRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
   });
 });

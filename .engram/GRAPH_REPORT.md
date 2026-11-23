@@ -2,15 +2,15 @@
 
 ## Corpus Check
 
-- 209 files · ~79,203 words
+- 209 files · ~79,825 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 713 nodes · 986 edges · 65 communities detected
+- 717 nodes · 991 edges · 65 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
-- Edge kinds: contains: 299 · references: 299 · method: 178 · imports: 64 · imports_from: 63 · calls: 59 · implements: 22 · inherits: 2
+- Edge kinds: contains: 302 · references: 301 · method: 178 · imports: 64 · imports_from: 63 · calls: 59 · implements: 22 · inherits: 2
 
 ## Input Scope
 
@@ -21,7 +21,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `56c72af`
+- Built from Git commit: `c90ccf6`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
@@ -55,17 +55,17 @@
 ### Community 0 - "Community 0"
 
 Cohesion: 0.05
-Nodes (31): AdminController, AnalyticsController, AuthController, OrganizerController, Body, CheckoutController, Controller, CurrentUser (+23 more)
+Nodes (32): AdminController, AnalyticsController, AuthController, OrganizerController, Body, CheckoutController, Controller, CurrentUser (+24 more)
 
 ### Community 1 - "Community 1"
 
-Cohesion: 0.09
-Nodes (30): Header(), HeaderProps, QRVisualizer(), QRVisualizerProps, RequestEditor(), RequestEditorProps, ResponseViewer(), ResponseViewerProps (+22 more)
+Cohesion: 0.05
+Nodes (21): AdminModule, AnalyticsModule, AuthModule, BloomModule, CheckoutModule, OnModuleDestroy, DatabaseModule, OnModuleDestroy (+13 more)
 
 ### Community 2 - "Community 2"
 
-Cohesion: 0.05
-Nodes (21): AdminModule, AnalyticsModule, AuthModule, BloomModule, CheckoutModule, OnModuleDestroy, DatabaseModule, OnModuleDestroy (+13 more)
+Cohesion: 0.09
+Nodes (30): Header(), HeaderProps, QRVisualizer(), QRVisualizerProps, RequestEditor(), RequestEditorProps, ResponseViewer(), ResponseViewerProps (+22 more)
 
 ### Community 3 - "Community 3"
 
@@ -109,18 +109,18 @@ Nodes (5): Cron, ExpiryMetrics, ExpiryService, OnModuleDestroy, SeatExpiryPubSub
 
 ### Community 11 - "Community 11"
 
-Cohesion: 0.19
-Nodes (7): GenerateArcParams, GenerateGridParams, GenerateTableClusterParams, TableClusterGroup, TableClusterTransform, buildSeatId(), rowToLabel()
+Cohesion: 0.13
+Nodes (14): AdminReasonDto, AdminReasonSchema, AuditLogDto, AuditLogQuery, AuditLogQuerySchema, CommissionSettingsResponse, FlagOrderResponse, PaginatedAuditLogs (+6 more)
 
 ### Community 12 - "Community 12"
 
-Cohesion: 0.14
-Nodes (5): createSeatLockClient(), getCounts(), getSnapshot(), RedisScriptsWrapper, registerRedisScripts()
+Cohesion: 0.19
+Nodes (7): GenerateArcParams, GenerateGridParams, GenerateTableClusterParams, TableClusterGroup, TableClusterTransform, buildSeatId(), rowToLabel()
 
 ### Community 13 - "Community 13"
 
-Cohesion: 0.15
-Nodes (12): AuditLogDto, AuditLogQuery, AuditLogQuerySchema, CommissionSettingsResponse, FlagOrderResponse, PaginatedAuditLogs, RevokeTicketResponse, UpdateCommissionRateDto (+4 more)
+Cohesion: 0.14
+Nodes (5): createSeatLockClient(), getCounts(), getSnapshot(), RedisScriptsWrapper, registerRedisScripts()
 
 ### Community 14 - "Community 14"
 
@@ -139,7 +139,7 @@ Nodes (8): MigrationInterface, Utb2InitExtensions1794836828550, CONFIRM_SOLD_LUA
 
 ### Community 17 - "Community 17"
 
-Cohesion: 0.24
+Cohesion: 0.27
 Nodes (3): Inject, Optional, OrdersService
 
 ### Community 18 - "Community 18"
@@ -379,7 +379,7 @@ Nodes (1): config
 
 ## Knowledge Gaps
 
-- **155 isolated node(s):** `config`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester`, `CurrentUser` (+150 more)
+- **157 isolated node(s):** `config`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester`, `CurrentUser` (+152 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 8`** (1 nodes): `AuthService`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -463,13 +463,13 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `AuthService` connect `Community 8` to `Community 17`, `Community 18`?**
   _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **What connects `config`, `AdminActor`, `RecordAuditLogParams` to the rest of the system?**
-  _155 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _157 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.051526251526251524 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.050645007166746296 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.09191583610188261 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.048726467331118496 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.04994192799070848 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09191583610188261 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.0553306342780027 - nodes in this community are weakly interconnected._
 - **Should `Community 5` be split into smaller, more focused modules?**

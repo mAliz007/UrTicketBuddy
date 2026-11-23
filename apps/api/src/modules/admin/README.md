@@ -22,7 +22,7 @@ All endpoints are strictly protected by `JwtAuthGuard` and `RolesGuard`, restric
   - Resets the associated `event_seats` record to `status = 'AVAILABLE'`.
   - Removes the seat from Redis sold set atomically via `RedisScriptsWrapper.unsellSeats(eventId, [seatId])` (`SREM seat_sold:{eventId}`).
   - Emits real-time availability updates via Redis Pub/Sub channels:
-    - `seat-updates:{eventId}`: `{ seatId, status: 'AVAILABLE' }`
+    - `seat-updates:{eventId}`: `{ eventId, seatId, state: 'AVAILABLE' }`
     - `seat.state`: `{ eventId, seatId, state: 'AVAILABLE' }`
   - Writes an immutable audit entry with action `TICKET_REVOKED`.
 
@@ -39,10 +39,10 @@ All endpoints are strictly protected by `JwtAuthGuard` and `RolesGuard`, restric
 ### 4. User and Organizer Lifecycle Management
 
 - **`PATCH /api/v1/admin/users/:userId/suspend`**
-  - Marks user suspended and immediately revokes all issued refresh tokens in `refresh_tokens` (`isRevoked = true`).
+  - Marks user suspended (`user.isSuspended = true`) and immediately revokes all issued refresh tokens in `refresh_tokens` (`isRevoked = true`).
   - Writes an immutable audit entry with action `USER_SUSPENDED`.
 - **`PATCH /api/v1/admin/organizers/:userId/approve`**
-  - Promotes user to `ORGANIZER` role and provisions an `organizerTenantId` (`org_<uuid>`) if not already present.
+  - Promotes user to `ORGANIZER` role and provisions an `organizerTenantId` (UUID) if not already present.
   - Writes an immutable audit entry with action `ORGANIZER_APPROVED`.
 
 ### 5. Append-Only Audit Trail

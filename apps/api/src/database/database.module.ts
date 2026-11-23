@@ -132,7 +132,26 @@ let redisClientInstance: Redis | null = null;
     {
       provide: AUDIT_LOG_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
-        return dataSource.getRepository(AuditLog);
+        const repo = dataSource.getRepository(AuditLog);
+        const forbiddenMutation = () => {
+          throw new Error(
+            "audit_logs table is append-only and cannot be updated or deleted",
+          );
+        };
+        return new Proxy(repo, {
+          get(target, prop, receiver) {
+            if (
+              prop === "update" ||
+              prop === "delete" ||
+              prop === "remove" ||
+              prop === "softDelete" ||
+              prop === "clear"
+            ) {
+              return forbiddenMutation;
+            }
+            return Reflect.get(target, prop, receiver);
+          },
+        });
       },
       inject: [DATA_SOURCE],
     },

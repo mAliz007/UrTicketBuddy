@@ -218,7 +218,7 @@
     "video": []
   },
   "total_files": 209,
-  "total_words": 79203,
+  "total_words": 79825,
   "needs_graph": true,
   "warning": null,
   "skipped_sensitive": [
@@ -232,7 +232,7 @@
   "graphifyignore_patterns": 3,
   "git": {
     "source_owner": "git",
-    "source_hash": "56c72af4689997ba0ff6d4f57b0e3ead2e3fccec",
+    "source_hash": "c90ccf6831f826f287284ae5a0be47e9266c9a70",
     "branches": [
       "chore/UTB-1-monorepo-scaffold",
       "chore/UTB-1-monorepo-scaffold-apps",
@@ -252,6 +252,10 @@
       "feat/UTB-14-dynamic-qr-gate-tests",
       "feat/UTB-14-dynamic-qr-gate-tickets-module",
       "feat/UTB-16-admin-analytics-audit",
+      "feat/UTB-16-admin-analytics-audit-admin",
+      "feat/UTB-16-admin-analytics-audit-analytics",
+      "feat/UTB-16-admin-analytics-audit-db",
+      "feat/UTB-16-admin-analytics-audit-tests",
       "feat/UTB-18-docker-cd-pipeline",
       "feat/UTB-18/cd-workflow",
       "feat/UTB-18/docker-compose",
@@ -285,7 +289,7 @@
     "source": "configured-default",
     "root": ".",
     "git_root": ".",
-    "head": "56c72af4689997ba0ff6d4f57b0e3ead2e3fccec",
+    "head": "c90ccf6831f826f287284ae5a0be47e9266c9a70",
     "candidate_count": null,
     "included_count": 209,
     "excluded_untracked_count": 0,

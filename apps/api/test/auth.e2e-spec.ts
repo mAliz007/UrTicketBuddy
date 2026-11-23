@@ -170,7 +170,12 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       expect(typeof res.body.accessToken).toBe("string");
 
       // Verify Set-Cookie header contains refreshToken
-      const cookies = res.headers["set-cookie"] || [];
+      const rawCookies = res.headers["set-cookie"];
+      const cookies = Array.isArray(rawCookies)
+        ? rawCookies
+        : rawCookies
+          ? [rawCookies]
+          : [];
       const hasRefreshCookie = cookies.some((c: string) =>
         c.startsWith("refreshToken="),
       );
@@ -230,7 +235,12 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       expect(res.body.user.email).toBe("carol@example.com");
       expect(res.body.accessToken).toBeDefined();
 
-      const cookies = res.headers["set-cookie"] || [];
+      const rawCookies = res.headers["set-cookie"];
+      const cookies = Array.isArray(rawCookies)
+        ? rawCookies
+        : rawCookies
+          ? [rawCookies]
+          : [];
       expect(cookies.some((c: string) => c.startsWith("refreshToken="))).toBe(
         true,
       );
@@ -263,7 +273,12 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
           lastName: "User",
         });
 
-      const cookies = registerRes.headers["set-cookie"] || [];
+      const rawCookies = registerRes.headers["set-cookie"];
+      const cookies = Array.isArray(rawCookies)
+        ? rawCookies
+        : rawCookies
+          ? [rawCookies]
+          : [];
       const cookie = cookies.find((c: string) => c.startsWith("refreshToken="));
       originalCookie = cookie ? cookie.split(";")[0] : "";
     });
@@ -275,7 +290,12 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
         .expect(200);
 
       expect(refreshRes.body.accessToken).toBeDefined();
-      const newCookies = refreshRes.headers["set-cookie"] || [];
+      const rawNewCookies = refreshRes.headers["set-cookie"];
+      const newCookies = Array.isArray(rawNewCookies)
+        ? rawNewCookies
+        : rawNewCookies
+          ? [rawNewCookies]
+          : [];
       expect(
         newCookies.some((c: string) => c.startsWith("refreshToken=")),
       ).toBe(true);
