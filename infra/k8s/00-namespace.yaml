@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: urticketbuddy
+  labels:
+    app.kubernetes.io/name: urticketbuddy
+    app.kubernetes.io/part-of: urticketbuddy

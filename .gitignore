@@ -47,4 +47,7 @@ Thumbs.db
 
 # Temporary local files
 temp/
+backups/
+test-backups/
+test-media-storage/
 

@@ -20,6 +20,7 @@ export const envSchema = z
     POSTGRES_PASSWORD: z.string().default("postgres"),
     POSTGRES_DB: z.string().default("urticketbuddy"),
     POSTGRES_DIRECT_PORT: z.coerce.number().default(5432),
+    POSTGRES_SSL: z.coerce.boolean().default(false),
 
     // MongoDB
     MONGO_URI: z.string().default("mongodb://localhost:27017/urticketbuddy"),
@@ -51,6 +52,16 @@ export const envSchema = z
     // Payment Providers
     STRIPE_SECRET_KEY: z.string().optional(),
     SAFEPAY_API_KEY: z.string().optional(),
+
+    // Object Storage & CDN Caching
+    STORAGE_PROVIDER: z.enum(["s3", "oci", "local"]).default("local"),
+    S3_BUCKET: z.string().default("urticketbuddy-media"),
+    S3_REGION: z.string().default("us-east-1"),
+    S3_ENDPOINT: z.string().optional(),
+    S3_ACCESS_KEY_ID: z.string().optional(),
+    S3_SECRET_ACCESS_KEY: z.string().optional(),
+    S3_FORCE_PATH_STYLE: z.coerce.boolean().default(true),
+    CDN_BASE_URL: z.string().default("http://localhost:3000/media"),
   })
   .refine(
     (data) => {

@@ -8,6 +8,9 @@ describe("packages/config env loader", () => {
       expect(parsed.data.API_PORT).toBe(3000);
       expect(parsed.data.POSTGRES_PORT).toBe(6432);
       expect(parsed.data.NODE_ENV).toBe("development");
+      expect(parsed.data.STORAGE_PROVIDER).toBe("local");
+      expect(parsed.data.S3_BUCKET).toBe("urticketbuddy-media");
+      expect(parsed.data.CDN_BASE_URL).toBe("http://localhost:3000/media");
     }
   });
 
