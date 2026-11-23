@@ -8,4 +8,6 @@ export * from "./venue";
 export * from "./orders";
 export * from "./auth";
 export * from "./tickets";
+export * from "./admin";
+export * from "./analytics";
 export * from "./media";

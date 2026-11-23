@@ -9,6 +9,8 @@ import { CheckoutModule } from "./modules/checkout/checkout.module";
 import { OrdersModule } from "./modules/orders/orders.module";
 import { TicketsModule } from "./modules/tickets/tickets.module";
 import { GateModule } from "./modules/gate/gate.module";
+import { AdminModule } from "./modules/admin/admin.module";
+import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { MediaModule } from "./modules/media/media.module";
 
 @Module({
@@ -23,6 +25,8 @@ import { MediaModule } from "./modules/media/media.module";
     OrdersModule,
     TicketsModule,
     GateModule,
+    AdminModule,
+    AnalyticsModule,
     MediaModule,
   ],
   controllers: [],

@@ -10,6 +10,8 @@ import {
   RefreshToken,
   Ticket,
   GateScan,
+  PlatformSetting,
+  AuditLog,
 } from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import mongoose from "mongoose";
@@ -28,6 +30,8 @@ import {
   ORDER_ITEM_REPOSITORY,
   TICKET_REPOSITORY,
   GATE_SCAN_REPOSITORY,
+  PLATFORM_SETTING_REPOSITORY,
+  AUDIT_LOG_REPOSITORY,
   MONGO_CONNECTION,
   VENUE_LAYOUT_MODEL,
   REDIS_CLIENT,
@@ -119,6 +123,39 @@ let redisClientInstance: Redis | null = null;
       inject: [DATA_SOURCE],
     },
     {
+      provide: PLATFORM_SETTING_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(PlatformSetting);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: AUDIT_LOG_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        const repo = dataSource.getRepository(AuditLog);
+        const forbiddenMutation = () => {
+          throw new Error(
+            "audit_logs table is append-only and cannot be updated or deleted",
+          );
+        };
+        return new Proxy(repo, {
+          get(target, prop, receiver) {
+            if (
+              prop === "update" ||
+              prop === "delete" ||
+              prop === "remove" ||
+              prop === "softDelete" ||
+              prop === "clear"
+            ) {
+              return forbiddenMutation;
+            }
+            return Reflect.get(target, prop, receiver);
+          },
+        });
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
       provide: MONGO_CONNECTION,
       useFactory: async () => {
         const env = loadEnv();
@@ -179,6 +216,8 @@ let redisClientInstance: Redis | null = null;
     REFRESH_TOKEN_REPOSITORY,
     TICKET_REPOSITORY,
     GATE_SCAN_REPOSITORY,
+    PLATFORM_SETTING_REPOSITORY,
+    AUDIT_LOG_REPOSITORY,
     MONGO_CONNECTION,
     VENUE_LAYOUT_MODEL,
     REDIS_CLIENT,

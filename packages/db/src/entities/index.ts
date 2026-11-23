@@ -7,3 +7,5 @@ export * from "./user.entity";
 export * from "./refresh-token.entity";
 export * from "./ticket.entity";
 export * from "./gate-scan.entity";
+export * from "./platform-setting.entity";
+export * from "./audit-log.entity";

@@ -10,6 +10,8 @@ import { User } from "./entities/user.entity";
 import { RefreshToken } from "./entities/refresh-token.entity";
 import { Ticket } from "./entities/ticket.entity";
 import { GateScan } from "./entities/gate-scan.entity";
+import { PlatformSetting } from "./entities/platform-setting.entity";
+import { AuditLog } from "./entities/audit-log.entity";
 
 const env = loadEnv();
 
@@ -38,6 +40,8 @@ export const AppDataSource = new DataSource({
     RefreshToken,
     Ticket,
     GateScan,
+    PlatformSetting,
+    AuditLog,
     __dirname + "/entities/**/!(*.spec|*.test).{js,ts}",
   ],
   migrations: [__dirname + "/migrations/**/!(*.spec|*.test).{js,ts}"],

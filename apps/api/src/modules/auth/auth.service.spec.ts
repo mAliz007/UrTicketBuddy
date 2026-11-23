@@ -132,7 +132,7 @@ describe("AuthService", () => {
           password: "short",
           firstName: "",
           lastName: "",
-        }),
+        } as any),
       ).rejects.toThrow(BadRequestException);
     });
   });

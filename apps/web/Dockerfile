@@ -4,6 +4,10 @@ RUN corepack enable && corepack prepare pnpm@12.21.0 --activate
 WORKDIR /app
 COPY pnpm-lock.yaml package.json pnpm-workspace.yaml turbo.json ./
 COPY packages/ ./packages/
+COPY apps/api/package.json ./apps/api/
+COPY apps/realtime/package.json ./apps/realtime/
+COPY apps/worker/package.json ./apps/worker/
+COPY apps/tester/package.json ./apps/tester/
 COPY apps/web/ ./apps/web/
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @urticketbuddy/web build
