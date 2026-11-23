@@ -23,7 +23,7 @@ if [ ! -d "${BACKUP_DIR}" ]; then
   exit 0
 fi
 
-TARGET_DIRS=("${BACKUP_DIR}/postgres" "${BACKUP_DIR}/mongo" "${BACKUP_DIR}/redis" "${BACKUP_DIR}/manifests")
+TARGET_DIRS=("${BACKUP_DIR}/postgres" "${BACKUP_DIR}/mongo" "${BACKUP_DIR}/redis" "${BACKUP_DIR}/manifests" "${BACKUP_DIR}/reports")
 
 DELETED_COUNT=0
 

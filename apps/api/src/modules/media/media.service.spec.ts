@@ -60,6 +60,9 @@ describe("MediaService", () => {
         "test-bucket.s3.eu-west-1.amazonaws.com",
       );
       expect(response.uploadUrl).toContain("X-Amz-Algorithm=AWS4-HMAC-SHA256");
+      expect(response.uploadUrl).toContain(
+        "X-Amz-SignedHeaders=content-type%3Bhost",
+      );
       expect(response.uploadUrl).toContain("X-Amz-Signature=");
       expect(response.fileKey).toContain("venue_layout/");
 
@@ -168,6 +171,40 @@ describe("MediaService", () => {
       await expect(
         service.saveLocalFile(fileKey, Buffer.from("data"), token, expiresAt),
       ).rejects.toThrow(BadRequestException);
+    });
+
+    it("should reject upload when contentType does not match signed token", async () => {
+      const fileKey = "avatar/mismatch.png";
+      const expiresAt = Math.floor(Date.now() / 1000) + 600;
+      // Token signed for image/png
+      const token = service.generateLocalToken(fileKey, expiresAt, "image/png");
+
+      // Attacker tries to upload application/pdf
+      await expect(
+        service.saveLocalFile(
+          fileKey,
+          Buffer.from("data"),
+          token,
+          expiresAt,
+          "application/pdf",
+        ),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it("should gracefully reject malformed/short token without throwing RangeError", async () => {
+      const fileKey = "avatar/short-token.png";
+      const expiresAt = Math.floor(Date.now() / 1000) + 600;
+
+      // Token of invalid length (e.g. 5 chars instead of 64 hex chars)
+      await expect(
+        service.saveLocalFile(
+          fileKey,
+          Buffer.from("data"),
+          "short",
+          expiresAt,
+          "image/png",
+        ),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 });

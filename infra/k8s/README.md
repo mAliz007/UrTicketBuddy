@@ -8,7 +8,8 @@ Production-ready Kubernetes manifests and Kustomize declarations for UrTicketBud
 | ----------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `00-namespace.yaml`           | Namespace Isolation        | Creates isolated `urticketbuddy` namespace                                                           |
 | `01-configmap.yaml`           | Production Configuration   | Environment properties (`NODE_ENV`, ports, DB hosts, CDN URL)                                        |
-| `02-secrets.yaml`             | Sensitive Credentials      | Production secrets (`JWT_SECRET`, `MASTER_TICKET_SECRET`, passwords)                                 |
+| `02-secrets.yaml`             | Sensitive Credentials      | Development secrets template (`JWT_SECRET`, `MASTER_TICKET_SECRET`, passwords)                       |
+| `02-backup-pvc.yaml`          | Backup Volume Claim        | 10Gi PersistentVolumeClaim for scheduled database backups and DR drills                              |
 | `03-services.yaml`            | Internal Networking        | ClusterIP services for `api`, `realtime`, `web`, `postgres`, `mongo`, `redis`, `elasticsearch`       |
 | `04-api-deployment.yaml`      | REST API Deployment        | RollingUpdate (2 replicas), health probes (`/api/v1/health`), resource limits                        |
 | `05-realtime-deployment.yaml` | Realtime Gateway           | RollingUpdate (2 replicas), WebSocket cluster, health probes                                         |

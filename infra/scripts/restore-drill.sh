@@ -16,9 +16,10 @@ REPORTS_DIR="${BACKUP_DIR}/reports"
 mkdir -p "${REPORTS_DIR}"
 
 POSTGRES_HOST="${POSTGRES_HOST:-localhost}"
-POSTGRES_PORT="${POSTGRES_PORT:-5432}"
+POSTGRES_PORT="${POSTGRES_DIRECT_PORT:-${POSTGRES_PORT:-5432}}"
 POSTGRES_USER="${POSTGRES_USER:-postgres}"
 export PGPASSWORD="${POSTGRES_PASSWORD:-postgres}"
+MONGO_URI="${MONGO_URI:-mongodb://localhost:27017/urticketbuddy}"
 
 DRILL_DB_NAME="urticketbuddy_drill_${DRILL_TIMESTAMP}"
 DRILL_MONGO_DB="urticketbuddy_drill_${DRILL_TIMESTAMP}"
@@ -101,8 +102,15 @@ if command -v createdb >/dev/null 2>&1 && command -v pg_restore >/dev/null 2>&1;
   pg_restore -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${POSTGRES_USER}" -d "${DRILL_DB_NAME}" --no-owner --no-privileges "${PG_FILE}" || true
   
   echo "Verifying restored schema..."
-  TABLE_COUNT="$(psql -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${POSTGRES_USER}" -d "${DRILL_DB_NAME}" -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public';" | tr -d ' ')"
+  TABLE_COUNT="$(psql -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${POSTGRES_USER}" -d "${DRILL_DB_NAME}" -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public';" 2>/dev/null | tr -d ' ' || echo "0")"
   echo "Restored public tables: ${TABLE_COUNT}"
+  if [ -n "${TABLE_COUNT}" ] && [ "${TABLE_COUNT}" -gt 0 ]; then
+    echo "PASS: PostgreSQL restore verified (${TABLE_COUNT} public tables)"
+    PG_DRILL_STATUS="PASSED"
+  else
+    echo "FAIL: PostgreSQL restore produced 0 public tables"
+    PG_DRILL_STATUS="FAILED"
+  fi
   
   echo "Cleaning up drill database '${DRILL_DB_NAME}'..."
   dropdb -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${POSTGRES_USER}" "${DRILL_DB_NAME}" || true
@@ -128,9 +136,9 @@ MONGO_DRILL_STATUS="PASSED"
 
 if command -v mongorestore >/dev/null 2>&1; then
   echo "Restoring MongoDB archive into temporary namespace '${DRILL_MONGO_DB}'..."
-  mongorestore --uri="mongodb://localhost:27017" --archive="${MONGO_FILE}" --gzip --nsFrom="urticketbuddy.*" --nsTo="${DRILL_MONGO_DB}.*" --drop || true
+  mongorestore --uri="${MONGO_URI}" --archive="${MONGO_FILE}" --gzip --nsFrom="urticketbuddy.*" --nsTo="${DRILL_MONGO_DB}.*" --drop || true
   echo "Dropping temporary drill database '${DRILL_MONGO_DB}'..."
-  mongosh "${DRILL_MONGO_DB}" --eval "db.dropDatabase()" >/dev/null 2>&1 || true
+  mongosh "${MONGO_URI%/*}/${DRILL_MONGO_DB}" --eval "db.dropDatabase()" >/dev/null 2>&1 || true
 elif docker ps --format '{{.Names}}' | grep -q "mongo"; then
   CONTAINER_NAME="$(docker ps --format '{{.Names}}' | grep "mongo" | head -n1)"
   echo "Performing MongoDB drill via Docker container '${CONTAINER_NAME}'..."

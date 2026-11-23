@@ -168,7 +168,7 @@ export class MediaService {
       "X-Amz-Credential": `${accessKeyId}/${credentialScope}`,
       "X-Amz-Date": amzDate,
       "X-Amz-Expires": params.expiresInSeconds.toString(),
-      "X-Amz-SignedHeaders": "host",
+      "X-Amz-SignedHeaders": "content-type;host",
     };
 
     const sortedQuery = Object.keys(queryParams)
@@ -179,8 +179,8 @@ export class MediaService {
       )
       .join("&");
 
-    const canonicalHeaders = `host:${host}\n`;
-    const signedHeaders = "host";
+    const canonicalHeaders = `content-type:${params.mimeType.toLowerCase()}\nhost:${host}\n`;
+    const signedHeaders = "content-type;host";
     const payloadHash = "UNSIGNED-PAYLOAD";
 
     const canonicalRequest = [
@@ -248,18 +248,34 @@ export class MediaService {
     if (now > expiresAt) {
       return false;
     }
-    // Check against allowed mime types or specific mimeType
+
+    const tokenBuf = Buffer.from(token);
+
+    // If a specific MIME type was supplied, it must strictly match the signed token
     if (mimeType) {
-      const expected = this.generateLocalToken(fileKey, expiresAt, mimeType);
-      if (crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(token))) {
-        return true;
+      const normalizedMime = mimeType.split(";")[0].trim().toLowerCase();
+      if (!ALLOWED_MEDIA_MIME_TYPES.includes(normalizedMime as any)) {
+        return false;
       }
+      const expected = this.generateLocalToken(
+        fileKey,
+        expiresAt,
+        normalizedMime,
+      );
+      const expectedBuf = Buffer.from(expected);
+      if (expectedBuf.length !== tokenBuf.length) {
+        return false;
+      }
+      return crypto.timingSafeEqual(expectedBuf, tokenBuf);
     }
+
+    // Fallback if contentType header was omitted: token must match one allowed MIME type
     for (const allowedMime of ALLOWED_MEDIA_MIME_TYPES) {
       const expected = this.generateLocalToken(fileKey, expiresAt, allowedMime);
+      const expectedBuf = Buffer.from(expected);
       if (
-        expected.length === token.length &&
-        crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(token))
+        expectedBuf.length === tokenBuf.length &&
+        crypto.timingSafeEqual(expectedBuf, tokenBuf)
       ) {
         return true;
       }
@@ -291,8 +307,9 @@ export class MediaService {
       });
     }
 
+    const rootDir = path.resolve(this.localStorageDir);
     const safePath = path.resolve(this.localStorageDir, fileKey);
-    if (!safePath.startsWith(path.resolve(this.localStorageDir))) {
+    if (safePath !== rootDir && !safePath.startsWith(rootDir + path.sep)) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
         message: "Invalid file path traversal detected",
@@ -312,8 +329,9 @@ export class MediaService {
    * Retrieves file from local media storage with path protection
    */
   getLocalFile(fileKey: string): { buffer: Buffer; mimeType: string } | null {
+    const rootDir = path.resolve(this.localStorageDir);
     const safePath = path.resolve(this.localStorageDir, fileKey);
-    if (!safePath.startsWith(path.resolve(this.localStorageDir))) {
+    if (safePath !== rootDir && !safePath.startsWith(rootDir + path.sep)) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
         message: "Invalid file path",

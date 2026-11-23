@@ -39,6 +39,13 @@ spec:
                 limits:
                   cpu: 500m
                   memory: 512Mi
+              volumeMounts:
+                - name: backup-volume
+                  mountPath: /backups
+          volumes:
+            - name: backup-volume
+              persistentVolumeClaim:
+                claimName: utb-backup-pvc
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -66,8 +73,9 @@ spec:
               image: urticketbuddy/api:latest
               imagePullPolicy: IfNotPresent
               command:
-                - pnpm
-                - db:check:data
+                - /bin/sh
+                - -c
+                - 'node -e "require(''@urticketbuddy/db/dist/data-check'')" # db:check:data'
               envFrom:
                 - configMapRef:
                     name: utb-config
@@ -122,3 +130,10 @@ spec:
                 limits:
                   cpu: 500m
                   memory: 512Mi
+              volumeMounts:
+                - name: backup-volume
+                  mountPath: /backups
+          volumes:
+            - name: backup-volume
+              persistentVolumeClaim:
+                claimName: utb-backup-pvc

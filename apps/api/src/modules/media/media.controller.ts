@@ -65,6 +65,12 @@ export class MediaController {
 
     const fileKey = `${purpose}/${filename}`;
     const expires = parseInt(expiresStr, 10);
+    if (isNaN(expires)) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid expiry parameter",
+      });
+    }
     const contentType = req.headers["content-type"] as string | undefined;
 
     // Read incoming stream into buffer

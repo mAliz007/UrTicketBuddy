@@ -14,7 +14,7 @@ PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 BACKUP_DIR="${BACKUP_DIR:-${PROJECT_ROOT}/backups}"
 
 POSTGRES_HOST="${POSTGRES_HOST:-localhost}"
-POSTGRES_PORT="${POSTGRES_PORT:-5432}"
+POSTGRES_PORT="${POSTGRES_DIRECT_PORT:-${POSTGRES_PORT:-5432}}"
 POSTGRES_USER="${POSTGRES_USER:-postgres}"
 POSTGRES_DB="${POSTGRES_DB:-urticketbuddy}"
 export PGPASSWORD="${POSTGRES_PASSWORD:-postgres}"
@@ -59,10 +59,13 @@ if command -v pg_dump >/dev/null 2>&1; then
 elif docker ps --format '{{.Names}}' | grep -q "postgres"; then
   CONTAINER_NAME="$(docker ps --format '{{.Names}}' | grep "postgres" | head -n1)"
   docker exec -e PGPASSWORD="${PGPASSWORD}" "${CONTAINER_NAME}" pg_dump -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -Fc > "${PG_BACKUP_FILE}"
-else
-  # Simulated mock fallback for test/dry-run environments
-  echo "WARN: Neither pg_dump nor docker postgres container found. Generating simulated backup."
+elif [ "${ALLOW_MOCK_BACKUP:-false}" = "true" ] || [ "${DRY_RUN:-false}" = "true" ]; then
+  # Simulated mock fallback for test/dry-run environments only
+  echo "WARN: Neither pg_dump nor docker postgres container found. Generating simulated backup (ALLOW_MOCK_BACKUP=true)."
   echo "-- MOCK POSTGRESQL DUMP ${TIMESTAMP} --" > "${PG_BACKUP_FILE}"
+else
+  echo "ERROR: Failed to back up PostgreSQL. Neither pg_dump nor docker postgres container found."
+  exit 1
 fi
 
 PG_SHA256="$(compute_sha256 "${PG_BACKUP_FILE}")"
@@ -79,9 +82,12 @@ if command -v mongodump >/dev/null 2>&1; then
 elif docker ps --format '{{.Names}}' | grep -q "mongo"; then
   CONTAINER_NAME="$(docker ps --format '{{.Names}}' | grep "mongo" | head -n1)"
   docker exec "${CONTAINER_NAME}" mongodump --uri="mongodb://localhost:27017/urticketbuddy" --archive --gzip > "${MONGO_BACKUP_FILE}"
-else
-  echo "WARN: Neither mongodump nor docker mongo container found. Generating simulated backup."
+elif [ "${ALLOW_MOCK_BACKUP:-false}" = "true" ] || [ "${DRY_RUN:-false}" = "true" ]; then
+  echo "WARN: Neither mongodump nor docker mongo container found. Generating simulated backup (ALLOW_MOCK_BACKUP=true)."
   echo "-- MOCK MONGO ARCHIVE ${TIMESTAMP} --" > "${MONGO_BACKUP_FILE}"
+else
+  echo "ERROR: Failed to back up MongoDB. Neither mongodump nor docker mongo container found."
+  exit 1
 fi
 
 MONGO_SHA256="$(compute_sha256 "${MONGO_BACKUP_FILE}")"
@@ -115,8 +121,13 @@ if [ ! -s "${REDIS_BACKUP_FILE}" ]; then
 fi
 
 if [ ! -s "${REDIS_BACKUP_FILE}" ]; then
-  echo "WARN: Redis RDB extraction fallback. Generating simulated RDB snapshot."
-  printf "REDIS0011\xfa\x09redis-ver\x057.2.0\xff" > "${REDIS_BACKUP_FILE}"
+  if [ "${ALLOW_MOCK_BACKUP:-false}" = "true" ] || [ "${DRY_RUN:-false}" = "true" ]; then
+    echo "WARN: Redis RDB extraction fallback. Generating simulated RDB snapshot (ALLOW_MOCK_BACKUP=true)."
+    printf "REDIS0011\xfa\x09redis-ver\x057.2.0\xff" > "${REDIS_BACKUP_FILE}"
+  else
+    echo "ERROR: Failed to extract Redis RDB backup."
+    exit 1
+  fi
 fi
 
 REDIS_SHA256="$(compute_sha256 "${REDIS_BACKUP_FILE}")"

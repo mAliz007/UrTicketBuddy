@@ -58,23 +58,25 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
     - Global security headers: `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`.
   - **Signed Object-Storage Media Upload API (`apps/api/src/modules/media/`)**:
     - `POST /api/v1/media/upload-url`: Generates cryptographic pre-signed upload URLs for AWS S3, OCI Object Storage (S3-compatible API), and Local storage simulator.
-    - Implemented lightweight AWS SigV4 pre-signing with zero heavy external dependencies.
+    - Implemented lightweight AWS SigV4 pre-signing with zero heavy external dependencies, binding `content-type` in `X-Amz-SignedHeaders`.
     - Strict MIME type whitelisting (`image/jpeg`, `image/png`, `image/webp`, `image/svg+xml`, `application/pdf`) and 10MB file size ceiling.
-    - `PUT /api/v1/media/upload/:purpose/:filename`: Direct local binary PUT upload receiver with HMAC-SHA256 signature verification.
-    - `GET /api/v1/media/:purpose/:filename`: Public media CDN delivery with MD5 ETag computation and conditional HTTP 304 handling.
+    - `PUT /api/v1/media/upload/:purpose/:filename`: Direct local binary PUT upload receiver with HMAC-SHA256 signature verification, strict MIME type matching, and length-protected constant-time comparison.
+    - `GET /api/v1/media/:purpose/:filename`: Public media CDN delivery with MD5 ETag computation, conditional HTTP 304 handling, and origin path rewriting support for `/media/`.
     - Zod schemas in `packages/contracts/src/media.ts` and configuration in `packages/config/src/env.ts`.
   - **Automated Multi-DB Hot Backups & Restore Drill Automation (`infra/scripts/`)**:
-    - `backup-all.sh`: Automated multi-database hot backup for PostgreSQL (`pg_dump -Fc`), MongoDB (`mongodump --archive --gzip`), and Redis (`redis-cli bgsave` / RDB snapshot) with SHA256 checksums and JSON manifest output (`manifest_<timestamp>.json`).
+    - `backup-all.sh`: Automated multi-database hot backup for PostgreSQL (`pg_dump -Fc`), MongoDB (`mongodump --archive --gzip`), and Redis (`redis-cli bgsave` / RDB snapshot) with SHA256 checksums and JSON manifest output (`manifest_<timestamp>.json`). Prioritizes `POSTGRES_DIRECT_PORT` (5432) to bypass PgBouncer session limitations and requires explicit mock opt-in (`ALLOW_MOCK_BACKUP=true`) to prevent false-positive backups in production.
     - `restore-drill.sh`: Automated Disaster Recovery (DR) restore drill script verifying checksum integrity, executing non-destructive test restores into isolated temporary drill databases, verifying table and document counts, computing Recovery Time Objective (RTO in seconds), and writing structured drill reports.
-    - `prune-backups.sh`: Retention cleaner enforcing configurable backup retention policy (default: 7 days).
+    - `prune-backups.sh`: Retention cleaner enforcing configurable backup retention policy (default: 7 days) across database dumps, manifests, and drill reports.
     - Verified through automated test suite `packages/config/src/backup-restore.spec.ts`.
   - **Production Kubernetes Manifests (`infra/k8s/`)**:
-    - Complete Kubernetes manifest suite: Namespace (`00-namespace.yaml`), ConfigMap (`01-configmap.yaml`), Secrets (`02-secrets.yaml`), ClusterIP Services (`03-services.yaml`), RollingUpdate Deployments with health probes & resource guardrails (`04-api-deployment.yaml`, `05-realtime-deployment.yaml`, `06-worker-deployment.yaml`, `07-web-deployment.yaml`), Nginx Ingress (`08-ingress.yaml`), and Kustomization (`kustomization.yaml`).
+    - Complete Kubernetes manifest suite: Namespace (`00-namespace.yaml`), ConfigMap (`01-configmap.yaml`), Secrets template (`02-secrets.yaml`), PersistentVolumeClaim (`02-backup-pvc.yaml`), ClusterIP Services (`03-services.yaml`), RollingUpdate Deployments with health probes & resource guardrails (`04-api-deployment.yaml`, `05-realtime-deployment.yaml`, `06-worker-deployment.yaml`, `07-web-deployment.yaml`), Nginx Ingress (`08-ingress.yaml`), and Kustomization (`kustomization.yaml`).
+    - Added dedicated Dockerfile for infrastructure automation image (`infra/docker/Dockerfile.infra-tools`).
     - HorizontalPodAutoscalers (`09-hpa.yaml`) for API (2-10 pods) and Realtime (2-8 pods) targeting 70% CPU / 80% Memory utilization.
-    - Automated CronJobs (`10-cronjobs.yaml`): Daily Backup (`02:00 UTC`), Nightly Data Checker (`03:00 UTC`), and Weekly DR Drill (`04:00 UTC Sunday`).
+    - Automated CronJobs (`10-cronjobs.yaml`): Daily Backup (`02:00 UTC`), Nightly Data Checker (`03:00 UTC`), and Weekly DR Drill (`04:00 UTC Sunday`) with persistent storage volume bindings.
     - Verified through automated test suite `packages/config/src/k8s.spec.ts`.
   - **Nightly Data-Level Integrity Checker (`pnpm db:check:data`)**:
     - CLI tool in `packages/db/src/data-check.ts` and wired into root `package.json`.
+    - Parameterized table existence queries and protected seat integrity against unseated tickets.
     - Audits operational consistency across 5 critical data categories:
       1. Financial & Ledger: Order totals equal sum of order item prices; rejects negative amounts.
       2. Referential Consistency: Detects orphaned order_items, tickets, and gate_scans.

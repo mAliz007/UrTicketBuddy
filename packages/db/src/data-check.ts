@@ -22,12 +22,15 @@ export async function tableExists(
   tableName: string,
 ): Promise<boolean> {
   try {
-    const res = await dataSource.query(`
+    const res = await dataSource.query(
+      `
       SELECT EXISTS (
         SELECT 1 FROM information_schema.tables
-        WHERE table_schema = 'public' AND table_name = '${tableName}'
+        WHERE table_schema = 'public' AND table_name = $1
       );
-    `);
+    `,
+      [tableName],
+    );
     return Boolean(res[0]?.exists === true || res[0]?.exists === "t");
   } catch {
     return false;
@@ -198,6 +201,7 @@ export async function checkSeatStateIntegrity(
         SELECT "eventId", "eventSeatId", COUNT(*) AS "activeCount"
         FROM tickets
         WHERE status IN ('${TicketStatus.ISSUED}', '${TicketStatus.CHECKED_IN}')
+          AND "eventSeatId" IS NOT NULL
         GROUP BY "eventId", "eventSeatId"
         HAVING COUNT(*) > 1;
       `);

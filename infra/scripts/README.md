@@ -45,7 +45,7 @@ bash infra/scripts/restore-drill.sh backups/manifests/manifest_20261122_120000Z.
 
 Enforces automated backup retention policies (default: 7 days):
 
-- Scans `backups/postgres`, `backups/mongo`, `backups/redis`, and `backups/manifests`.
+- Scans `backups/postgres`, `backups/mongo`, `backups/redis`, `backups/manifests`, and `backups/reports`.
 - Deletes archives and manifests exceeding the retention threshold.
 
 ```bash
