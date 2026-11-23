@@ -271,6 +271,12 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
 
   const mockDataSource = {
     isInitialized: true,
+    getRepository: jest.fn(() => ({
+      find: jest.fn(async () => []),
+      findOne: jest.fn(async () => null),
+      save: jest.fn(async (e: unknown) => e),
+      create: jest.fn((e: unknown) => e),
+    })),
     transaction: jest.fn(
       async (
         cb: (manager: {
