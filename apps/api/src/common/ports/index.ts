@@ -7,6 +7,9 @@ export interface EventSeatCatalogPort {
 
 export interface PlatformSettingsPort {
   getSetting<T>(key: string): Promise<T | null>;
+  setSetting<T>(key: string, value: T): Promise<void>;
+  getCommissionRate(): Promise<number>;
+  setCommissionRate(rate: number): Promise<void>;
 }
 
 export interface PaymentProvider {
