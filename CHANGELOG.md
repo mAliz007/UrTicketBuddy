@@ -4,6 +4,47 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-16] - 2026-11-23
+
+### Admin Suite, Fraud & Ticket Revocation Engine, Append-Only Audit Log & Organizer Analytics
+
+- **Ticket Key:** `UTB-16`
+- **Completion Date:** 2026-11-23
+- **Main Feature Branch:** `feat/UTB-16-admin-analytics-audit`
+  - Sub-task 1: `feat/UTB-16-admin-analytics-audit-db` (Entities, migrations, trigger immutability)
+  - Sub-task 2: `feat/UTB-16-admin-analytics-audit-admin` (Admin module, fraud flag, ticket revocation, platform settings)
+  - Sub-task 3: `feat/UTB-16-admin-analytics-audit-analytics` (Organizer analytics, tenant isolation, velocity buckets)
+  - Sub-task 4: `feat/UTB-16-admin-analytics-audit-tests` (Unit and Supertest E2E verification)
+- **Status:** Completed & Verified (Backend Phase Only: 16 unit tests and 5 Supertest E2E assertions passing)
+- **Packages & Directories Modified:** `packages/contracts/`, `packages/db/`, `apps/api/`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Database Immutability & Entities (`packages/db`)**:
+    - Created `PlatformSetting` entity (`platform_settings`) with unique index `idx_platform_settings_key` and default `commission_rate_percent = '10'`.
+    - Created `AuditLog` entity (`audit_logs`) with covering indices `idx_audit_logs_actor_id`, `idx_audit_logs_action`, and `idx_audit_logs_created_at`.
+    - Created reversible migration `1795136850000-UTB-16-init-admin-audit.ts` adding PostgreSQL trigger `trg_audit_logs_immutable` and trigger function `audit_logs_immutable_fn()`, strictly aborting any `UPDATE` or `DELETE` with a database-level SQL exception.
+    - Added `organizerId` column to `events` table with index `idx_events_organizer_id` to establish tenant ownership boundaries.
+    - Verified all 4 database consistency checks pass cleanly (`pnpm db:check`).
+  - **Admin Suite & Fraud Mitigation (`apps/api/src/modules/admin`)**:
+    - Implemented `AdminController` with all routes guarded by `JwtAuthGuard` and `RolesGuard` restricted to `UserRole.ADMIN`.
+    - `PATCH /api/v1/admin/orders/:orderId/flag`: Marks order status as `FLAGGED` and increments `seedVersion` on all associated tickets, instantly invalidating HMAC-SHA256 dynamic QR tokens at the turnstiles.
+    - `DELETE /api/v1/admin/tickets/:ticketId`: Revokes ticket (`status = 'REVOKED'`), increments `seedVersion`, restores `EventSeat.status = 'AVAILABLE'`, invokes `RedisScriptsWrapper.unsellSeats` to remove the seat from `seat_sold:{eventId}`, and broadcasts `AVAILABLE` state to real-time clients across channels `seat-updates:{eventId}` and `seat.state`.
+    - `GET & PUT /api/v1/admin/settings/commission`: Reads and updates global platform commission rate bounded between 0% and 50%, backing `PlatformSettingsPort`.
+    - `PATCH /api/v1/admin/users/:userId/suspend`: Suspends user accounts and revokes all issued refresh tokens in `refresh_tokens`.
+    - `PATCH /api/v1/admin/organizers/:userId/approve`: Approves organizer accounts and provisions unique `organizerTenantId`.
+    - `GET /api/v1/admin/audit-logs`: Exposes paginated, filterable audit trail by `action`, `actorId`, and `entityType`.
+  - **Audit Logging Subsystem (`AuditService` & `AuditLogInterceptor`)**:
+    - Created `AuditService` exposing `recordLog` and `getLogs` with zero update/delete capabilities.
+    - Implemented `AuditLogInterceptor` for automated mutation logging across administrative and sensitive platform operations.
+  - **Organizer Analytics API (`apps/api/src/modules/analytics`)**:
+    - `GET /api/v1/organizer/analytics/:eventId`: Protected for `ORGANIZER` and `ADMIN` roles. Enforces strict tenant ownership isolation (`event.organizerId === user.organizerTenantId || event.organizerId === user.id`), returning `403 Forbidden` for other organizers while permitting `ADMIN` bypass.
+    - Computes minor-unit `totalRevenue`, `ticketsSold`, venue `totalCapacity`, `occupancyRate` percentage, 5-minute bucketed entry throughput from `gate_scans` (`result = 'VALID'`), real-time Redis seat holds via `RedisScriptsWrapper.getCounts`, and secondary resale market statistics.
+  - **Comprehensive Verification Suite**:
+    - 16/16 Unit tests passing across `AuditService`, `AdminService`, and `AnalyticsService`.
+    - 5/5 Supertest E2E assertions passing (`admin-analytics.e2e-spec.ts`) validating ticket revocation, fraud flagging, audit logs pagination, organizer tenant isolation, and commission rate updating.
+    - Clean TypeScript compilation (`tsc --noEmit`), zero ESLint errors, and clean `pnpm graphify` AST extraction.
+
+---
+
 ## [UTB-22] - 2026-11-22
 
 ### Centralized Space to Hit and Test Endpoints (Endpoint Tester Workbench)
