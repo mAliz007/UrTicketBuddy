@@ -11,3 +11,4 @@ export * from "./tickets";
 export * from "./admin";
 export * from "./analytics";
 export * from "./media";
+export * from "./resale";
