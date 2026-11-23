@@ -30,7 +30,7 @@ export class LedgerEntry {
   @CreateDateColumn({ type: "timestamp with time zone" })
   createdAt!: Date;
 
-  @ManyToOne(() => ResaleListing, { onDelete: "CASCADE" })
+  @ManyToOne(() => ResaleListing, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "listingId" })
   listing!: ResaleListing;
 }

@@ -20,7 +20,7 @@ import {
 } from "@urticketbuddy/contracts";
 import { LedgerEntry, ResaleListing, Ticket } from "@urticketbuddy/db";
 import Redis from "ioredis";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, QueryFailedError, Repository } from "typeorm";
 import {
   PLATFORM_SETTINGS_PORT,
   PlatformSettingsPort,
@@ -45,6 +45,9 @@ export interface TicketTransferredEvent {
 }
 
 const RESALE_LOCK_TTL_SECONDS = 300;
+const IDEMPOTENCY_TTL_SECONDS = 86_400;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RELEASE_RESALE_LOCK_LUA = `
 if redis.call('GET', KEYS[1]) == ARGV[1] then
   return redis.call('DEL', KEYS[1])
@@ -144,7 +147,20 @@ export class ResaleService {
       status: ResaleListingStatus.ACTIVE,
     });
 
-    return this.resaleListingRepository.save(listing);
+    try {
+      return await this.resaleListingRepository.save(listing);
+    } catch (err) {
+      if (
+        err instanceof QueryFailedError &&
+        (err.driverError as { code?: string } | undefined)?.code === "23505"
+      ) {
+        throw new ConflictException({
+          code: ErrorCode.CONFLICT,
+          message: "An active resale listing already exists for this ticket",
+        });
+      }
+      throw err;
+    }
   }
 
   async updateListing(listingId: string, sellerId: string, rawBody: unknown) {
@@ -154,6 +170,17 @@ export class ResaleService {
         code: ErrorCode.VALIDATION_ERROR,
         message: "Invalid resale listing update payload",
         details: parsed.error.flatten(),
+      });
+    }
+
+    const activeLockOwner = await this.redisClient.get(
+      `resale_lock:${listingId}`,
+    );
+    if (activeLockOwner) {
+      throw new ConflictException({
+        code: ErrorCode.CONFLICT,
+        message:
+          "Resale listing cannot be modified while a purchase is in progress",
       });
     }
 
@@ -229,21 +256,32 @@ export class ResaleService {
       });
     }
 
-    const { page, pageSize } = pagination.data;
-    const where: { status: string; eventId?: string } = {
-      status: ResaleListingStatus.ACTIVE,
-    };
-
-    if (query.eventId) {
-      where.eventId = query.eventId;
+    if (query.eventId !== undefined && !UUID_REGEX.test(query.eventId)) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid eventId filter",
+      });
     }
 
-    const [items, total] = await this.resaleListingRepository.findAndCount({
-      where,
-      order: { createdAt: "DESC" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    });
+    const { page, pageSize } = pagination.data;
+    const qb = this.resaleListingRepository
+      .createQueryBuilder("listing")
+      .innerJoin("listing.event", "event")
+      .where("listing.status = :status", {
+        status: ResaleListingStatus.ACTIVE,
+      })
+      .andWhere("event.startTime > :now", { now: new Date() });
+
+    if (query.eventId) {
+      qb.andWhere("listing.eventId = :eventId", { eventId: query.eventId });
+    }
+
+    const [items, total] = await qb
+      .orderBy("listing.createdAt", "DESC")
+      .addOrderBy("listing.id", "DESC")
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .getManyAndCount();
 
     return {
       items,
@@ -273,6 +311,12 @@ export class ResaleService {
         message: "Invalid purchase payload",
         details: parsed.error.flatten(),
       });
+    }
+
+    const idempotencyCacheKey = `resale_idem:${listingId}:${buyerId}:${idempotencyKey}`;
+    const cachedResponse = await this.redisClient.get(idempotencyCacheKey);
+    if (cachedResponse) {
+      return JSON.parse(cachedResponse) as Record<string, unknown>;
     }
 
     const lockKey = `resale_lock:${listingId}`;
@@ -334,78 +378,105 @@ export class ResaleService {
       const commissionRateBps =
         await this.platformSettings.getCommissionRateBps();
 
-      const result = await this.dataSource.transaction(async (manager) => {
-        const lockedListing = await manager.findOne(ResaleListing, {
-          where: { id: listingId },
-          lock: { mode: "pessimistic_write" },
-        });
-
-        if (
-          !lockedListing ||
-          lockedListing.status !== ResaleListingStatus.ACTIVE
-        ) {
-          throw new ConflictException({
-            code: ErrorCode.CONFLICT,
-            message: "Resale listing is no longer active",
+      let result;
+      try {
+        result = await this.dataSource.transaction(async (manager) => {
+          const lockedListing = await manager.findOne(ResaleListing, {
+            where: { id: listingId },
+            lock: { mode: "pessimistic_write" },
           });
-        }
 
-        const lockedTicket = await manager.findOne(Ticket, {
-          where: { id: lockedListing.ticketId },
-          lock: { mode: "pessimistic_write" },
-        });
+          if (
+            !lockedListing ||
+            lockedListing.status !== ResaleListingStatus.ACTIVE
+          ) {
+            throw new ConflictException({
+              code: ErrorCode.CONFLICT,
+              message: "Resale listing is no longer active",
+            });
+          }
 
-        if (!lockedTicket || lockedTicket.status !== TicketStatus.ISSUED) {
-          throw new ConflictException({
-            code: ErrorCode.CONFLICT,
-            message: "Ticket is no longer eligible for resale transfer",
+          const lockedTicket = await manager.findOne(Ticket, {
+            where: { id: lockedListing.ticketId },
+            lock: { mode: "pessimistic_write" },
           });
+
+          if (!lockedTicket || lockedTicket.status !== TicketStatus.ISSUED) {
+            throw new ConflictException({
+              code: ErrorCode.CONFLICT,
+              message: "Ticket is no longer eligible for resale transfer",
+            });
+          }
+
+          const commissionMinor = Math.floor(
+            (lockedListing.askingPriceMinor * commissionRateBps) / 10000,
+          );
+          const sellerPayoutMinor =
+            lockedListing.askingPriceMinor - commissionMinor;
+
+          const commissionEntry = manager.create(LedgerEntry, {
+            listingId: lockedListing.id,
+            account: "platform:commission",
+            amountMinor: commissionMinor,
+            kind: LedgerEntryKind.PLATFORM_COMMISSION,
+          });
+
+          const sellerPayoutEntry = manager.create(LedgerEntry, {
+            listingId: lockedListing.id,
+            account: `seller:${lockedListing.sellerId}`,
+            amountMinor: sellerPayoutMinor,
+            kind: LedgerEntryKind.SELLER_PAYOUT,
+          });
+
+          await manager.save(LedgerEntry, [commissionEntry, sellerPayoutEntry]);
+
+          const previousOwnerId = lockedTicket.ownerId;
+          lockedTicket.ownerId = buyerId;
+          lockedTicket.seedVersion += 1;
+          await manager.save(Ticket, lockedTicket);
+
+          lockedListing.status = ResaleListingStatus.SOLD;
+          await manager.save(ResaleListing, lockedListing);
+
+          return {
+            listingId: lockedListing.id,
+            ticketId: lockedTicket.id,
+            eventId: lockedListing.eventId,
+            previousOwnerId,
+            buyerId,
+            askingPriceMinor: lockedListing.askingPriceMinor,
+            commissionMinor,
+            sellerPayoutMinor,
+            seedVersion: lockedTicket.seedVersion,
+            status: lockedListing.status,
+            transactionId: paymentResult.transactionId,
+          };
+        });
+      } catch (err) {
+        if (paymentResult.transactionId) {
+          await this.paymentService
+            .refundPayment({
+              transactionId: paymentResult.transactionId,
+              amount: listing.askingPriceMinor,
+              reason: err instanceof Error ? err.message : "DB commit failed",
+            })
+            .catch((refundErr) => {
+              this.logger.error(
+                `CRITICAL: Compensating refund failed for transaction ${paymentResult.transactionId}: ${refundErr instanceof Error ? refundErr.message : String(refundErr)}`,
+              );
+            });
         }
+        throw err;
+      }
 
-        const commissionMinor = Math.floor(
-          (lockedListing.askingPriceMinor * commissionRateBps) / 10000,
-        );
-        const sellerPayoutMinor =
-          lockedListing.askingPriceMinor - commissionMinor;
-
-        const commissionEntry = manager.create(LedgerEntry, {
-          listingId: lockedListing.id,
-          account: "platform:commission",
-          amountMinor: commissionMinor,
-          kind: LedgerEntryKind.PLATFORM_COMMISSION,
-        });
-
-        const sellerPayoutEntry = manager.create(LedgerEntry, {
-          listingId: lockedListing.id,
-          account: `seller:${lockedListing.sellerId}`,
-          amountMinor: sellerPayoutMinor,
-          kind: LedgerEntryKind.SELLER_PAYOUT,
-        });
-
-        await manager.save(LedgerEntry, [commissionEntry, sellerPayoutEntry]);
-
-        const previousOwnerId = lockedTicket.ownerId;
-        lockedTicket.ownerId = buyerId;
-        lockedTicket.seedVersion += 1;
-        await manager.save(Ticket, lockedTicket);
-
-        lockedListing.status = ResaleListingStatus.SOLD;
-        await manager.save(ResaleListing, lockedListing);
-
-        return {
-          listingId: lockedListing.id,
-          ticketId: lockedTicket.id,
-          eventId: lockedListing.eventId,
-          previousOwnerId,
-          buyerId,
-          askingPriceMinor: lockedListing.askingPriceMinor,
-          commissionMinor,
-          sellerPayoutMinor,
-          seedVersion: lockedTicket.seedVersion,
-          status: lockedListing.status,
-          transactionId: paymentResult.transactionId,
-        };
-      });
+      await this.redisClient
+        .set(
+          idempotencyCacheKey,
+          JSON.stringify(result),
+          "EX",
+          IDEMPOTENCY_TTL_SECONDS,
+        )
+        .catch(() => undefined);
 
       const transferredEvent: TicketTransferredEvent = {
         ticketId: result.ticketId,

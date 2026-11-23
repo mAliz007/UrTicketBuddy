@@ -26,6 +26,10 @@ export class Utb15InitResaleLedger1795136850000 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
+      CREATE UNIQUE INDEX "uq_resale_listings_active_ticket" ON "resale_listings" ("ticketId") WHERE "status" = 'ACTIVE';
+    `);
+
+    await queryRunner.query(`
       CREATE INDEX "idx_resale_listings_event_id" ON "resale_listings" ("eventId");
     `);
 
@@ -43,7 +47,7 @@ export class Utb15InitResaleLedger1795136850000 implements MigrationInterface {
         "kind" character varying(50) NOT NULL,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_ledger_entries_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_06ca5804051219422c87e507899" FOREIGN KEY ("listingId") REFERENCES "resale_listings"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+        CONSTRAINT "FK_06ca5804051219422c87e507899" FOREIGN KEY ("listingId") REFERENCES "resale_listings"("id") ON DELETE RESTRICT ON UPDATE NO ACTION
       );
     `);
 
@@ -66,6 +70,9 @@ export class Utb15InitResaleLedger1795136850000 implements MigrationInterface {
     );
     await queryRunner.query(
       `DROP INDEX IF EXISTS "idx_resale_listings_ticket_id";`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "uq_resale_listings_active_ticket";`,
     );
     await queryRunner.query(`DROP TABLE IF EXISTS "resale_listings";`);
   }

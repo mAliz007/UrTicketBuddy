@@ -12,6 +12,10 @@ import { Ticket } from "./ticket.entity";
 import { Event } from "./event.entity";
 
 @Entity("resale_listings")
+@Index("uq_resale_listings_active_ticket", ["ticketId"], {
+  unique: true,
+  where: "\"status\" = 'ACTIVE'",
+})
 export class ResaleListing {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

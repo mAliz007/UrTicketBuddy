@@ -31,7 +31,7 @@ describe("ResaleService (Unit)", () => {
     create: jest.Mock;
     save: jest.Mock;
   };
-  let mockRedis: { set: jest.Mock; eval: jest.Mock };
+  let mockRedis: { get: jest.Mock; set: jest.Mock; eval: jest.Mock };
   let mockManager: {
     findOne: jest.Mock;
     create: jest.Mock;
@@ -66,6 +66,7 @@ describe("ResaleService (Unit)", () => {
     };
 
     mockRedis = {
+      get: jest.fn().mockResolvedValue(null),
       set: jest.fn().mockResolvedValue("OK"),
       eval: jest.fn().mockResolvedValue(1),
     };
@@ -310,5 +311,68 @@ describe("ResaleService (Unit)", () => {
     expect(ErrorCode.RESALE_PRICE_CAP_EXCEEDED).toBe(
       "RESALE_PRICE_CAP_EXCEEDED",
     );
+  });
+
+  it("blocks seller update/withdraw while resale_lock is held by a buyer", async () => {
+    mockRedis.get.mockResolvedValueOnce(buyerId);
+
+    await expect(
+      service.updateListing(listingId, sellerId, {
+        status: ResaleListingStatus.WITHDRAWN,
+      }),
+    ).rejects.toThrow(ConflictException);
+    expect(mockListingRepo.findOne).not.toHaveBeenCalled();
+  });
+
+  it("returns cached purchase summary on Idempotency-Key retry without double-charging", async () => {
+    const cachedSummary = {
+      listingId,
+      ticketId,
+      buyerId,
+      status: ResaleListingStatus.SOLD,
+    };
+    mockRedis.get.mockResolvedValueOnce(JSON.stringify(cachedSummary));
+
+    const result = await service.purchaseListing(
+      listingId,
+      buyerId,
+      {},
+      "idem-retry-1",
+    );
+
+    expect(result).toEqual(cachedSummary);
+    expect(mockRedis.set).not.toHaveBeenCalled();
+  });
+
+  it("issues compensating refund when DB transaction fails after payment succeeds", async () => {
+    const paymentService = service["paymentService"];
+    const refundSpy = jest.spyOn(paymentService, "refundPayment");
+
+    mockListingRepo.findOne.mockResolvedValue({
+      id: listingId,
+      ticketId,
+      eventId,
+      sellerId,
+      askingPriceMinor: 1000,
+      status: ResaleListingStatus.ACTIVE,
+    });
+    mockDataSource.transaction.mockRejectedValueOnce(new Error("DB deadlock"));
+
+    await expect(
+      service.purchaseListing(
+        listingId,
+        buyerId,
+        { paymentMethodToken: "tok_visa" },
+        "idem-refund-1",
+      ),
+    ).rejects.toThrow("DB deadlock");
+
+    expect(refundSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        amount: 1000,
+        reason: "DB deadlock",
+      }),
+    );
+    expect(mockRedis.eval).toHaveBeenCalledTimes(1);
   });
 });

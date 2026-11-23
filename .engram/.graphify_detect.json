@@ -193,7 +193,7 @@
     "video": []
   },
   "total_files": 184,
-  "total_words": 68015,
+  "total_words": 68416,
   "needs_graph": true,
   "warning": null,
   "skipped_sensitive": [
@@ -207,7 +207,7 @@
   "graphifyignore_patterns": 3,
   "git": {
     "source_owner": "git",
-    "source_hash": "448313c98018f6f20b49c1005457ff013b5d9a99",
+    "source_hash": "60f48516a8dff958824300d41c1719beb5379fe6",
     "branches": [
       "feat/UTB-11-hold-expiry-worker",
       "feat/UTB-11/expiry-cron",
@@ -236,7 +236,7 @@
     "source": "configured-default",
     "root": ".",
     "git_root": ".",
-    "head": "448313c98018f6f20b49c1005457ff013b5d9a99",
+    "head": "60f48516a8dff958824300d41c1719beb5379fe6",
     "candidate_count": null,
     "included_count": 184,
     "excluded_untracked_count": 0,
