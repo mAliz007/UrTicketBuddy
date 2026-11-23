@@ -123,10 +123,16 @@ docker compose ps
 
 ### 6. Verify Database & Migrations
 
-To verify database connectivity through PgBouncer:
+To verify database structural consistency through PgBouncer:
 
 ```bash
 pnpm db:check
+```
+
+To run nightly data-level integrity audits (financial ledger balance, double-booking prevention, orphan detection, ticket lifecycle status consistency):
+
+```bash
+pnpm db:check:data
 ```
 
 To run pending database migrations:

@@ -11,6 +11,7 @@ import { TicketsModule } from "./modules/tickets/tickets.module";
 import { GateModule } from "./modules/gate/gate.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
+import { MediaModule } from "./modules/media/media.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AnalyticsModule } from "./modules/analytics/analytics.module";
     GateModule,
     AdminModule,
     AnalyticsModule,
+    MediaModule,
   ],
   controllers: [],
   providers: [],

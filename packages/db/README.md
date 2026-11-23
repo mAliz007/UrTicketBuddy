@@ -32,7 +32,20 @@ pnpm db:generate src/migrations/UTB-<n>-<description>
 
 # Run consistency checks (PK, unindexed FK, synchronize flag, Mongoose indexes)
 pnpm db:check
+
+# Run nightly data-level integrity checks (ledger mismatch, orphans, double booking, status audits)
+pnpm db:check:data
 ```
+
+### Nightly Data-Level Integrity Checker (`pnpm db:check:data`)
+
+Audits operational data consistency across tables:
+
+1. **Financial & Ledger Integrity**: Ensures `totalAmount` equals the sum of `order_items.price` and rejects any negative currency values.
+2. **Referential & Orphan Audits**: Discovers orphaned `order_items`, `tickets`, and `gate_scans`.
+3. **Seat State & Double-Booking Protection**: Prevents multiple active tickets (`ISSUED` or `CHECKED_IN`) for the same seat, and catches seats marked `AVAILABLE` that possess active tickets.
+4. **Ticket Lifecycle Audits**: Enforces valid ticket status values (per D-2) and ensures `CHECKED_IN` tickets have corresponding valid gate scan audit entries.
+5. **Venue & Event Temporal Consistency**: Verifies venue references and ensures chronological event dates (`startDate <= endDate`).
 
 ---
 

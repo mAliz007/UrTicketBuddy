@@ -11,10 +11,12 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  // Allow root /health to resolve to /api/v1/health
+  // Allow root /health and /media to resolve under global prefix /api/v1
   app.use((req: any, _res: any, next: any) => {
     if (req.url === "/health" || req.url === "/health/") {
       req.url = "/api/v1/health";
+    } else if (req.url.startsWith("/media/")) {
+      req.url = `/api/v1${req.url}`;
     }
     next();
   });

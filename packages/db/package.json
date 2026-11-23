@@ -13,7 +13,8 @@
     "db:migrate": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
     "db:revert": "typeorm-ts-node-commonjs migration:revert -d src/data-source.ts",
     "db:generate": "typeorm-ts-node-commonjs migration:generate -d src/data-source.ts",
-    "db:check": "ts-node src/check.ts"
+    "db:check": "ts-node src/check.ts",
+    "db:check:data": "ts-node src/data-check.ts"
   },
   "dependencies": {
     "@urticketbuddy/config": "workspace:*",
