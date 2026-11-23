@@ -1,3 +1,4 @@
+import { EventEmitter } from "events";
 import {
   BadRequestException,
   ConflictException,
@@ -59,6 +60,7 @@ end
 @Injectable()
 export class ResaleService {
   private readonly logger = new Logger(ResaleService.name);
+  public readonly domainEvents = new EventEmitter();
 
   constructor(
     @Inject(DATA_SOURCE) private readonly dataSource: DataSource,
@@ -223,7 +225,7 @@ export class ResaleService {
 
       if (askingPriceMinor > listing.askingPriceMinor) {
         throw new BadRequestException({
-          code: ErrorCode.RESALE_PRICE_CAP_EXCEEDED,
+          code: ErrorCode.VALIDATION_ERROR,
           message: "Resale asking price can only be lowered, not raised",
         });
       }
@@ -336,8 +338,14 @@ export class ResaleService {
     }
 
     try {
+      const cachedAfterLock = await this.redisClient.get(idempotencyCacheKey);
+      if (cachedAfterLock) {
+        return JSON.parse(cachedAfterLock) as Record<string, unknown>;
+      }
+
       const listing = await this.resaleListingRepository.findOne({
         where: { id: listingId },
+        relations: ["event"],
       });
 
       if (!listing) {
@@ -351,6 +359,13 @@ export class ResaleService {
         throw new ConflictException({
           code: ErrorCode.CONFLICT,
           message: `Resale listing is no longer active (${listing.status})`,
+        });
+      }
+
+      if (listing.event && listing.event.startTime.getTime() <= Date.now()) {
+        throw new ConflictException({
+          code: ErrorCode.CONFLICT,
+          message: "Cannot purchase resale listing after the event has started",
         });
       }
 
@@ -488,6 +503,7 @@ export class ResaleService {
         askingPriceMinor: result.askingPriceMinor,
         transferredAt: new Date().toISOString(),
       };
+      this.domainEvents.emit("ticket.transferred", transferredEvent);
       this.logger.log(`ticket.transferred ${JSON.stringify(transferredEvent)}`);
 
       return result;

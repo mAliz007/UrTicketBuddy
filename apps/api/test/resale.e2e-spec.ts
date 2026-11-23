@@ -163,6 +163,40 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
         return [all.slice(skip, skip + take), all.length];
       },
     ),
+    createQueryBuilder: jest.fn(() => {
+      let filterEventId: string | undefined;
+      let skipVal = 0;
+      let takeVal = 20;
+      const qb = {
+        innerJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn((clause: string, params?: { eventId?: string }) => {
+          if (clause.includes("eventId") && params?.eventId) {
+            filterEventId = params.eventId;
+          }
+          return qb;
+        }),
+        orderBy: jest.fn().mockReturnThis(),
+        addOrderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn((n: number) => {
+          skipVal = n;
+          return qb;
+        }),
+        take: jest.fn((n: number) => {
+          takeVal = n;
+          return qb;
+        }),
+        getManyAndCount: jest.fn(async () => {
+          const all = Array.from(listingsStore.values()).filter((item) => {
+            if (item.status !== ResaleListingStatus.ACTIVE) return false;
+            if (filterEventId && item.eventId !== filterEventId) return false;
+            return futureEvent.startTime.getTime() > Date.now();
+          });
+          return [all.slice(skipVal, skipVal + takeVal), all.length];
+        }),
+      };
+      return qb;
+    }),
   };
 
   const mockLedgerRepo = {
@@ -421,6 +455,14 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
 
     expect(atCapRes.body.askingPriceMinor).toBe(11000);
     expect(atCapRes.body.status).toBe(ResaleListingStatus.ACTIVE);
+
+    // Public GET /api/v1/resale/listings returns the active listing
+    const browseRes = await request(app.getHttpServer())
+      .get(`/api/v1/resale/listings?eventId=${eventId}&page=1&pageSize=10`)
+      .expect(200);
+
+    expect(browseRes.body.total).toBe(1);
+    expect(browseRes.body.items[0].id).toBe(atCapRes.body.id);
   });
 
   it("rejects listing a CHECKED_IN ticket with 409 Conflict", async () => {

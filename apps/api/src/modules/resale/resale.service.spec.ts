@@ -28,8 +28,19 @@ describe("ResaleService (Unit)", () => {
   let mockListingRepo: {
     findOne: jest.Mock;
     findAndCount: jest.Mock;
+    createQueryBuilder: jest.Mock;
     create: jest.Mock;
     save: jest.Mock;
+  };
+  let mockListingQb: {
+    innerJoin: jest.Mock;
+    where: jest.Mock;
+    andWhere: jest.Mock;
+    orderBy: jest.Mock;
+    addOrderBy: jest.Mock;
+    skip: jest.Mock;
+    take: jest.Mock;
+    getManyAndCount: jest.Mock;
   };
   let mockRedis: { get: jest.Mock; set: jest.Mock; eval: jest.Mock };
   let mockManager: {
@@ -55,9 +66,21 @@ describe("ResaleService (Unit)", () => {
       findOne: jest.fn(),
     };
 
+    mockListingQb = {
+      innerJoin: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      addOrderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getManyAndCount: jest.fn().mockResolvedValue([[], 0]),
+    };
+
     mockListingRepo = {
       findOne: jest.fn(),
       findAndCount: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue(mockListingQb),
       create: jest.fn((data: Partial<ResaleListing>) => ({
         id: listingId,
         ...data,
@@ -374,5 +397,30 @@ describe("ResaleService (Unit)", () => {
       }),
     );
     expect(mockRedis.eval).toHaveBeenCalledTimes(1);
+  });
+
+  it("paginates active listings for future events and rejects invalid eventId UUID", async () => {
+    mockListingQb.getManyAndCount.mockResolvedValueOnce([
+      [{ id: listingId, eventId, status: ResaleListingStatus.ACTIVE }],
+      1,
+    ]);
+
+    const res = await service.getListings({
+      eventId,
+      page: "1",
+      pageSize: "10",
+    });
+
+    expect(res.total).toBe(1);
+    expect(res.page).toBe(1);
+    expect(res.pageSize).toBe(10);
+    expect(mockListingQb.innerJoin).toHaveBeenCalledWith(
+      "listing.event",
+      "event",
+    );
+
+    await expect(
+      service.getListings({ eventId: "not-a-uuid" }),
+    ).rejects.toThrow(BadRequestException);
   });
 });

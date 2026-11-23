@@ -142,6 +142,10 @@ describe("packages/contracts", () => {
     // Large values
     expect(maxResalePrice(10_000_000)).toBe(11_000_000);
     expect(maxResalePrice(999_999_999)).toBe(1_099_999_998);
+
+    // Negative / NaN rejection
+    expect(() => maxResalePrice(-100)).toThrow(RangeError);
+    expect(() => maxResalePrice(Number.NaN)).toThrow(RangeError);
   });
 
   it("should validate resale enums and schemas", () => {
@@ -157,6 +161,26 @@ describe("packages/contracts", () => {
         askingPriceMinor: 5500,
       }).success,
     ).toBe(true);
+
+    // Rejects 0, negative, float, and > PG_MAX_INT32
+    expect(
+      CreateResaleListingSchema.safeParse({
+        ticketId: "123e4567-e89b-12d3-a456-426614174000",
+        askingPriceMinor: 0,
+      }).success,
+    ).toBe(false);
+    expect(
+      CreateResaleListingSchema.safeParse({
+        ticketId: "123e4567-e89b-12d3-a456-426614174000",
+        askingPriceMinor: 100.5,
+      }).success,
+    ).toBe(false);
+    expect(
+      CreateResaleListingSchema.safeParse({
+        ticketId: "123e4567-e89b-12d3-a456-426614174000",
+        askingPriceMinor: 3_000_000_000,
+      }).success,
+    ).toBe(false);
 
     expect(
       UpdateResaleListingSchema.safeParse({
