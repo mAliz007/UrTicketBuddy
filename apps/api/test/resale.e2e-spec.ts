@@ -17,6 +17,7 @@ import { AppModule } from "../src/app.module";
 import { BloomService } from "../src/common/bloom/bloom.service";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
 import {
+  AUDIT_LOG_REPOSITORY,
   DATA_SOURCE,
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
@@ -25,6 +26,7 @@ import {
   MONGO_CONNECTION,
   ORDER_ITEM_REPOSITORY,
   ORDER_REPOSITORY,
+  PLATFORM_SETTING_REPOSITORY,
   REDIS_CLIENT,
   REDIS_SCRIPTS_WRAPPER,
   REFRESH_TOKEN_REPOSITORY,
@@ -282,6 +284,12 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
 
   const mockDataSource = {
     isInitialized: true,
+    getRepository: jest.fn(() => ({
+      find: jest.fn(async () => []),
+      findOne: jest.fn(async () => null),
+      save: jest.fn(async (e: unknown) => e),
+      create: jest.fn((e: unknown) => e),
+    })),
     transaction: jest.fn(
       async (
         cb: (manager: {
@@ -372,6 +380,18 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
       .useValue(mockListingRepo)
       .overrideProvider(LEDGER_ENTRY_REPOSITORY)
       .useValue(mockLedgerRepo)
+      .overrideProvider(PLATFORM_SETTING_REPOSITORY)
+      .useValue({
+        findOne: jest.fn(async () => null),
+        save: jest.fn(async (e: unknown) => e),
+        create: jest.fn((e: unknown) => e),
+      })
+      .overrideProvider(AUDIT_LOG_REPOSITORY)
+      .useValue({
+        find: jest.fn(async () => []),
+        save: jest.fn(async (e: unknown) => e),
+        create: jest.fn((e: unknown) => e),
+      })
       .overrideProvider(REDIS_CLIENT)
       .useValue(mockRedisClient)
       .overrideProvider(REDIS_SCRIPTS_WRAPPER)

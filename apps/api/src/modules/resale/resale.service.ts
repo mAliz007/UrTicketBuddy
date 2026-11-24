@@ -45,6 +45,20 @@ export interface TicketTransferredEvent {
   transferredAt: string;
 }
 
+export interface PurchaseListingResult {
+  listingId: string;
+  ticketId: string;
+  eventId: string;
+  previousOwnerId: string;
+  buyerId: string;
+  askingPriceMinor: number;
+  commissionMinor: number;
+  sellerPayoutMinor: number;
+  seedVersion: number;
+  status: ResaleListingStatus | string;
+  transactionId?: string;
+}
+
 const RESALE_LOCK_TTL_SECONDS = 300;
 const IDEMPOTENCY_TTL_SECONDS = 86_400;
 const UUID_REGEX =
@@ -307,7 +321,7 @@ export class ResaleService {
     buyerId: string,
     rawBody: unknown,
     idempotencyKey?: string,
-  ) {
+  ): Promise<PurchaseListingResult> {
     if (!idempotencyKey || idempotencyKey.trim().length === 0) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
@@ -327,7 +341,7 @@ export class ResaleService {
     const idempotencyCacheKey = `resale_idem:${listingId}:${buyerId}:${idempotencyKey}`;
     const cachedResponse = await this.redisClient.get(idempotencyCacheKey);
     if (cachedResponse) {
-      return JSON.parse(cachedResponse) as Record<string, unknown>;
+      return JSON.parse(cachedResponse) as PurchaseListingResult;
     }
 
     const lockKey = `resale_lock:${listingId}`;
@@ -349,7 +363,7 @@ export class ResaleService {
     try {
       const cachedAfterLock = await this.redisClient.get(idempotencyCacheKey);
       if (cachedAfterLock) {
-        return JSON.parse(cachedAfterLock) as Record<string, unknown>;
+        return JSON.parse(cachedAfterLock) as PurchaseListingResult;
       }
 
       const listing = await this.resaleListingRepository.findOne({
