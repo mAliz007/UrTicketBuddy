@@ -1,0 +1,217 @@
+name: k6 Stress & Load Tests (UTB-17)
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "infra/loadtests/**"
+      - "packages/redis-scripts/**"
+      - "apps/api/src/modules/checkout/**"
+      - "apps/api/src/modules/orders/**"
+      - "apps/realtime/**"
+      - ".github/workflows/loadtest.yml"
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      vus:
+        description: "Virtual Users count (default 1000)"
+        required: false
+        default: "1000"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-smoke:
+    name: PR Smoke (50 VUs / 30s + Invariants)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_DB: urticketbuddy_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis/redis-stack-server:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DIRECT_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: urticketbuddy_test
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      JWT_SECRET: ci-loadtest-jwt-secret-min-16-characters
+      JWT_REFRESH_SECRET: ci-loadtest-refresh-secret-min-16-chars
+      MASTER_TICKET_SECRET: ci-master-ticket-secret-32-chars-minimum-key
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.21.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+
+      - name: Install dependencies & build packages
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @urticketbuddy/config build
+          pnpm --filter @urticketbuddy/contracts build
+          pnpm --filter @urticketbuddy/venue-engine build
+          pnpm --filter @urticketbuddy/redis-scripts build
+          pnpm --filter @urticketbuddy/db build
+
+      - name: Run database migrations & seed 5,000 seats + 1,000 JWTs
+        run: |
+          pnpm --filter @urticketbuddy/db db:migrate
+          pnpm --filter @urticketbuddy/db exec ts-node ../../infra/loadtests/seed-loadtest.ts
+
+      - name: Run 1,000-User Contention & Mathematical Invariant Suite
+        run: pnpm --filter @urticketbuddy/api test -- test/concurrency-invariants.e2e-spec.ts
+
+      - name: Start API server & run 50-VU 30s k6 smoke test
+        run: |
+          pnpm --filter @urticketbuddy/api build
+          node apps/api/dist/main.js &
+          API_PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/api/v1/health >/dev/null; then break; fi
+            sleep 1
+          done
+          k6 run --env VUS=50 --env DURATION=30s --summary-export=infra/loadtests/pr-smoke-summary.json infra/loadtests/random-seats-1000.js
+          kill $API_PID || true
+
+      - name: Run Post-Run DB & Redis Invariant Verifier
+        run: pnpm --filter @urticketbuddy/db exec ts-node ../../infra/loadtests/verify-invariants.ts
+
+  nightly-stress-1000:
+    name: Nightly 1,000-VU Full Stress Suite
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_DB: urticketbuddy_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis/redis-stack-server:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DIRECT_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: urticketbuddy_test
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      JWT_SECRET: ci-loadtest-jwt-secret-min-16-characters
+      JWT_REFRESH_SECRET: ci-loadtest-refresh-secret-min-16-chars
+      MASTER_TICKET_SECRET: ci-master-ticket-secret-32-chars-minimum-key
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.21.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+
+      - name: Build workspace & seed 5,000-seat arena
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm --filter @urticketbuddy/db db:migrate
+          pnpm --filter @urticketbuddy/db exec ts-node ../../infra/loadtests/seed-loadtest.ts
+
+      - name: Run 1,000-VU k6 Stress Scenarios & Verify Invariants
+        run: |
+          VUS_COUNT="${{ github.event.inputs.vus || '1000' }}"
+          node apps/api/dist/main.js &
+          API_PID=$!
+          node apps/realtime/dist/main.js &
+          RT_PID=$!
+          sleep 5
+
+          k6 run --env VUS=$VUS_COUNT --summary-export=infra/loadtests/same-seat-1000-summary.json infra/loadtests/same-seat-1000.js
+          pnpm --filter @urticketbuddy/db exec ts-node ../../infra/loadtests/seed-loadtest.ts
+          k6 run --env VUS=$VUS_COUNT --summary-export=infra/loadtests/random-seats-1000-summary.json infra/loadtests/random-seats-1000.js
+          pnpm --filter @urticketbuddy/db exec ts-node ../../infra/loadtests/seed-loadtest.ts
+          k6 run --env VUS=$VUS_COUNT --summary-export=infra/loadtests/full-funnel-summary.json infra/loadtests/full-funnel.js
+          pnpm --filter @urticketbuddy/db exec ts-node ../../infra/loadtests/verify-invariants.ts
+          k6 run --env VUS=$VUS_COUNT --summary-export=infra/loadtests/ws-fanout-1000-summary.json infra/loadtests/ws-fanout-1000.js
+
+          kill $API_PID $RT_PID || true
+
+      - name: Upload k6 Summary Report Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-loadtest-summary-${{ github.run_id }}
+          path: infra/loadtests/*-summary.json
+          retention-days: 14
