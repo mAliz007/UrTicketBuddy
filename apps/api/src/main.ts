@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import { json, urlencoded } from "express";
+import { json, urlencoded, Request, Response, NextFunction } from "express";
 import { AppModule } from "./app.module";
 import { loadEnv } from "@urticketbuddy/config";
 import { Logger } from "@nestjs/common";
@@ -27,7 +27,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LogRedactionInterceptor());
 
   // Allow root /health and /media to resolve under global prefix /api/v1
-  app.use((req: any, _res: any, next: any) => {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
     if (req.url === "/health" || req.url === "/health/") {
       req.url = "/api/v1/health";
     } else if (req.url.startsWith("/media/")) {
@@ -53,10 +53,11 @@ async function bootstrap() {
       if (!origin) {
         return callback(null, true);
       }
-      if (
-        allowedOrigins.includes(origin) ||
-        (env.NODE_ENV !== "production" && origin.includes("localhost"))
-      ) {
+      const isLocalhost =
+        env.NODE_ENV !== "production" &&
+        /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+
+      if (allowedOrigins.includes(origin) || isLocalhost) {
         return callback(null, true);
       }
       return callback(

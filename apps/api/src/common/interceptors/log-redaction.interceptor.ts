@@ -63,6 +63,26 @@ export function redactSensitiveData<T>(data: T): T {
   return redacted as T;
 }
 
+export function sanitizeUrl(rawUrl: string): string {
+  try {
+    const qIndex = rawUrl.indexOf("?");
+    if (qIndex === -1) return rawUrl;
+
+    const path = rawUrl.substring(0, qIndex);
+    const queryString = rawUrl.substring(qIndex + 1);
+    const params = new URLSearchParams(queryString);
+
+    for (const key of Array.from(params.keys())) {
+      if (isSensitiveField(key)) {
+        params.set(key, "[REDACTED]");
+      }
+    }
+    return `${path}?${params.toString()}`;
+  } catch {
+    return rawUrl;
+  }
+}
+
 @Injectable()
 export class LogRedactionInterceptor implements NestInterceptor {
   private readonly logger = new Logger("HTTP");
@@ -73,7 +93,8 @@ export class LogRedactionInterceptor implements NestInterceptor {
     const res = http.getResponse<Response>();
 
     const method = req?.method || "GET";
-    const url = req?.originalUrl || req?.url || "/";
+    const rawUrl = req?.originalUrl || req?.url || "/";
+    const url = sanitizeUrl(rawUrl);
     const startTime = Date.now();
 
     return next.handle().pipe(
@@ -86,8 +107,15 @@ export class LogRedactionInterceptor implements NestInterceptor {
         error: (err) => {
           const duration = Date.now() - startTime;
           const statusCode = err?.status || res?.statusCode || 500;
+          const safeError =
+            typeof err?.message === "string"
+              ? err.message.replace(
+                  /Bearer\s+[A-Za-z0-9._-]+/gi,
+                  "Bearer [REDACTED]",
+                )
+              : "Internal Error";
           this.logger.warn(
-            `[${method}] ${url} ${statusCode} - ${duration}ms - Error: ${err?.message}`,
+            `[${method}] ${url} ${statusCode} - ${duration}ms - Error: ${safeError}`,
           );
         },
       }),

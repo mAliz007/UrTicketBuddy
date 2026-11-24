@@ -3,6 +3,7 @@ import { INestApplication } from "@nestjs/common";
 import { Reflector, ModulesContainer } from "@nestjs/core";
 import request from "supertest";
 import cookieParser from "cookie-parser";
+import crypto from "crypto";
 import { JwtService } from "@nestjs/jwt";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
@@ -308,9 +309,54 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
     const mockVenueRepo = {
       findOne: jest.fn(async () => ({ id: "v1", name: "Arena 1" })),
       find: jest.fn(async () => [{ id: "v1", name: "Arena 1" }]),
-      save: jest.fn(async (v: any) => v),
-      create: jest.fn((dto: any) => ({ ...dto, id: "v1" })),
+      save: jest.fn(async (v: any) => ({
+        ...v,
+        id: v.id || "v1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+      create: jest.fn((dto: any) => ({
+        ...dto,
+        id: "v1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
     };
+
+    const MockVenueLayoutModel: any = jest
+      .fn()
+      .mockImplementation((payload: any) => ({
+        _id: `layout-${Date.now()}`,
+        ...payload,
+        save: async () => ({
+          _id: `layout-${Date.now()}`,
+          ...payload,
+        }),
+      }));
+    MockVenueLayoutModel.findById = jest.fn((id: string) => ({
+      lean: async () => ({
+        _id: id,
+        schemaVersion: 1,
+        name: "Test Layout",
+        dimensions: { width: 1000, height: 800 },
+        sections: [
+          {
+            type: "grid",
+            id: "SEC-1",
+            name: "General",
+            origin: { x: 10, y: 10 },
+            rows: 5,
+            columns: 10,
+            seatWidth: 20,
+            gapX: 5,
+            gapY: 5,
+            staggerOffset: 0,
+            aisleColumns: [],
+            aisleWidth: 0,
+          },
+        ],
+      }),
+    }));
 
     const mockEventSeatRepo = {
       find: jest.fn(async () => []),
@@ -460,7 +506,7 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
       .overrideProvider(MONGO_CONNECTION)
       .useValue({ readyState: 1, model: jest.fn() })
       .overrideProvider(VENUE_LAYOUT_MODEL)
-      .useValue({ findOne: jest.fn() })
+      .useValue(MockVenueLayoutModel)
       .overrideProvider(REDIS_CLIENT)
       .useValue(mockRedis)
       .overrideProvider(CHECKOUT_REDIS_CLIENT)
@@ -553,7 +599,7 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
             const hasRoles =
               controllerRoles.length > 0 || methodRoles.length > 0;
 
-            const isProtectedOrPublic = isPublic || hasJwtGuard || hasRoles;
+            const isProtectedOrPublic = isPublic || hasJwtGuard;
 
             routeAuditLog.push({
               controller: controllerClass.name,
@@ -570,9 +616,9 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
 
       // Assert comprehensive coverage of route registry
       expect(auditedRoutesCount).toBeGreaterThanOrEqual(15);
-      expect(
-        routeAuditLog.every((r) => r.isPublic || r.hasJwtGuard || r.hasRoles),
-      ).toBe(true);
+      expect(routeAuditLog.every((r) => r.isPublic || r.hasJwtGuard)).toBe(
+        true,
+      );
     });
   });
 
@@ -841,13 +887,172 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
           .expect(401);
       });
 
+      it("GATE_STAFF -> 403 FORBIDDEN", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/resale/listings")
+          .set("Authorization", `Bearer ${gateStaffToken}`)
+          .send({ ticketId: ticket1Id, askingPriceMinor: 5000 })
+          .expect(403);
+      });
+
       it("CUSTOMER -> Authenticated resale access", async () => {
         const res = await request(app.getHttpServer())
           .post("/api/v1/resale/listings")
           .set("Authorization", `Bearer ${customerToken}`)
           .send({ ticketId: ticket1Id, askingPriceMinor: 5000 });
-        // Passes authentication guard (not 401)
+        // Passes authentication guard (not 401 or 403)
         expect([201, 400, 409]).toContain(res.status);
+      });
+    });
+
+    describe("Endpoint: POST /api/v1/venues", () => {
+      const venuePayload = {
+        name: "Test Arena",
+        location: "Test Location",
+        layout: {
+          schemaVersion: 1,
+          name: "Test Layout",
+          dimensions: { width: 1000, height: 800 },
+          sections: [
+            {
+              type: "grid",
+              id: "SEC-1",
+              name: "General",
+              origin: { x: 10, y: 10 },
+              rows: 5,
+              columns: 10,
+              seatWidth: 20,
+              gapX: 5,
+              gapY: 5,
+              staggerOffset: 0,
+              aisleColumns: [],
+              aisleWidth: 0,
+            },
+          ],
+        },
+      };
+
+      it("Unauthenticated -> 401 UNAUTHORIZED", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/venues")
+          .send(venuePayload)
+          .expect(401);
+      });
+
+      it("CUSTOMER -> 403 FORBIDDEN", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/venues")
+          .set("Authorization", `Bearer ${customerToken}`)
+          .send(venuePayload)
+          .expect(403);
+      });
+
+      it("ORGANIZER -> 201 CREATED", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/venues")
+          .set("Authorization", `Bearer ${organizer1Token}`)
+          .send(venuePayload)
+          .expect(201);
+      });
+
+      it("ADMIN -> 201 CREATED", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/venues")
+          .set("Authorization", `Bearer ${adminToken}`)
+          .send(venuePayload)
+          .expect(201);
+      });
+    });
+
+    describe("Endpoint: POST /api/v1/events", () => {
+      const eventPayload = {
+        venueId: "v1",
+        name: "Test Event",
+        startTime: new Date(Date.now() + 86400000).toISOString(),
+      };
+
+      it("Unauthenticated -> 401 UNAUTHORIZED", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/events")
+          .send(eventPayload)
+          .expect(401);
+      });
+
+      it("CUSTOMER -> 403 FORBIDDEN", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/events")
+          .set("Authorization", `Bearer ${customerToken}`)
+          .send(eventPayload)
+          .expect(403);
+      });
+
+      it("ORGANIZER -> 201 CREATED", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/events")
+          .set("Authorization", `Bearer ${organizer1Token}`)
+          .send(eventPayload)
+          .expect(201);
+      });
+    });
+
+    describe("Endpoint: POST /api/v1/events/:id/generate-seats", () => {
+      it("Unauthenticated -> 401 UNAUTHORIZED", async () => {
+        await request(app.getHttpServer())
+          .post(`/api/v1/events/${event1Id}/generate-seats`)
+          .expect(401);
+      });
+
+      it("CUSTOMER -> 403 FORBIDDEN", async () => {
+        await request(app.getHttpServer())
+          .post(`/api/v1/events/${event1Id}/generate-seats`)
+          .set("Authorization", `Bearer ${customerToken}`)
+          .expect(403);
+      });
+
+      it("ORGANIZER -> Allowed (200 or processed)", async () => {
+        const res = await request(app.getHttpServer())
+          .post(`/api/v1/events/${event1Id}/generate-seats`)
+          .set("Authorization", `Bearer ${organizer1Token}`);
+        expect(res.status).not.toBe(401);
+        expect(res.status).not.toBe(403);
+      });
+    });
+
+    describe("Endpoint: GET /api/v1/orders/:id", () => {
+      const orderId = "ord-security-01";
+
+      beforeAll(() => {
+        ordersStore.set(orderId, {
+          id: orderId,
+          userId: customerId,
+          eventId: event1Id,
+          totalAmount: 5000,
+          currency: "PKR",
+          status: OrderStatus.COMPLETED,
+          items: [],
+        });
+      });
+
+      it("Unauthenticated -> 401 UNAUTHORIZED", async () => {
+        await request(app.getHttpServer())
+          .get(`/api/v1/orders/${orderId}`)
+          .expect(401);
+      });
+
+      it("CUSTOMER -> 200 OK", async () => {
+        const res = await request(app.getHttpServer())
+          .get(`/api/v1/orders/${orderId}`)
+          .set("Authorization", `Bearer ${customerToken}`)
+          .expect(200);
+        expect(res.body.id).toBe(orderId);
+      });
+
+      it("ADMIN -> 200 OK", async () => {
+        const res = await request(app.getHttpServer())
+          .get(`/api/v1/orders/${orderId}`)
+          .set("Authorization", `Bearer ${adminToken}`)
+          .expect(200);
+        expect(res.body.id).toBe(orderId);
       });
     });
 
@@ -945,50 +1150,60 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
 
   describe("3. Tenant Isolation, Token Rotation Replay & Log Redaction Matrix", () => {
     describe("Refresh Token Rotation & Family Reuse Revocation", () => {
-      it("should revoke all family tokens when an already-used refresh token is replayed", async () => {
+      it("should detect reuse via /api/v1/auth/refresh and revoke all family tokens", async () => {
         const familyId = "fam-security-test-01";
-        const oldTokenHash = "hash-token-1";
-        const rotatedTokenHash = "hash-token-2";
+        const rawOldToken = "old-replayed-refresh-token-secret-123";
+        const oldTokenHash = crypto
+          .createHash("sha256")
+          .update(rawOldToken)
+          .digest("hex");
 
-        // Seed initial active refresh token
+        const rawChildToken = "active-child-refresh-token-secret-456";
+        const childTokenHash = crypto
+          .createHash("sha256")
+          .update(rawChildToken)
+          .digest("hex");
+
+        // Seed old token (already revoked after normal rotation)
         refreshTokensStore.set(oldTokenHash, {
           id: "rt-1",
           userId: customerId,
           tokenHash: oldTokenHash,
           familyId,
-          isRevoked: false,
+          isRevoked: true,
           expiresAt: new Date(Date.now() + 86400000),
         });
 
-        // First rotation: valid token exchanged, old token revoked, new token issued
-        const initialToken = refreshTokensStore.get(oldTokenHash);
-        expect(initialToken.isRevoked).toBe(false);
-
-        // Simulate rotation: old token is marked revoked
-        initialToken.isRevoked = true;
-        refreshTokensStore.set(rotatedTokenHash, {
+        // Seed active child token in the same family
+        refreshTokensStore.set(childTokenHash, {
           id: "rt-2",
           userId: customerId,
-          tokenHash: rotatedTokenHash,
+          tokenHash: childTokenHash,
           familyId,
           isRevoked: false,
           expiresAt: new Date(Date.now() + 86400000),
         });
 
-        // Adversary attempts replay of old token
-        const replayedToken = refreshTokensStore.get(oldTokenHash);
-        expect(replayedToken.isRevoked).toBe(true);
+        // Adversary replays the revoked old token to /api/v1/auth/refresh
+        const res = await request(app.getHttpServer())
+          .post("/api/v1/auth/refresh")
+          .send({ refreshToken: rawOldToken })
+          .expect(401);
 
-        // Execute family revocation
-        for (const token of refreshTokensStore.values()) {
-          if (token.familyId === familyId) {
-            token.isRevoked = true;
-          }
-        }
+        expect(res.body.error.code).toBe(ErrorCode.INVALID_REFRESH_TOKEN);
+        expect(res.body.error.message).toContain("Token reuse detected");
 
-        // Verify entire family is now revoked
-        const validChildToken = refreshTokensStore.get(rotatedTokenHash);
-        expect(validChildToken.isRevoked).toBe(true);
+        // Assert that the active child token was revoked via the family revocation
+        const childRecord = refreshTokensStore.get(childTokenHash);
+        expect(childRecord.isRevoked).toBe(true);
+
+        // Subsequent attempt with child token now also fails
+        const childRes = await request(app.getHttpServer())
+          .post("/api/v1/auth/refresh")
+          .send({ refreshToken: rawChildToken })
+          .expect(401);
+
+        expect(childRes.body.error.code).toBe(ErrorCode.INVALID_REFRESH_TOKEN);
       });
     });
 

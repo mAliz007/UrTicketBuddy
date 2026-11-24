@@ -258,7 +258,7 @@
     "video": []
   },
   "total_files": 249,
-  "total_words": 97238,
+  "total_words": 98006,
   "needs_graph": true,
   "warning": null,
   "skipped_sensitive": [
@@ -273,7 +273,7 @@
   "graphifyignore_patterns": 3,
   "git": {
     "source_owner": "git",
-    "source_hash": "9655bcf2e136dabd58f88025a06ccb59d3b8c777",
+    "source_hash": "dd3bdbd7593b60decb3d4728d0916b90671f9fb0",
     "branches": [
       "chore/UTB-21-security-hardening",
       "chore/UTB-21-security-hardening-auth-matrix-tests",
@@ -311,7 +311,7 @@
     "source": "configured-default",
     "root": ".",
     "git_root": ".",
-    "head": "9655bcf2e136dabd58f88025a06ccb59d3b8c777",
+    "head": "dd3bdbd7593b60decb3d4728d0916b90671f9fb0",
     "candidate_count": null,
     "included_count": 249,
     "excluded_untracked_count": 0,

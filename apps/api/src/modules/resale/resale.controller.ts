@@ -13,6 +13,7 @@ import {
 import { UserRole } from "@urticketbuddy/contracts";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Public } from "../auth/decorators/public.decorator";
+import { Roles } from "../auth/decorators/roles.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { ResaleService } from "./resale.service";
@@ -30,6 +31,7 @@ export class ResaleController {
   constructor(private readonly resaleService: ResaleService) {}
 
   @Post("listings")
+  @Roles(UserRole.CUSTOMER, UserRole.ADMIN)
   async createListing(
     @CurrentUser() user: AuthenticatedUser,
     @Body() body: unknown,
@@ -39,6 +41,7 @@ export class ResaleController {
   }
 
   @Patch("listings/:listingId")
+  @Roles(UserRole.CUSTOMER, UserRole.ADMIN)
   async updateListing(
     @Param("listingId", new ParseUUIDPipe()) listingId: string,
     @CurrentUser() user: AuthenticatedUser,
@@ -59,6 +62,7 @@ export class ResaleController {
   }
 
   @Post("listings/:listingId/purchase")
+  @Roles(UserRole.CUSTOMER, UserRole.ORGANIZER, UserRole.ADMIN)
   async purchaseListing(
     @Param("listingId", new ParseUUIDPipe()) listingId: string,
     @CurrentUser() user: AuthenticatedUser,

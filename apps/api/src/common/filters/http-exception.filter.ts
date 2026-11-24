@@ -58,7 +58,11 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         details = resObj.details;
       }
     } else if (exception instanceof Error) {
-      message = exception.message;
+      this.logger.error(
+        `Unhandled internal server error: ${exception.message}`,
+        exception.stack,
+      );
+      message = "An unexpected error occurred";
     }
 
     const requestId = (request.headers["x-request-id"] as string) || undefined;

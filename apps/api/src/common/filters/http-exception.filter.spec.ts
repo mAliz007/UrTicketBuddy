@@ -66,4 +66,23 @@ describe("GlobalHttpExceptionFilter", () => {
       },
     });
   });
+
+  it("should redact raw error messages for unhandled internal exceptions to prevent information leakage", () => {
+    const unhandledError = new Error(
+      "QueryFailedError: relation 'users' does not exist at postgres.internal",
+    );
+
+    filter.catch(unhandledError, mockHost);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      error: {
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: "An unexpected error occurred",
+        requestId: "req-12345",
+      },
+    });
+  });
 });

@@ -1,12 +1,21 @@
 import {
   redactSensitiveData,
   isSensitiveField,
+  sanitizeUrl,
   LogRedactionInterceptor,
 } from "./log-redaction.interceptor";
 import { ExecutionContext, CallHandler } from "@nestjs/common";
 import { of, throwError } from "rxjs";
 
 describe("LogRedactionInterceptor & redactSensitiveData", () => {
+  it("should sanitize sensitive query parameters from URLs", () => {
+    expect(
+      sanitizeUrl("/api/v1/auth/callback?token=my-secret-jwt&state=123"),
+    ).toBe("/api/v1/auth/callback?token=%5BREDACTED%5D&state=123");
+    expect(sanitizeUrl("/api/v1/events?page=1&pageSize=20")).toBe(
+      "/api/v1/events?page=1&pageSize=20",
+    );
+  });
   it("should detect sensitive field names case-insensitively with hyphens/underscores", () => {
     expect(isSensitiveField("password")).toBe(true);
     expect(isSensitiveField("Password")).toBe(true);
