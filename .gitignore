@@ -50,4 +50,6 @@ temp/
 backups/
 test-backups/
 test-media-storage/
+infra/loadtests/users.json
+infra/loadtests/*-summary.json
 
