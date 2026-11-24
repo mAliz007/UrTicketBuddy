@@ -130,22 +130,33 @@ describe("packages/contracts", () => {
     expect(maxResalePrice(1000)).toBe(1100);
     expect(maxResalePrice(10000)).toBe(11000);
     expect(maxResalePrice(105)).toBe(115); // Math.floor(115.5)
+    expect(maxResalePrice(1)).toBe(1); // floor(1.1)
+    expect(maxResalePrice(10)).toBe(11); // 10 * 110 / 100 = 11
 
     // 1 minor unit above boundary fails cap check
-    const cap = maxResalePrice(1000);
-    expect(cap + 1 <= cap).toBe(false);
-    expect(1101 <= maxResalePrice(1000)).toBe(false);
+    const cap1000 = maxResalePrice(1000);
+    expect(1100 <= cap1000).toBe(true);
+    expect(1101 <= cap1000).toBe(false);
+
+    const cap10000 = maxResalePrice(10000);
+    expect(11000 <= cap10000).toBe(true);
+    expect(11001 <= cap10000).toBe(false);
 
     // Zero
     expect(maxResalePrice(0)).toBe(0);
+    expect(0 <= maxResalePrice(0)).toBe(true);
+    expect(1 <= maxResalePrice(0)).toBe(false);
 
-    // Large values
+    // Large values and 32-bit limits
     expect(maxResalePrice(10_000_000)).toBe(11_000_000);
     expect(maxResalePrice(999_999_999)).toBe(1_099_999_998);
+    expect(maxResalePrice(2_147_483_647)).toBe(2_362_232_011);
 
-    // Negative / NaN rejection
+    // Negative / NaN / Non-finite rejection
+    expect(() => maxResalePrice(-1)).toThrow(RangeError);
     expect(() => maxResalePrice(-100)).toThrow(RangeError);
     expect(() => maxResalePrice(Number.NaN)).toThrow(RangeError);
+    expect(() => maxResalePrice(Number.POSITIVE_INFINITY)).toThrow(RangeError);
   });
 
   it("should validate resale enums and schemas", () => {

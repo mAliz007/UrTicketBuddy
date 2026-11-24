@@ -198,6 +198,15 @@ export class ResaleService {
       });
     }
 
+    if (!listing.ticket && listing.ticketId) {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id: listing.ticketId },
+      });
+      if (ticket) {
+        listing.ticket = ticket;
+      }
+    }
+
     if (listing.sellerId !== sellerId) {
       throw new ForbiddenException({
         code: ErrorCode.FORBIDDEN,

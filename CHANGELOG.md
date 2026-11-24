@@ -4,6 +4,59 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-16] - 2026-11-23
+
+### Admin Suite, Fraud & Ticket Revocation Engine, Append-Only Audit Log & Organizer Analytics
+
+- **Ticket Key:** `UTB-16`
+- **Completion Date:** 2026-11-23
+- **Main Feature Branch:** `feat/UTB-16-admin-analytics-audit`
+  - Sub-task 1: `feat/UTB-16-admin-analytics-audit-db` (Entities, migrations, trigger immutability)
+  - Sub-task 2: `feat/UTB-16-admin-analytics-audit-admin` (Admin module, fraud flag, ticket revocation, platform settings)
+  - Sub-task 3: `feat/UTB-16-admin-analytics-audit-analytics` (Organizer analytics, tenant isolation, velocity buckets)
+  - Sub-task 4: `feat/UTB-16-admin-analytics-audit-tests` (Unit and Supertest E2E verification)
+  - Sub-task 5: `feat/UTB-16-admin-analytics-audit-tester-docs` (Tester app catalog, CI/CD trigger sync, and docs)
+  - Sub-task 6: `feat/UTB-16-admin-analytics-audit-fixes` (Transaction manager atomicity in AuditService, order flagging idempotency guard, and unit/E2E coverage)
+- **Status:** Completed & Verified (Backend Phase Only: 18 unit tests, 5 Supertest E2E assertions, 100% monorepo pass)
+- **Packages & Directories Modified:** `packages/contracts/`, `packages/db/`, `apps/api/`, `apps/tester/`, `apps/worker/`, `.github/workflows/`, `docker/`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Endpoint Workbench Catalog Integration (`apps/tester`)**:
+    - Expanded REST catalog with **Admin Suite & Fraud Control** (`/api/v1/admin/orders/:orderId/flag`, `/api/v1/admin/tickets/:ticketId`, `/api/v1/admin/settings/commission` GET/PUT, `/api/v1/admin/users/:userId/suspend`, `/api/v1/admin/organizers/:userId/approve`, `/api/v1/admin/audit-logs`).
+    - Added **Organizer Analytics** endpoint (`/api/v1/organizer/analytics/:eventId`) to tester workbench with pre-configured parameters and payload samples.
+    - Updated `apps/tester/README.md` and verified clean production build (`pnpm --filter @urticketbuddy/tester build`).
+  - **CI/CD Triggers & Dockerfile Integrity**:
+    - Synced `.github/workflows/ci.yml` and `.github/workflows/cd.yml` with `origin/main` commit `83a294e`, restoring automated CI testing across `feat/**` branches and post-CI CD deployment triggers.
+    - Added `COPY apps/tester/package.json ./apps/tester/` across all multi-stage Dockerfiles (`docker/api.Dockerfile`, `docker/realtime.Dockerfile`, `docker/worker.Dockerfile`, `apps/api/Dockerfile`, `apps/realtime/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/Dockerfile`) to prevent Docker layer lockfile discrepancies.
+    - Added clean `moduleRef.close()` teardown in `apps/worker/test/expiry.integration.spec.ts` preventing open handle warnings in CI.
+  - **Database Immutability & Entities (`packages/db`)**:
+    - Created `PlatformSetting` entity (`platform_settings`) with unique index `idx_platform_settings_key` and default `commission_rate_percent = '10'`.
+    - Created `AuditLog` entity (`audit_logs`) with covering indices `idx_audit_logs_actor_id`, `idx_audit_logs_action`, and `idx_audit_logs_created_at`.
+    - Added `isSuspended` column (boolean, default false) to `User` entity (`users`).
+    - Created reversible migration `1795136850000-UTB-16-init-admin-audit.ts` adding PostgreSQL trigger `trg_audit_logs_immutable` and trigger function `audit_logs_immutable_fn()`, strictly aborting any `UPDATE` or `DELETE` with a database-level SQL exception.
+    - Added `organizerId` column to `events` table with index `idx_events_organizer_id` to establish tenant ownership boundaries.
+    - Verified all 4 database consistency checks pass cleanly (`pnpm db:check`).
+  - **Admin Suite & Fraud Mitigation (`apps/api/src/modules/admin`)**:
+    - Implemented `AdminController` with all routes guarded by `JwtAuthGuard` and `RolesGuard` restricted to `UserRole.ADMIN`.
+    - `PATCH /api/v1/admin/orders/:orderId/flag`: Marks order status as `FLAGGED` and increments `seedVersion` on all associated tickets inside a database transaction, instantly invalidating HMAC-SHA256 dynamic QR tokens at the turnstiles.
+    - `DELETE /api/v1/admin/tickets/:ticketId`: Revokes ticket (`status = 'REVOKED'`), increments `seedVersion`, restores `EventSeat.status = 'AVAILABLE'` transactionally, invokes `RedisScriptsWrapper.unsellSeats` to remove the seat from `seat_sold:{eventId}`, and broadcasts `AVAILABLE` state to real-time clients across channels `seat-updates:{eventId}` and `seat.state`. Includes guard against re-revoking already revoked tickets.
+    - `GET & PUT /api/v1/admin/settings/commission`: Reads and updates global platform commission rate bounded between 0% and 50%, backing `PlatformSettingsPort`.
+    - `PATCH /api/v1/admin/users/:userId/suspend`: Suspends user accounts (`isSuspended = true`) and revokes all issued refresh tokens in `refresh_tokens`.
+    - `PATCH /api/v1/admin/organizers/:userId/approve`: Approves organizer accounts and provisions unique `organizerTenantId`.
+    - `GET /api/v1/admin/audit-logs`: Exposes paginated, filterable audit trail by `action`, `actorId`, and `entityType`.
+  - **Audit Logging Subsystem (`AuditService` & `AuditLogInterceptor`)**:
+    - Created `AuditService` exposing `recordLog` and `getLogs` with zero update/delete capabilities.
+    - Provided `AUDIT_LOG_REPOSITORY` with a runtime Proxy guard rejecting any mutation attempts (`update`, `delete`, `remove`, `softDelete`, `clear`).
+    - Implemented `AuditLogInterceptor` for automated mutation logging across administrative and sensitive platform operations (bound to `GateController`).
+    - Bound `AuthService` token replay detection to log `TOKEN_REUSE_DETECTED` into audit trail.
+  - **Organizer Analytics API (`apps/api/src/modules/analytics`)**:
+    - `GET /api/v1/organizer/analytics/:eventId`: Protected for `ORGANIZER` and `ADMIN` roles. Enforces strict tenant ownership isolation (`event.organizerId === user.organizerTenantId || event.organizerId === user.id`), returning `403 Forbidden` for other organizers while permitting `ADMIN` bypass.
+    - Computes minor-unit `totalRevenue`, `ticketsSold`, venue `totalCapacity`, `occupancyRate` percentage, 5-minute bucketed entry throughput from `gate_scans` (`result = 'VALID'`), real-time Redis seat holds via `RedisScriptsWrapper.getCounts`, and secondary resale market statistics.
+  - **Comprehensive Verification Suite**:
+    - 21/21 Test suites and 145/145 tests passing in `@urticketbuddy/api` (including unit tests for `AuditService`, `AdminService`, `AnalyticsService`, and 5/5 Supertest E2E assertions in `admin-analytics.e2e-spec.ts`).
+    - Clean TypeScript compilation (`tsc --noEmit`), zero ESLint errors, and clean `pnpm graphify` AST extraction.
+
+---
+
 ## [UTB-22] - 2026-11-22
 
 ### Centralized Space to Hit and Test Endpoints (Endpoint Tester Workbench)
@@ -87,26 +140,34 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 ### Capped P2P Resale Marketplace API
 
 - **Ticket Key:** `UTB-15`
-- **Completion Date:** 2026-11-21
+- **Completion Date:** 2026-11-21 (Audit & Remediation completed 2026-11-24)
 - **Main Feature Branch:** `feat/UTB-15-resale-marketplace`
   - Sub-task 1: `feat/UTB-15-resale-marketplace-contracts-db`
   - Sub-task 2: `feat/UTB-15-resale-marketplace-api`
   - Sub-task 3: `feat/UTB-15-resale-marketplace-tests`
-- **Status:** Completed (Sub-tasks merged into `feat/UTB-15-resale-marketplace`; PR ready for review; `main` unmerged)
-- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `CHANGELOG.md`, `.engram`
+  - Sub-task 4: `feat/UTB-15-resale-marketplace-audit-remediation`
+- **Status:** Completed & Audited (All sub-tasks merged into `feat/UTB-15-resale-marketplace`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `apps/tester`, `README.md`, `CHANGELOG.md`, `.engram`
 - **Scope & Deliverables:**
   - **Contracts & 110% Price Cap (`packages/contracts/src/resale.ts`)**:
     - Implemented `maxResalePrice(faceValueMinor)` (`Math.floor((faceValueMinor * 110) / 100)`), `ResaleListingStatus`, `LedgerEntryKind`, `CreateResaleListingSchema`, `UpdateResaleListingSchema`, `PurchaseResaleListingSchema`, and `ErrorCode.RESALE_PRICE_CAP_EXCEEDED`.
+    - Added boundary and 32-bit limit unit tests in `packages/contracts/src/index.spec.ts`.
+    - Recompiled package build artifacts (`dist/`) ensuring runtime availability across workspace packages.
   - **Database Entities & Migration (`packages/db`)**:
     - Added `ResaleListing` (`resale_listings`) and `LedgerEntry` (`ledger_entries`) TypeORM entities with covering indexes (`idx_resale_listings_ticket_id`, `uq_resale_listings_active_ticket`, `idx_resale_listings_event_id`, `idx_resale_listings_seller_id`, `idx_ledger_entries_listing_id`).
     - Created reversible migration `1795136850000-UTB-15-init-resale-ledger.ts` with exact TypeORM hashed FK constraint names (`FK_6f3aa262c5f7947d2adb51d3f36`, `FK_23c4922b768155c827d32122952`, `FK_06ca5804051219422c87e507899`) and `ON DELETE RESTRICT` on `ledger_entries`.
+    - Passed all 4 database consistency checks (`pnpm db:check`).
   - **Resale Module (`apps/api/src/modules/resale`)**:
     - Added `PlatformSettingsPort` (`PLATFORM_SETTINGS_PORT`) + `DefaultPlatformSettingsProvider` (10% / `1000` bps).
     - Implemented `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings` (`@Public()`), and `POST /api/v1/resale/listings/:listingId/purchase` (`Idempotency-Key` deduplication, Redis `resale_lock:<listingId>`, `PaymentProvider` charge + compensating refund, PostgreSQL `SELECT ... FOR UPDATE` transaction, 2-row ledger split, `ticket.ownerId` transfer, `ticket.seedVersion += 1`, and `ticket.transferred` event).
+    - Hardened `ResaleService.updateListing` with relation loading fallbacks to prevent undefined entity property access.
+  - **Tester App Integration (`apps/tester`)**:
+    - Integrated the complete **Capped P2P Resale Marketplace** endpoint suite into the `@urticketbuddy/tester` workbench catalog (`POST /listings`, `PATCH /listings/:id`, `GET /listings`, `POST /listings/:id/purchase`).
+    - Verified clean production build (`pnpm --filter @urticketbuddy/tester build`).
   - **Testing & Documentation**:
-    - Added unit tests in `packages/contracts/src/index.spec.ts` and `apps/api/src/modules/resale/resale.service.spec.ts`.
-    - Added Supertest E2E suite in `apps/api/test/resale.e2e-spec.ts` covering 110% cap boundaries, checked-in rejection, concurrent buyer Redis lock race, balanced ledger entries, and post-resale QR invalidation at `/api/v1/gate/scan`.
-    - Added `apps/api/src/modules/resale/README.md` and updated `apps/api/README.md` and `CHANGELOG.md`.
+    - Added comprehensive unit tests in `packages/contracts/src/index.spec.ts` (10/10 passing) and `apps/api/src/modules/resale/resale.service.spec.ts` (18/18 passing).
+    - Added 8-scenario Supertest E2E integration suite in `apps/api/test/resale.e2e-spec.ts` (8/8 passing) covering cap enforcement, non-ISSUED/duplicate rejections, price lowering/withdrawal, pagination, eventId filtering, payment failure lock release, idempotency caching, and gate scanner token invalidation.
+    - Authored dedicated technical specification in `apps/api/src/modules/resale/README.md` and updated root `README.md`, `apps/tester/README.md`, and `CHANGELOG.md`.
 
 ---
 

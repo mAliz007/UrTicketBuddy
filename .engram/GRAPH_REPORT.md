@@ -1,8 +1,8 @@
-# Graph Report - . (2026-11-23)
+# Graph Report - . (2026-11-24)
 
 ## Corpus Check
 
-- 201 files · ~77,044 words
+- 201 files · ~78,608 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -21,7 +21,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `93877a4`
+- Built from Git commit: `52064cc`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)

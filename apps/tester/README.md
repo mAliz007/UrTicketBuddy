@@ -9,7 +9,7 @@ Runs on dedicated port **`5174`** (`apps/web` runs on `5173`).
 ## 🚀 Key Capabilities
 
 1. **Pre-configured Endpoint Catalog**:
-   - Complete route tree for **Authentication & RBAC**, **Venues & Seating Layouts**, **Events & Discovery**, **Seat Selection & Realtime Holds**, **Checkout & Orders**, **Tickets & Wallet**, **Gate Scanner Verification**, and **System Health & Readiness**.
+   - Complete route tree for **Authentication & RBAC**, **Venues & Seating Layouts**, **Events & Discovery**, **Seat Selection & Realtime Holds**, **Checkout & Orders**, **Tickets & Wallet**, **Gate Scanner Verification**, **Capped P2P Resale Marketplace**, and **System Health & Readiness**.
    - Pre-populated standard request bodies, query parameters, and required HTTP headers matching Zod contract definitions.
 
 2. **Multi-Environment Targeting**:
