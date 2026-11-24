@@ -200,7 +200,7 @@ UrTicketBuddy/
 │   ├── docker/          # Dockerfile and service configs (PgBouncer, Dockerfiles)
 │   ├── nginx/           # Nginx reverse proxy configuration with rate limiting & gzip
 │   ├── k8s/             # Kubernetes deployment manifests (kind-validated)
-│   ├── loadtests/       # k6 load testing scenarios
+│   ├── loadtests/       # 1,000-VU k6 stress scenarios, 5,000-seat seeder & DB/Redis invariant verifier
 │   └── scripts/         # Automation and database maintenance scripts
 └── docs/
     ├── adr/             # Architecture Decision Records (ADR-0001: Decisions D-1 to D-7)
