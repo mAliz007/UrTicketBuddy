@@ -502,4 +502,169 @@ export const ENDPOINT_CATEGORIES: EndpointCategory[] = [
       },
     ],
   },
+  {
+    name: "Admin Suite & Fraud Control",
+    description:
+      "System administration, fraud mitigation, ticket revocation with seat recovery, immutable audit trail, and platform settings",
+    endpoints: [
+      {
+        id: "admin-flag-order",
+        name: "Flag Order as Fraudulent",
+        description:
+          "Marks order status as FLAGGED and increments seedVersion on all tickets transactionally to invalidate HMAC QR tokens",
+        category: "Admin Suite & Fraud Control",
+        method: "PATCH",
+        path: "/api/v1/admin/orders/:orderId/flag",
+        requiresAuth: true,
+        defaultParams: {
+          orderId: "60000000-0000-0000-0000-000000000001",
+        },
+        defaultHeaders: {
+          "Content-Type": "application/json",
+        },
+        defaultBody: JSON.stringify(
+          {
+            reason: "Suspected credit card fraud reported by cardholder",
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "admin-revoke-ticket",
+        name: "Revoke Ticket & Restore Seat",
+        description:
+          "Revokes ticket (REVOKED), increments seedVersion, resets seat to AVAILABLE in Postgres, removes from Redis sold set, and broadcasts availability on seat-updates:{eventId}",
+        category: "Admin Suite & Fraud Control",
+        method: "DELETE",
+        path: "/api/v1/admin/tickets/:ticketId",
+        requiresAuth: true,
+        defaultParams: {
+          ticketId: "70000000-0000-0000-0000-000000000001",
+        },
+        defaultHeaders: {
+          "Content-Type": "application/json",
+        },
+        defaultBody: JSON.stringify(
+          {
+            reason: "Duplicate chargeback dispute upheld by payment processor",
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "admin-get-commission",
+        name: "Get Platform Commission Rate",
+        description:
+          "Reads global platform commission rate percent (backed by PlatformSettingsPort and platform_settings table)",
+        category: "Admin Suite & Fraud Control",
+        method: "GET",
+        path: "/api/v1/admin/settings/commission",
+        requiresAuth: true,
+      },
+      {
+        id: "admin-update-commission",
+        name: "Update Platform Commission Rate",
+        description:
+          "Updates global platform commission rate percentage (0% to 50%) and appends immutable audit log",
+        category: "Admin Suite & Fraud Control",
+        method: "PUT",
+        path: "/api/v1/admin/settings/commission",
+        requiresAuth: true,
+        defaultHeaders: {
+          "Content-Type": "application/json",
+        },
+        defaultBody: JSON.stringify(
+          {
+            commissionRatePercent: 12,
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "admin-suspend-user",
+        name: "Suspend User Account",
+        description:
+          "Suspends user account (isSuspended = true), immediately revokes all active refresh tokens, and writes audit record",
+        category: "Admin Suite & Fraud Control",
+        method: "PATCH",
+        path: "/api/v1/admin/users/:userId/suspend",
+        requiresAuth: true,
+        defaultParams: {
+          userId: "30000000-0000-0000-0000-000000000001",
+        },
+        defaultHeaders: {
+          "Content-Type": "application/json",
+        },
+        defaultBody: JSON.stringify(
+          {
+            reason:
+              "Terms of service violation - automated scalping bot detected",
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "admin-approve-organizer",
+        name: "Approve Organizer Tenant",
+        description:
+          "Promotes user to ORGANIZER role, provisions tenant identifier, and logs admin approval action",
+        category: "Admin Suite & Fraud Control",
+        method: "PATCH",
+        path: "/api/v1/admin/organizers/:userId/approve",
+        requiresAuth: true,
+        defaultParams: {
+          userId: "20000000-0000-0000-0000-000000000002",
+        },
+        defaultHeaders: {
+          "Content-Type": "application/json",
+        },
+        defaultBody: JSON.stringify(
+          {
+            reason: "KYC credentials and venue host documentation verified",
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "admin-get-audit-logs",
+        name: "Query Append-Only Audit Trail",
+        description:
+          "Queries paginated immutable audit logs with optional filtering by action, actorId, and entityType",
+        category: "Admin Suite & Fraud Control",
+        method: "GET",
+        path: "/api/v1/admin/audit-logs",
+        requiresAuth: true,
+        defaultParams: {
+          page: "1",
+          pageSize: "20",
+          action: "ORDER_FLAGGED",
+        },
+      },
+    ],
+  },
+  {
+    name: "Organizer Analytics",
+    description:
+      "Real-time event performance, revenue metrics, 5-minute gate entry throughput, Redis seat locks, and secondary resale turnover",
+    endpoints: [
+      {
+        id: "organizer-get-analytics",
+        name: "Get Event Performance & Revenue Analytics",
+        description:
+          "Returns minor-unit gross revenue, sold ticket counts, venue capacity, occupancy rate, 5-minute bucket entry velocity, Redis hold counts, and resale volume (tenant isolated for ORGANIZER, unrestricted for ADMIN)",
+        category: "Organizer Analytics",
+        method: "GET",
+        path: "/api/v1/organizer/analytics/:eventId",
+        requiresAuth: true,
+        defaultParams: {
+          eventId: "40000000-0000-0000-0000-000000000001",
+        },
+      },
+    ],
+  },
 ];

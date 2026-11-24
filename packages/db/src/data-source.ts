@@ -12,8 +12,15 @@ import { Ticket } from "./entities/ticket.entity";
 import { GateScan } from "./entities/gate-scan.entity";
 import { ResaleListing } from "./entities/resale-listing.entity";
 import { LedgerEntry } from "./entities/ledger-entry.entity";
+import { PlatformSetting } from "./entities/platform-setting.entity";
+import { AuditLog } from "./entities/audit-log.entity";
 
 const env = loadEnv();
+
+const useSsl =
+  Boolean(env.POSTGRES_SSL) ||
+  process.env.POSTGRES_SSL === "true" ||
+  Boolean(env.POSTGRES_HOST?.includes("neon.tech"));
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -22,6 +29,7 @@ export const AppDataSource = new DataSource({
   username: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
   database: env.POSTGRES_DB,
+  ssl: useSsl ? { rejectUnauthorized: false } : false,
   synchronize: false,
   logging: env.NODE_ENV === "development",
   entities: [
@@ -36,6 +44,8 @@ export const AppDataSource = new DataSource({
     GateScan,
     ResaleListing,
     LedgerEntry,
+    PlatformSetting,
+    AuditLog,
     __dirname + "/entities/**/!(*.spec|*.test).{js,ts}",
   ],
   migrations: [__dirname + "/migrations/**/!(*.spec|*.test).{js,ts}"],

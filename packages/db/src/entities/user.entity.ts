@@ -38,6 +38,9 @@ export class User {
   @Column({ type: "uuid", nullable: true })
   organizerTenantId!: string | null;
 
+  @Column({ type: "boolean", default: false })
+  isSuspended!: boolean;
+
   @CreateDateColumn({ type: "timestamp with time zone" })
   createdAt!: Date;
 

@@ -1,20 +1,18 @@
 name: CD Pipeline
 
 on:
-  # Paused automatic post-CI deployment triggers to conserve GitHub Actions credits.
-  # Trigger manually via GitHub Actions UI -> "Run workflow" when ready to deploy.
   workflow_dispatch:
     inputs:
       target_commit:
         description: "Git commit SHA to deploy (defaults to HEAD of main)"
         required: false
         default: ""
-  # workflow_run:
-  #   workflows: ["CI Pipeline"]
-  #   types:
-  #     - completed
-  #   branches:
-  #     - main
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+    branches:
+      - main
 
 # Ensure production deployments run sequentially and never overlap
 concurrency:

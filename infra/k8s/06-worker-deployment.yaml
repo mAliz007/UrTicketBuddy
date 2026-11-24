@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utb-worker
+  namespace: urticketbuddy
+  labels:
+    app: utb-worker
+    app.kubernetes.io/component: queue-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: utb-worker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: utb-worker
+    spec:
+      containers:
+        - name: worker
+          image: urticketbuddy/worker:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3002
+              name: health
+          envFrom:
+            - configMapRef:
+                name: utb-config
+            - secretRef:
+                name: utb-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 3002
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 3002
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 2

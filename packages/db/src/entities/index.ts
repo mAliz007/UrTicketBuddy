@@ -9,3 +9,5 @@ export * from "./ticket.entity";
 export * from "./gate-scan.entity";
 export * from "./resale-listing.entity";
 export * from "./ledger-entry.entity";
+export * from "./platform-setting.entity";
+export * from "./audit-log.entity";

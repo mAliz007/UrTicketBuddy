@@ -21,6 +21,10 @@ export class Event {
   @Column({ type: "uuid" })
   venueId!: string;
 
+  @Index("idx_events_organizer_id")
+  @Column({ type: "varchar", length: 255, nullable: true })
+  organizerId?: string | null;
+
   @Column({ type: "varchar", length: 255 })
   name!: string;
 

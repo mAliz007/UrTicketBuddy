@@ -5,6 +5,7 @@ export enum OrderStatus {
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
   REFUNDED = "REFUNDED",
+  FLAGGED = "FLAGGED",
 }
 
 export const CheckoutRequestSchema = z

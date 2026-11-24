@@ -9,3 +9,6 @@ export * from "./orders";
 export * from "./auth";
 export * from "./tickets";
 export * from "./resale";
+export * from "./admin";
+export * from "./analytics";
+export * from "./media";

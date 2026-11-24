@@ -1,8 +1,10 @@
 import {
   Injectable,
   Inject,
+  Optional,
   ConflictException,
   UnauthorizedException,
+  ForbiddenException,
   BadRequestException,
   NotFoundException,
   Logger,
@@ -12,13 +14,13 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import * as crypto from "crypto";
 import type { Response } from "express";
-import { User, RefreshToken } from "@urticketbuddy/db";
+import { User, RefreshToken, AuditLog } from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import {
   ErrorCode,
   UserRole,
   RegisterRequestSchema,
-  RegisterRequest,
+  RegisterRequestInput,
   LoginRequestSchema,
   LoginRequest,
   AuthResponse,
@@ -31,6 +33,7 @@ import {
 import {
   USER_REPOSITORY,
   REFRESH_TOKEN_REPOSITORY,
+  AUDIT_LOG_REPOSITORY,
 } from "../../database/database.tokens";
 
 @Injectable()
@@ -43,9 +46,15 @@ export class AuthService {
     @Inject(REFRESH_TOKEN_REPOSITORY)
     private readonly refreshTokenRepository: Repository<RefreshToken>,
     private readonly jwtService: JwtService,
+    @Optional()
+    @Inject(AUDIT_LOG_REPOSITORY)
+    private readonly auditLogRepository?: Repository<AuditLog>,
   ) {}
 
-  async register(data: RegisterRequest, res?: Response): Promise<AuthResponse> {
+  async register(
+    data: RegisterRequestInput,
+    res?: Response,
+  ): Promise<AuthResponse> {
     const parsed = RegisterRequestSchema.safeParse(data);
     if (!parsed.success) {
       throw new BadRequestException({
@@ -120,6 +129,13 @@ export class AuthService {
       });
     }
 
+    if (user.isSuspended) {
+      throw new ForbiddenException({
+        code: ErrorCode.FORBIDDEN,
+        message: "User account is suspended",
+      });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException({
@@ -177,6 +193,23 @@ export class AuthService {
         { familyId: storedToken.familyId },
         { isRevoked: true },
       );
+      if (this.auditLogRepository) {
+        try {
+          const entry = this.auditLogRepository.create({
+            actorId: storedToken.userId,
+            actorRole: "CUSTOMER",
+            action: "TOKEN_REUSE_DETECTED",
+            entityType: "RefreshToken",
+            entityId: storedToken.familyId,
+            summary: `Token reuse detected for family ${storedToken.familyId}. All active sessions revoked.`,
+            beforeState: { familyId: storedToken.familyId, isRevoked: false },
+            afterState: { familyId: storedToken.familyId, isRevoked: true },
+          });
+          await this.auditLogRepository.save(entry);
+        } catch (auditErr) {
+          this.logger.warn(`Failed to audit token reuse: ${auditErr}`);
+        }
+      }
       if (res) {
         this.clearRefreshTokenCookie(res);
       }
@@ -201,6 +234,13 @@ export class AuthService {
       throw new UnauthorizedException({
         code: ErrorCode.UNAUTHORIZED,
         message: "User not found",
+      });
+    }
+
+    if (user.isSuspended) {
+      throw new ForbiddenException({
+        code: ErrorCode.FORBIDDEN,
+        message: "User account is suspended",
       });
     }
 

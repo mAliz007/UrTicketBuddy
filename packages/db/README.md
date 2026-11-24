@@ -32,7 +32,20 @@ pnpm db:generate src/migrations/UTB-<n>-<description>
 
 # Run consistency checks (PK, unindexed FK, synchronize flag, Mongoose indexes)
 pnpm db:check
+
+# Run nightly data-level integrity checks (ledger mismatch, orphans, double booking, status audits)
+pnpm db:check:data
 ```
+
+### Nightly Data-Level Integrity Checker (`pnpm db:check:data`)
+
+Audits operational data consistency across tables:
+
+1. **Financial & Ledger Integrity**: Ensures `totalAmount` equals the sum of `order_items.price` and rejects any negative currency values.
+2. **Referential & Orphan Audits**: Discovers orphaned `order_items`, `tickets`, and `gate_scans`.
+3. **Seat State & Double-Booking Protection**: Prevents multiple active tickets (`ISSUED` or `CHECKED_IN`) for the same seat, and catches seats marked `AVAILABLE` that possess active tickets.
+4. **Ticket Lifecycle Audits**: Enforces valid ticket status values (per D-2) and ensures `CHECKED_IN` tickets have corresponding valid gate scan audit entries.
+5. **Venue & Event Temporal Consistency**: Verifies venue references and ensures chronological event dates (`startDate <= endDate`).
 
 ---
 
@@ -57,16 +70,19 @@ Example:
 - `1794836850000-UTB-9-init-venues-events.ts`: Venues, Events, and EventSeats tables with foreign keys and covering indexes.
 - `1794936850000-UTB-10-init-orders.ts`: Orders and OrderItems tables with foreign keys, covering indexes, and monetary precision.
 - `1795036850000-UTB-14-init-tickets-gate-scans.ts`: Tickets and GateScans tables with foreign keys, covering indexes, and status tracking.
+- `1795136850000-UTB-16-init-admin-audit.ts`: Platform settings table (`platform_settings`), append-only audit trail (`audit_logs`) secured with PostgreSQL trigger `trg_audit_logs_immutable`, and `organizerId` column on `events`.
 
 ### Entities
 
 - `Venue`: Physical venue metadata and reference to MongoDB layout document (`layoutMongoId`).
-- `Event`: Event instance belonging to a venue (`venueId` FK).
+- `Event`: Event instance belonging to a venue (`venueId` FK, optional `organizerId` tenant identifier).
 - `EventSeat`: Individual seat coordinate and tier record belonging to an event (`eventId` FK, `seatId` deterministic `<section>-<row>-<number>`).
 - `Order`: Customer order record with total amount, currency, status, and event association (`eventId` FK, `userId` index).
 - `OrderItem`: Line item connecting an order to an individual event seat (`orderId` FK, `eventSeatId` FK, `price`).
 - `Ticket`: Digital admission ticket with cryptographic seed version, face value, and status (`ISSUED`, `CHECKED_IN`, `VOID`, `REVOKED`).
 - `GateScan`: Turnstile scan audit trail recording scan timestamps, scanner operator, and validation result (`VALID`, `USED`, `INVALID`, `EXPIRED`, `WRONG_EVENT`).
+- `PlatformSetting`: Dynamic key-value configuration table storing system parameters such as `commission_rate_percent` (seeding default `'10'`).
+- `AuditLog`: Immutable append-only audit log recording administrative interventions, fraud flags, revocations, and system actions.
 
 ---
 

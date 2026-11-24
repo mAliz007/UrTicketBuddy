@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { Test } from "@nestjs/testing";
+import { Test, TestingModule } from "@nestjs/testing";
 import { RedisKeys, RedisScriptsWrapper } from "@urticketbuddy/redis-scripts";
 import Redis from "ioredis";
 import { GenericContainer, StartedTestContainer } from "testcontainers";
@@ -18,6 +18,7 @@ describe("ExpiryService (Testcontainers Redis Integration)", () => {
   let subscriber: Redis;
   let redisScripts: RedisScriptsWrapper;
   let expiryService: ExpiryService;
+  let moduleRef: TestingModule;
 
   beforeAll(async () => {
     container = await new GenericContainer("redis/redis-stack-server:latest")
@@ -31,7 +32,7 @@ describe("ExpiryService (Testcontainers Redis Integration)", () => {
     subscriber = new Redis({ host, port, maxRetriesPerRequest: 3 });
     redisScripts = new RedisScriptsWrapper(redis);
 
-    const moduleRef = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       providers: [
         ExpiryService,
         { provide: WORKER_REDIS_CLIENT, useValue: redis },
@@ -49,6 +50,9 @@ describe("ExpiryService (Testcontainers Redis Integration)", () => {
     }
     if (redis) {
       await redis.quit();
+    }
+    if (moduleRef) {
+      await moduleRef.close();
     }
     if (container) {
       await container.stop();
