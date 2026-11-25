@@ -1,18 +1,19 @@
 name: k6 Stress & Load Tests (UTB-17)
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "infra/loadtests/**"
-      - "packages/redis-scripts/**"
-      - "apps/api/src/modules/checkout/**"
-      - "apps/api/src/modules/orders/**"
-      - "apps/realtime/**"
-      - ".github/workflows/loadtest.yml"
-  schedule:
-    - cron: "0 3 * * *"
+  # Paused automatic CI runs for k6 load tests [UTB-17]
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "infra/loadtests/**"
+  #     - "packages/redis-scripts/**"
+  #     - "apps/api/src/modules/checkout/**"
+  #     - "apps/api/src/modules/orders/**"
+  #     - "apps/realtime/**"
+  #     - ".github/workflows/loadtest.yml"
+  # schedule:
+  #   - cron: "0 3 * * *"
   workflow_dispatch:
     inputs:
       vus:
