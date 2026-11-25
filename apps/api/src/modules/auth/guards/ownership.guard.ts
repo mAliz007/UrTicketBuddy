@@ -15,30 +15,42 @@ export class OwnershipGuard implements CanActivate {
     if (!user) {
       throw new ForbiddenException({
         code: ErrorCode.FORBIDDEN,
-        message: "Forbidden: user context not found",
+        message: "Tenant context missing: user unauthenticated",
       });
     }
 
-    // Admins bypass ownership checks
+    // Admins bypass tenant isolation with global platform access
     if (user.role === UserRole.ADMIN) {
       return true;
     }
 
-    // Check ownership against request params, body, or headers
-    const resourceOwnerId =
-      request.params?.userId ||
+    // Check organizer / tenant isolation
+    const targetTenantId =
       request.params?.organizerId ||
+      request.params?.tenantId ||
+      request.query?.organizerId ||
+      request.query?.tenantId ||
       request.body?.organizerTenantId ||
-      request.body?.userId;
+      request.body?.organizerId ||
+      request.body?.tenantId ||
+      request.headers?.["x-tenant-id"];
 
-    if (!resourceOwnerId) {
-      return true;
+    const userTenantId =
+      user.organizerTenantId || user.tenantId || user.id || user.userId;
+
+    if (targetTenantId && userTenantId && targetTenantId !== userTenantId) {
+      throw new ForbiddenException({
+        code: ErrorCode.FORBIDDEN,
+        message:
+          "Cross-tenant access forbidden: resource belongs to another organizer",
+      });
     }
 
-    const matchesUser = user.id === resourceOwnerId;
-    const matchesTenant = user.organizerTenantId === resourceOwnerId;
+    // Check individual user resource ownership
+    const targetUserId = request.params?.userId || request.body?.userId;
+    const currentUserId = user.id || user.userId;
 
-    if (!matchesUser && !matchesTenant) {
+    if (targetUserId && currentUserId && targetUserId !== currentUserId) {
       throw new ForbiddenException({
         code: ErrorCode.FORBIDDEN,
         message: "Forbidden: you do not own this resource",

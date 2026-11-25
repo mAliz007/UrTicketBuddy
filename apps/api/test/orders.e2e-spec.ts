@@ -1,6 +1,9 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import request from "supertest";
+import { JwtService } from "@nestjs/jwt";
+import { loadEnv } from "@urticketbuddy/config";
+import { UserRole } from "@urticketbuddy/contracts";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
 import {
@@ -20,6 +23,7 @@ jest.setTimeout(30000);
 
 describe("Orders & Checkout API (e2e - Supertest)", () => {
   let app: INestApplication;
+  let customerToken: string;
 
   const eventId = "e0000000-0000-0000-0000-000000000001";
   const userId = "usr-vip-999";
@@ -204,6 +208,15 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
     app.setGlobalPrefix("api/v1");
     app.useGlobalFilters(new GlobalHttpExceptionFilter());
     await app.init();
+
+    const env = loadEnv();
+    const jwtService = new JwtService({ secret: env.JWT_SECRET });
+    customerToken = jwtService.sign({
+      sub: userId,
+      id: userId,
+      email: "customer@example.com",
+      role: UserRole.CUSTOMER,
+    });
   });
 
   afterAll(async () => {
@@ -372,6 +385,7 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
 
     const res = await request(app.getHttpServer())
       .get(`/api/v1/orders/${orderId}`)
+      .set("Authorization", `Bearer ${customerToken}`)
       .expect(200);
 
     expect(res.body.id).toBe(orderId);
@@ -382,6 +396,7 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
   it("GET /api/v1/orders/:id - should return 404 Not Found for non-existent order", async () => {
     const res = await request(app.getHttpServer())
       .get("/api/v1/orders/non-existent-order-id")
+      .set("Authorization", `Bearer ${customerToken}`)
       .expect(404);
 
     expect(res.body.error).toBeDefined();

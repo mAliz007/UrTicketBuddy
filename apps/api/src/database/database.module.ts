@@ -55,7 +55,7 @@ let redisClientInstance: Redis | null = null;
             await AppDataSource.initialize();
           } catch (err) {
             console.warn(
-              "Warning: AppDataSource failed to connect: " +
+              "Warning: TypeORM failed to initialize database connection: " +
                 (err instanceof Error ? err.message : String(err)),
             );
           }
@@ -85,20 +85,6 @@ let redisClientInstance: Redis | null = null;
       inject: [DATA_SOURCE],
     },
     {
-      provide: ORDER_REPOSITORY,
-      useFactory: (dataSource: DataSource) => {
-        return dataSource.getRepository(Order);
-      },
-      inject: [DATA_SOURCE],
-    },
-    {
-      provide: ORDER_ITEM_REPOSITORY,
-      useFactory: (dataSource: DataSource) => {
-        return dataSource.getRepository(OrderItem);
-      },
-      inject: [DATA_SOURCE],
-    },
-    {
       provide: USER_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
         return dataSource.getRepository(User);
@@ -109,6 +95,20 @@ let redisClientInstance: Redis | null = null;
       provide: REFRESH_TOKEN_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
         return dataSource.getRepository(RefreshToken);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: ORDER_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(Order);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: ORDER_ITEM_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(OrderItem);
       },
       inject: [DATA_SOURCE],
     },
