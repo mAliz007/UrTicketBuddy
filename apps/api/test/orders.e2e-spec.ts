@@ -85,6 +85,12 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
       }
       return { affected: criteria?.id?._value?.length || 1 };
     }),
+    find: jest.fn(async (entityClass: any, options: any) => {
+      const ids = options?.where?.id?._value || [];
+      return Array.from(eventSeatsStore.values()).filter((s) =>
+        ids.includes(s.id),
+      );
+    }),
   };
 
   const mockDataSource = {
@@ -178,6 +184,12 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
         return { success: true, code: "OK", soldSeats: seatIds };
       },
     ),
+    unsellSeats: jest.fn(async (eId: string, seatIds: string[]) => {
+      for (const sId of seatIds) {
+        redisSold.delete(sId);
+      }
+      return { success: true, count: seatIds.length };
+    }),
   };
 
   beforeAll(async () => {

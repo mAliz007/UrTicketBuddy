@@ -90,11 +90,7 @@ jobs:
       - name: Install dependencies & build packages
         run: |
           pnpm install --frozen-lockfile
-          pnpm --filter @urticketbuddy/config build
-          pnpm --filter @urticketbuddy/contracts build
-          pnpm --filter @urticketbuddy/venue-engine build
-          pnpm --filter @urticketbuddy/redis-scripts build
-          pnpm --filter @urticketbuddy/db build
+          pnpm build
 
       - name: Run database migrations & seed 5,000 seats + 1,000 JWTs
         run: |
@@ -106,13 +102,17 @@ jobs:
 
       - name: Start API server & run 50-VU 30s k6 smoke test
         run: |
-          pnpm --filter @urticketbuddy/api build
           node apps/api/dist/main.js &
           API_PID=$!
           for i in $(seq 1 30); do
             if curl -sf http://localhost:3000/api/v1/health >/dev/null; then break; fi
             sleep 1
           done
+          if ! curl -sf http://localhost:3000/api/v1/health >/dev/null; then
+            echo "API server failed to become healthy within 30s"
+            kill $API_PID || true
+            exit 1
+          fi
           k6 run --env VUS=50 --env DURATION=30s --summary-export=infra/loadtests/pr-smoke-summary.json infra/loadtests/random-seats-1000.js
           kill $API_PID || true
 
@@ -196,7 +196,15 @@ jobs:
           API_PID=$!
           node apps/realtime/dist/main.js &
           RT_PID=$!
-          sleep 5
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/api/v1/health >/dev/null; then break; fi
+            sleep 1
+          done
+          if ! curl -sf http://localhost:3000/api/v1/health >/dev/null; then
+            echo "API server failed to become healthy within 30s"
+            kill $API_PID $RT_PID || true
+            exit 1
+          fi
 
           k6 run --env VUS=$VUS_COUNT --summary-export=infra/loadtests/same-seat-1000-summary.json infra/loadtests/same-seat-1000.js
           pnpm --filter @urticketbuddy/db exec ts-node ../../infra/loadtests/seed-loadtest.ts

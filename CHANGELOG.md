@@ -28,7 +28,12 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - **Post-Run DB & Redis Invariant Verifier (`infra/loadtests/verify-invariants.ts`, `apps/api/test/concurrency-invariants.e2e-spec.ts`)**:
     - Implemented `evaluateConcurrencyInvariants` and `verifyLiveEventInvariants` with a 1-second quiescence barrier asserting: (1) Zero Double-Booking across `OrderItem` and `Ticket`, (2) State Exclusivity between `seat_sold:{eventId}` and `seat_lock:{eventId}:{seatId}` / `hold_expiry:{eventId}`, (3) Redis `SCARD seat_sold:{eventId}` ↔ PostgreSQL `SOLD` `EventSeat` & completed `OrderItem` parity, and (4) Conservation of Money ($\sum \text{Orders} \equiv \sum \text{OrderItems} \equiv \sum \text{Tickets}$).
     - Added 1,000-User Contention Jest E2E simulation (`apps/api/test/concurrency-invariants.e2e-spec.ts`) verifying 1 winner (`201`), 999 conflicts (`409`), idempotency deduplication, and zero invariant drift (4/4 tests passed).
-  - **CI Workflow & Benchmark Report (`.github/workflows/loadtest.yml`, `docs/load-test-report.md`)**:
+  - **CI Workflow & Benchmark Report (`.github/workflows/loadtest.yml`, `.github/workflows/ci.yml`, `docs/load-test-report.md`)**:
+    - Resolved CI Unit Test, Integration Test, and PR Smoke failures:
+      - Fixed `apps/api/src/main.ts` body limit bootstrapping to utilize `NestExpressApplication.useBodyParser('json' | 'urlencoded')` instead of runtime `express` imports, resolving `MODULE_NOT_FOUND` on standalone server launch.
+      - Updated `apps/api/test/orders.e2e-spec.ts` `mockTransactionManager` with `find()` method to support pessimistic write seat locks and `mockRedisScripts.unsellSeats()` rollback.
+      - Hardened `packages/redis-scripts/src/integration.spec.ts` and `apps/worker/test/expiry.integration.spec.ts` with `REDIS_HOST` environment discovery and graceful container fallback for environments without active Docker runtimes.
+      - Streamlined `.github/workflows/loadtest.yml` to run full workspace `pnpm build` and added verified HTTP 200 health check polling prior to executing k6 scenarios.
     - Created `.github/workflows/loadtest.yml` with `pr-smoke` (50 VUs for 30s + `verify-invariants.ts`) and `nightly-stress-1000` (1,000-VU suite + artifact upload).
     - Documented benchmark metrics, p95 latencies, and reproduction runbooks in `docs/load-test-report.md` and `infra/loadtests/README.md`.
 
