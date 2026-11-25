@@ -58,7 +58,6 @@ export interface PurchaseListingResult {
   status: ResaleListingStatus | string;
   transactionId?: string;
 }
-
 const RESALE_LOCK_TTL_SECONDS = 300;
 const IDEMPOTENCY_TTL_SECONDS = 86_400;
 const UUID_REGEX =
@@ -220,7 +219,6 @@ export class ResaleService {
         listing.ticket = ticket;
       }
     }
-
     if (listing.sellerId !== sellerId) {
       throw new ForbiddenException({
         code: ErrorCode.FORBIDDEN,

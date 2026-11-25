@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from "@nestjs/common";
+import { ThrottlerException } from "@nestjs/throttler";
 import { Response, Request } from "express";
 import { ErrorCode } from "@urticketbuddy/contracts";
 
@@ -23,11 +24,20 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     let message = "An unexpected error occurred";
     let details: unknown = undefined;
 
-    if (exception instanceof HttpException) {
+    if (exception instanceof ThrottlerException) {
+      status = HttpStatus.TOO_MANY_REQUESTS;
+      code = ErrorCode.TOO_MANY_REQUESTS;
+      message = exception.message || "Too many requests";
+      response.setHeader("Retry-After", "60");
+    } else if (exception instanceof HttpException) {
       status = exception.getStatus();
       const res = exception.getResponse();
 
-      if (typeof res === "string") {
+      if (status === HttpStatus.TOO_MANY_REQUESTS) {
+        code = ErrorCode.TOO_MANY_REQUESTS;
+        message = "Too many requests";
+        response.setHeader("Retry-After", "60");
+      } else if (typeof res === "string") {
         message = res;
       } else if (typeof res === "object" && res !== null) {
         const resObj = res as Record<string, unknown>;
@@ -48,7 +58,11 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         details = resObj.details;
       }
     } else if (exception instanceof Error) {
-      message = exception.message;
+      this.logger.error(
+        `Unhandled internal server error: ${exception.message}`,
+        exception.stack,
+      );
+      message = "An unexpected error occurred";
     }
 
     const requestId = (request.headers["x-request-id"] as string) || undefined;

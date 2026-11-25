@@ -34,6 +34,38 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-21] - 2026-11-23
+
+### Security Audit, Route Authorization Matrix & Production Hardening
+
+- **Ticket Key:** `UTB-21`
+- **Completion Date:** 2026-11-23
+- **Main Feature Branch:** `chore/UTB-21-security-hardening`
+  - Sub-task 1: `chore/UTB-21-security-hardening-http-throttling` (Helmet, CORS allowlist, 100kb body limit, ThrottlerException RFC 6585 mapping, LogRedactionInterceptor, Nginx rate limit zones)
+  - Sub-task 2: `chore/UTB-21-security-hardening-auth-matrix-tests` (Route metadata scanner, 5-persona Role × Route Matrix test suite, OwnershipGuard tenant isolation, token replay verification)
+  - Sub-task 3: `chore/UTB-21-security-hardening-ci-owasp-docs` (CI supply-chain security workflows, OWASP Top 10 audit report docs/security-audit.md)
+- **Status:** Completed & Verified (Backend & Security Phase Only: 52 automated route security tests passing, 100% monorepo pass)
+- **Packages & Directories Modified:** `packages/config/`, `apps/api/`, `infra/nginx/`, `.github/workflows/`, `docs/`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **HTTP Hardening, Body Limits & Rate Limiting (`apps/api`, `infra/nginx`)**:
+    - Integrated `helmet` in `apps/api/src/main.ts` for automated security headers (HSTS, CSP, X-Frame-Options, X-Content-Type-Options, DNS Prefetch Control).
+    - Enforced strict origin validation via `CORS_ORIGINS` loaded through `@urticketbuddy/config` Zod schema, rejecting wildcards and unauthorized origins.
+    - Added body-parser request size limit (`100kb`) for JSON and URL-encoded bodies in `apps/api/src/main.ts` to neutralize body parser payload inflation attacks.
+    - Updated `GlobalHttpExceptionFilter` to intercept NestJS `ThrottlerException` and map it to `{ error: { code: ErrorCode.TOO_MANY_REQUESTS, message, requestId } }` with standard HTTP `Retry-After: 60` response header per RFC 6585.
+    - Implemented `LogRedactionInterceptor` (`apps/api/src/common/interceptors/log-redaction.interceptor.ts`) recursively scrubbing sensitive credentials (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`, `totpSecret`) from logging streams.
+    - Updated `infra/nginx/nginx.conf` with dedicated `limit_req_zone` definitions (`auth_limit` 5r/s [burst 10], `checkout_limit` 10r/s [burst 15], `orders_limit` 10r/s [burst 20], `gate_scan_limit` 30r/s [burst 50], `resale_limit` 10r/s [burst 20]) and location routing rules.
+  - **Automated Route Metadata Audit Scanner & Role × Route Matrix (`apps/api/test/security-audit.e2e-spec.ts`)**:
+    - Built programmatic route scanner auditing all registered NestJS controllers using `ModulesContainer` and `Reflector`, verifying that every route is explicitly marked with `@Public()` or guarded by `JwtAuthGuard` and `@Roles(...)`.
+    - Executed matrix verification across 5 user personas (`Unauthenticated`, `CUSTOMER`, `GATE_STAFF`, `ORGANIZER`, `ADMIN`) across 12+ API modules, asserting exact 401 Unauthorized, 403 Forbidden, and 200/201 Success responses.
+    - Verified multi-tenant organizer isolation via `OwnershipGuard` ensuring non-owning organizers receive 403 Forbidden while resource owners and admins succeed.
+    - Re-verified refresh token family revocation upon token reuse detection and sensitive credential log scrubbing across interceptors.
+    - All 52 automated security audit tests passing in `security-audit.e2e-spec.ts`.
+  - **CI Supply-Chain Gates & OWASP Top 10 Report (`docs/security-audit.md`, `.github/workflows`)**:
+    - Created dedicated `.github/workflows/security.yml` and added additive security job to `.github/workflows/ci.yml` running `pnpm audit --audit-level=high` and automated route security tests.
+    - Authored exhaustive `docs/security-audit.md` mapping OWASP Top 10 categories (A01–A10) to exact code implementations, guards, Lua scripts, and passing test cases.
+
+---
+
 ## [UTB-16] - 2026-11-23
 
 ### Admin Suite, Fraud & Ticket Revocation Engine, Append-Only Audit Log & Organizer Analytics

@@ -1,6 +1,9 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import request from "supertest";
+import { JwtService } from "@nestjs/jwt";
+import { loadEnv } from "@urticketbuddy/config";
+import { UserRole } from "@urticketbuddy/contracts";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
 import {
@@ -18,6 +21,7 @@ jest.setTimeout(30000);
 
 describe("Venues & Events API (e2e - Supertest)", () => {
   let app: INestApplication;
+  let organizerToken: string;
 
   // In-memory relational storage
   const venuesStore = new Map<string, any>();
@@ -138,6 +142,16 @@ describe("Venues & Events API (e2e - Supertest)", () => {
     app.setGlobalPrefix("api/v1");
     app.useGlobalFilters(new GlobalHttpExceptionFilter());
     await app.init();
+
+    const env = loadEnv();
+    const jwtService = new JwtService({ secret: env.JWT_SECRET });
+    organizerToken = jwtService.sign({
+      sub: "10000000-0000-4000-a000-000000000001",
+      id: "10000000-0000-4000-a000-000000000001",
+      email: "organizer@example.com",
+      role: UserRole.ORGANIZER,
+      organizerTenantId: "10000000-0000-4000-a000-000000000001",
+    });
   });
 
   afterAll(async () => {
@@ -199,6 +213,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
 
     const res = await request(app.getHttpServer())
       .post("/api/v1/venues")
+      .set("Authorization", `Bearer ${organizerToken}`)
       .send(invalidPayload)
       .expect(400);
 
@@ -216,6 +231,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
 
     const res = await request(app.getHttpServer())
       .post("/api/v1/venues")
+      .set("Authorization", `Bearer ${organizerToken}`)
       .send(validVenuePayload)
       .expect(201);
 
@@ -231,6 +247,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
     // Create venue first
     const createRes = await request(app.getHttpServer())
       .post("/api/v1/venues")
+      .set("Authorization", `Bearer ${organizerToken}`)
       .send({
         name: "Joined Arena",
         location: "Central City",
@@ -254,6 +271,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
     // 1. Create Venue with valid layout (150 grid seats + 8 table seats = 158 seats)
     const venueRes = await request(app.getHttpServer())
       .post("/api/v1/venues")
+      .set("Authorization", `Bearer ${organizerToken}`)
       .send({
         name: "Grand Pavilion",
         location: "Star City",
@@ -266,6 +284,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
     // 2. Create Event linked to Venue
     const eventRes = await request(app.getHttpServer())
       .post("/api/v1/events")
+      .set("Authorization", `Bearer ${organizerToken}`)
       .send({
         venueId,
         name: "Symphony Orchestra Concert",
@@ -278,6 +297,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
     // 3. Generate seats
     const genRes = await request(app.getHttpServer())
       .post(`/api/v1/events/${eventId}/generate-seats`)
+      .set("Authorization", `Bearer ${organizerToken}`)
       .expect(200);
 
     expect(genRes.body).toEqual({
