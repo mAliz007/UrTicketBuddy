@@ -15,6 +15,7 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 2: `chore/UTB-21-security-hardening-auth-matrix-tests` (Route metadata scanner, 5-persona Role × Route Matrix test suite, OwnershipGuard tenant isolation, token replay verification)
   - Sub-task 3: `chore/UTB-21-security-hardening-ci-owasp-docs` (CI supply-chain security workflows, OWASP Top 10 audit report docs/security-audit.md)
 - **Status:** Completed & Verified (Backend & Security Phase Only: 52 automated route security tests passing, 100% monorepo pass)
+- **Hotfix (2026-11-25):** Added `express` to `@urticketbuddy/api` production dependencies (`apps/api/package.json`) and updated `pnpm-lock.yaml`, resolving runtime `MODULE_NOT_FOUND` error for `express` during containerized production deployment in OCI CD pipeline.
 - **Packages & Directories Modified:** `packages/config/`, `apps/api/`, `infra/nginx/`, `.github/workflows/`, `docs/`, `README.md`, `CHANGELOG.md`
 - **Scope & Deliverables:**
   - **HTTP Hardening, Body Limits & Rate Limiting (`apps/api`, `infra/nginx`)**:

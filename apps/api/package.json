@@ -25,6 +25,7 @@
     "@urticketbuddy/venue-engine": "workspace:*",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
+    "express": "^5.0.0",
     "helmet": "^8.3.0",
     "ioredis": "^5.5.0",
     "mongoose": "^9.12.1",
