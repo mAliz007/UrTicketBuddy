@@ -22,9 +22,13 @@ export const wsBroadcastLatencyMs = new Trend("ws_broadcast_latency_ms");
 export const options = {
   scenarios: {
     websocket_fanout_1000: {
-      executor: "constant-vus",
-      vus: TOTAL_VUS,
-      duration: __ENV.DURATION || "20s",
+      executor: "ramping-vus",
+      startVUs: 0,
+      stages: [
+        { duration: "5s", target: TOTAL_VUS },
+        { duration: __ENV.DURATION || "20s", target: TOTAL_VUS },
+        { duration: "3s", target: 0 },
+      ],
     },
   },
   thresholds: {

@@ -32,6 +32,17 @@ Executed automatically after every load test via `infra/loadtests/verify-invaria
    $$\text{SCARD}(\text{seat\_sold}:\{e\}) = |\text{EventSeats}(e, \text{status}=\text{'SOLD'})| = |\text{CompletedOrderItems}(e)|$$
 4. **Invariant 4 — 1,000-User Single-Seat Contention Determinism:**
    $$\text{Winners}(\text{HTTP } 201) = 1 \;\land\; \text{Conflicts}(\text{HTTP } 409) = 999 \;\land\; \text{ServerErrors}(\text{HTTP } 5\text{xx}) = 0$$
+5. **Invariant 5 — Conservation of Money & Financial Integrity:**
+   $$\sum_{i=1}^{N} \text{Order.totalAmount} \equiv \sum_{j=1}^{M} \text{OrderItem.price} \equiv \sum_{k=1}^{M} \frac{\text{Ticket.faceValueMinor}}{100}$$
+
+---
+
+## 4. Concurrency Hardening & Split-Brain Remediation
+
+- **Compensating Refunds on Failure:** If payment authorization succeeds but downstream Redis `confirm_sold.lua` or PostgreSQL transaction commits fail, `OrdersService` issues an immediate compensating refund (`refundPayment()`) and triggers `unsellSeats()` rollback in Redis, ensuring zero unrefunded charges.
+- **Relational Storage-Level Defense:** Partial unique index `uq_active_ticket_seat` on `tickets (eventId, eventSeatId) WHERE status IN ('ISSUED', 'CHECKED_IN')` guarantees that double bookings are impossible at the database engine level, even if the application cache were bypassed.
+- **Idempotency Deduplication:** Full deduplication caching (`idempotency:checkout:<key>`, TTL 24h) returns original order payloads on network retries without secondary charges.
+- **WebSocket Ingress Ramping:** Smooth connection staging (`ramping-vus` in `ws-fanout-1000.js`) eliminates TCP socket exhaustion during large fan-out tests.
 
 ---
 

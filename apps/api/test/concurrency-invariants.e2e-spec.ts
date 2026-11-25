@@ -97,10 +97,15 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
   // Single-threaded atomic transaction mutex simulating PostgreSQL FOR UPDATE row lock
   let pgTxChain: Promise<unknown> = Promise.resolve();
 
+  const genericRedisStorage = new Map<string, string>();
+
   const mockRedisClient = {
     status: "ready",
     publish: jest.fn(async () => 1),
     get: jest.fn(async (key: string) => {
+      if (genericRedisStorage.has(key)) {
+        return genericRedisStorage.get(key)!;
+      }
       const prefix = `seat_lock:{${eventId}}:`;
       if (key.startsWith(prefix)) {
         const seatId = key.slice(prefix.length);
@@ -108,8 +113,14 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
       }
       return null;
     }),
-    set: jest.fn(async () => "OK"),
-    del: jest.fn(async () => 1),
+    set: jest.fn(async (key: string, value: string) => {
+      genericRedisStorage.set(key, value);
+      return "OK";
+    }),
+    del: jest.fn(async (key: string) => {
+      genericRedisStorage.delete(key);
+      return 1;
+    }),
     eval: jest.fn(async () => 1),
     call: jest.fn(async () => 1),
     sadd: jest.fn(async () => 1),
@@ -396,8 +407,18 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
       soldEventSeats: Array.from(pgEventSeats.values())
         .filter((s) => s.status === "SOLD")
         .map((s) => ({ id: s.id, seatId: s.seatId, status: s.status })),
-      completedOrderItems: [...pgOrderItems],
-      activeTickets: [...pgTickets],
+      completedOrders: pgOrders.map((o) => ({
+        id: o.id,
+        totalAmount: o.totalAmount,
+      })),
+      completedOrderItems: pgOrderItems.map((item) => ({
+        ...item,
+        price: item.price || 1000,
+      })),
+      activeTickets: pgTickets.map((t) => ({
+        ...t,
+        faceValueMinor: 100000,
+      })),
       redisSoldSeatIds: Array.from(redisSoldSet),
       redisActiveLockSeatIds: Array.from(redisSeatLocks.keys()),
       redisHoldExpirySeatIds: Array.from(redisHoldExpiryZset.keys()),
@@ -529,6 +550,7 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
     expect(report.zeroDoubleBooking.passed).toBe(true);
     expect(report.stateExclusivity.passed).toBe(true);
     expect(report.redisPostgresParity.passed).toBe(true);
+    expect(report.conservationOfMoney.passed).toBe(true);
     expect(report.redisPostgresParity.redisSoldCount).toBe(1);
     expect(report.redisPostgresParity.postgresSoldSeatsCount).toBe(1);
     expect(report.redisPostgresParity.completedOrderItemsCount).toBe(1);
@@ -536,7 +558,7 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
     expect(pgTickets[0]!.status).toBe(TicketStatus.ISSUED);
   });
 
-  it("Supertest HTTP wave contention + multi-seat funnel preserves all 4 invariants", async () => {
+  it("Supertest HTTP wave contention + multi-seat funnel preserves all 4 invariants with idempotency deduplication", async () => {
     const users = generate1000VirtualUsers(env.JWT_SECRET).slice(0, 25);
     const httpSeat = "SEC-A-2-1";
 
@@ -574,8 +596,24 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
 
     expect(checkoutRes.body.status).toBe("COMPLETED");
 
+    // Idempotent retry returns identical order without error
+    const retryRes = await request(app.getHttpServer())
+      .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${winnerUser.token}`)
+      .set("x-user-id", winnerUser.userId)
+      .set("Idempotency-Key", `e2e-http-${winnerUser.userId}`)
+      .send({
+        eventId,
+        seatIds: [httpSeat],
+        paymentMethodToken: "tok_visa",
+      })
+      .expect(201);
+
+    expect(retryRes.body.id).toBe(checkoutRes.body.id);
+
     const report = evaluateConcurrencyInvariants(buildCurrentSnapshot());
     expect(report.passed).toBe(true);
+    expect(report.conservationOfMoney.passed).toBe(true);
     expect(report.redisPostgresParity.redisSoldCount).toBe(1);
   });
 
@@ -641,5 +679,29 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
     });
     expect(parityReport.passed).toBe(false);
     expect(parityReport.redisPostgresParity.passed).toBe(false);
+
+    // 4. Detect Conservation of Money drift
+    const moneyDriftReport = evaluateConcurrencyInvariants({
+      eventId,
+      soldEventSeats: [{ id: "s1", seatId: "SEC-A-1-1", status: "SOLD" }],
+      completedOrders: [{ id: "o1", totalAmount: 5000 }],
+      completedOrderItems: [
+        { id: "oi1", orderId: "o1", eventId, eventSeatId: "s1", price: 4000 },
+      ],
+      activeTickets: [
+        {
+          id: "t1",
+          eventId,
+          eventSeatId: "s1",
+          status: "ISSUED",
+          faceValueMinor: 500000,
+        },
+      ],
+      redisSoldSeatIds: ["SEC-A-1-1"],
+      redisActiveLockSeatIds: [],
+      redisHoldExpirySeatIds: [],
+    });
+    expect(moneyDriftReport.passed).toBe(false);
+    expect(moneyDriftReport.conservationOfMoney.passed).toBe(false);
   });
 });

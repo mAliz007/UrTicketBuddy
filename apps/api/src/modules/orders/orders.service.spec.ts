@@ -61,9 +61,14 @@ describe("OrdersService", () => {
   const mockRedisScripts = {
     getSnapshot: jest.fn(),
     confirmSold: jest.fn(),
+    unsellSeats: jest.fn().mockResolvedValue({ success: true }),
   };
 
   const mockTransactionManager = {
+    find: jest.fn(async () => [
+      { id: "seat-uuid-1", status: "AVAILABLE" },
+      { id: "seat-uuid-2", status: "AVAILABLE" },
+    ]),
     create: jest.fn((entityClass, data) => ({
       id: "ord-new-1",
       createdAt: new Date(),
@@ -212,7 +217,7 @@ describe("OrdersService", () => {
       ).rejects.toThrow(BadRequestException);
     });
 
-    it("should throw ConflictException if Redis confirmSold returns failure", async () => {
+    it("should issue compensating refund and throw ConflictException if Redis confirmSold returns failure", async () => {
       mockRedisScripts.getSnapshot.mockResolvedValue({
         holds: {
           [seatId1]: {
@@ -226,6 +231,7 @@ describe("OrdersService", () => {
         success: true,
         transactionId: "txn_123",
       });
+      const refundSpy = jest.spyOn(paymentService, "refundPayment");
       mockRedisScripts.confirmSold.mockResolvedValue({
         success: false,
         code: "SEAT_ALREADY_SOLD",
@@ -239,6 +245,55 @@ describe("OrdersService", () => {
           paymentMethodToken: "tok_visa",
         }),
       ).rejects.toThrow(ConflictException);
+
+      expect(refundSpy).toHaveBeenCalledWith({
+        transactionId: "txn_123",
+        amount: 1000,
+        reason: "Seat confirmation failed: SEAT_ALREADY_SOLD",
+      });
+    });
+
+    it("should issue compensating refund and unsell seats if database transaction fails", async () => {
+      mockRedisScripts.getSnapshot.mockResolvedValue({
+        holds: {
+          [seatId1]: {
+            userId,
+            expiresAt: Date.now() + 100000,
+          },
+        },
+      });
+      mockEventSeatRepo.find.mockResolvedValue([mockSeats[0]]);
+      jest.spyOn(paymentService, "processPayment").mockResolvedValue({
+        success: true,
+        transactionId: "txn_db_fail_123",
+      });
+      mockRedisScripts.confirmSold.mockResolvedValue({
+        success: true,
+        code: "OK",
+        soldSeats: [seatId1],
+      });
+      const refundSpy = jest.spyOn(paymentService, "refundPayment");
+      mockDataSource.transaction.mockRejectedValueOnce(
+        new Error("Database deadlock"),
+      );
+
+      await expect(
+        service.checkout({
+          eventId,
+          userId,
+          seatIds: [seatId1],
+          paymentMethodToken: "tok_visa",
+        }),
+      ).rejects.toThrow("Database deadlock");
+
+      expect(refundSpy).toHaveBeenCalledWith({
+        transactionId: "txn_db_fail_123",
+        amount: 1000,
+        reason: expect.stringContaining("Database transaction failed"),
+      });
+      expect(mockRedisScripts.unsellSeats).toHaveBeenCalledWith(eventId, [
+        seatId1,
+      ]);
     });
 
     it("should successfully complete checkout, commit transaction, publish pub/sub events, and return order", async () => {

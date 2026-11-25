@@ -69,8 +69,11 @@ export class OrdersService {
     createdAt: Date;
     updatedAt: Date;
   }> {
-    // Validate schema
-    const parsed = CheckoutRequestSchema.safeParse(dto);
+    // Extract idempotency key from DTO before strict schema validation
+    const { idempotencyKey: effectiveIdempotencyKey, ...schemaPayload } = dto;
+
+    // Validate schema against CheckoutRequestSchema (.strict())
+    const parsed = CheckoutRequestSchema.safeParse(schemaPayload);
     if (!parsed.success) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
@@ -81,6 +84,18 @@ export class OrdersService {
 
     const { eventId, seatIds, paymentMethodToken } = parsed.data;
     const effectiveUserId = parsed.data.userId || "usr-anon";
+
+    if (effectiveIdempotencyKey) {
+      const cached = await this.redisClient.get(
+        `idempotency:checkout:${effectiveIdempotencyKey}`,
+      );
+      if (cached) {
+        this.logger.log(
+          `Idempotency cache hit for key ${effectiveIdempotencyKey}`,
+        );
+        return JSON.parse(cached);
+      }
+    }
 
     // Step 1: Verify that the user currently holds these specific seats in Redis
     const nowMs = Date.now();
@@ -140,7 +155,9 @@ export class OrdersService {
       amount: totalAmount,
       currency: "PKR",
       paymentMethodToken,
-      idempotencyKey: `checkout_${eventId}_${effectiveUserId}_${Date.now()}`,
+      idempotencyKey:
+        effectiveIdempotencyKey ||
+        `checkout_${eventId}_${effectiveUserId}_${Date.now()}`,
     });
 
     if (!paymentResult.success) {
@@ -165,6 +182,22 @@ export class OrdersService {
       this.logger.error(
         `CRITICAL: Payment ${paymentResult.transactionId ?? "unknown"} succeeded for user ${effectiveUserId} on event ${eventId}, but confirmSold failed with ${confirmRes.code} — compensating refund required`,
       );
+      if (paymentResult.transactionId) {
+        try {
+          await this.paymentService.refundPayment({
+            transactionId: paymentResult.transactionId,
+            amount: totalAmount,
+            reason: `Seat confirmation failed: ${confirmRes.code}`,
+          });
+          this.logger.log(
+            `Compensating refund issued for transaction ${paymentResult.transactionId}`,
+          );
+        } catch (refundErr) {
+          this.logger.error(
+            `Failed to issue compensating refund for ${paymentResult.transactionId}: ${refundErr instanceof Error ? refundErr.message : String(refundErr)}`,
+          );
+        }
+      }
       throw new ConflictException({
         code: isExpiredOrLost ? confirmRes.code : ErrorCode.CONFLICT,
         message: `Failed to confirm seat lock in Redis: ${confirmRes.code}`,
@@ -172,52 +205,94 @@ export class OrdersService {
     }
 
     // Step 4: Open a TypeORM transaction (dataSource.transaction())
-    const createdOrder = await this.dataSource.transaction(async (manager) => {
-      // Create Order
-      const order = manager.create(Order, {
-        userId: effectiveUserId,
-        eventId,
-        totalAmount,
-        currency: "PKR",
-        status: OrderStatus.COMPLETED,
-        paymentGatewayRef: paymentResult.transactionId ?? null,
-      });
-      const savedOrder = await manager.save(Order, order);
+    let createdOrder;
+    try {
+      createdOrder = await this.dataSource.transaction(async (manager) => {
+        // Pessimistic write lock on EventSeat rows to serialize concurrent updates
+        const lockedSeats = await manager.find(EventSeat, {
+          where: { id: In(seats.map((s) => s.id)) },
+          lock: { mode: "pessimistic_write" },
+        });
 
-      // Create OrderItems
-      const orderItems = seats.map((seat) =>
-        manager.create(OrderItem, {
-          orderId: savedOrder.id,
-          eventSeatId: seat.id,
-          price: seatPrice,
-        }),
-      );
-      await manager.save(OrderItem, orderItems);
+        const alreadySold = lockedSeats.filter((s) => s.status === "SOLD");
+        if (alreadySold.length > 0) {
+          throw new ConflictException({
+            code: ErrorCode.CONFLICT,
+            message: "One or more seats have already been sold in the database",
+          });
+        }
 
-      // Update corresponding EventSeats to SOLD in PostgreSQL
-      await manager.update(
-        EventSeat,
-        { id: In(seats.map((s) => s.id)) },
-        { status: "SOLD" },
-      );
-
-      // Create and save Ticket records for each purchased seat
-      const tickets = seats.map((seat) =>
-        manager.create(Ticket, {
+        // Create Order
+        const order = manager.create(Order, {
+          userId: effectiveUserId,
           eventId,
-          eventSeatId: seat.id,
-          orderId: savedOrder.id,
-          ownerId: effectiveUserId,
-          status: "ISSUED",
-          seedVersion: 1,
-          faceValueMinor: seatPrice * 100,
-        }),
-      );
-      const savedTickets = await manager.save(Ticket, tickets);
+          totalAmount,
+          currency: "PKR",
+          status: OrderStatus.COMPLETED,
+          paymentGatewayRef: paymentResult.transactionId ?? null,
+        });
+        const savedOrder = await manager.save(Order, order);
 
-      savedOrder.items = orderItems;
-      return { order: savedOrder, tickets: savedTickets };
-    });
+        // Create OrderItems
+        const orderItems = seats.map((seat) =>
+          manager.create(OrderItem, {
+            orderId: savedOrder.id,
+            eventSeatId: seat.id,
+            price: seatPrice,
+          }),
+        );
+        await manager.save(OrderItem, orderItems);
+
+        // Update corresponding EventSeats to SOLD in PostgreSQL
+        await manager.update(
+          EventSeat,
+          { id: In(seats.map((s) => s.id)) },
+          { status: "SOLD" },
+        );
+
+        // Create and save Ticket records for each purchased seat
+        const tickets = seats.map((seat) =>
+          manager.create(Ticket, {
+            eventId,
+            eventSeatId: seat.id,
+            orderId: savedOrder.id,
+            ownerId: effectiveUserId,
+            status: "ISSUED",
+            seedVersion: 1,
+            faceValueMinor: seatPrice * 100,
+          }),
+        );
+        const savedTickets = await manager.save(Ticket, tickets);
+
+        savedOrder.items = orderItems;
+        return { order: savedOrder, tickets: savedTickets };
+      });
+    } catch (dbErr) {
+      this.logger.error(
+        `Checkout DB transaction failed for user ${effectiveUserId} on event ${eventId}: ${dbErr instanceof Error ? dbErr.message : String(dbErr)}`,
+      );
+      if (paymentResult.transactionId) {
+        try {
+          await this.paymentService.refundPayment({
+            transactionId: paymentResult.transactionId,
+            amount: totalAmount,
+            reason: `Database transaction failed: ${dbErr instanceof Error ? dbErr.message : String(dbErr)}`,
+          });
+        } catch (refundErr) {
+          this.logger.error(
+            `Failed to issue compensating refund for ${paymentResult.transactionId}: ${refundErr instanceof Error ? refundErr.message : String(refundErr)}`,
+          );
+        }
+      }
+      try {
+        await this.redisScripts.unsellSeats(eventId, seatIds);
+      } catch (unsellErr) {
+        this.logger.error(
+          `Failed to rollback Redis sold state for event ${eventId}: ${unsellErr instanceof Error ? unsellErr.message : String(unsellErr)}`,
+        );
+      }
+      throw dbErr;
+    }
 
     // Register tickets in RedisBloom ticket prefilter
     if (this.bloomService && createdOrder.tickets) {
@@ -250,7 +325,7 @@ export class OrdersService {
     );
 
     // Step 6: Return the completed Order details
-    return {
+    const result = {
       id: createdOrder.order.id,
       userId: createdOrder.order.userId,
       eventId: createdOrder.order.eventId,
@@ -267,6 +342,23 @@ export class OrdersService {
       createdAt: createdOrder.order.createdAt,
       updatedAt: createdOrder.order.updatedAt,
     };
+
+    if (effectiveIdempotencyKey) {
+      try {
+        await this.redisClient.set(
+          `idempotency:checkout:${effectiveIdempotencyKey}`,
+          JSON.stringify(result),
+          "EX",
+          86400,
+        );
+      } catch (cacheErr) {
+        this.logger.warn(
+          `Failed to cache idempotency result for key ${effectiveIdempotencyKey}: ${cacheErr instanceof Error ? cacheErr.message : String(cacheErr)}`,
+        );
+      }
+    }
+
+    return result;
   }
 
   async getOrderById(id: string): Promise<Order> {

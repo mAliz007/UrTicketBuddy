@@ -12,6 +12,10 @@ import { Event } from "./event.entity";
 import { EventSeat } from "./event-seat.entity";
 import { Order } from "./order.entity";
 
+@Index("uq_active_ticket_seat", ["eventId", "eventSeatId"], {
+  unique: true,
+  where: `"status" IN ('ISSUED', 'CHECKED_IN')`,
+})
 @Entity("tickets")
 export class Ticket {
   @PrimaryGeneratedColumn("uuid")
