@@ -1,0 +1,819 @@
+import { randomUUID } from "crypto";
+import { INestApplication } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { Test, TestingModule } from "@nestjs/testing";
+import { loadEnv } from "@urticketbuddy/config";
+import {
+  ErrorCode,
+  LedgerEntryKind,
+  ResaleListingStatus,
+  ScanResult,
+  TicketStatus,
+  UserRole,
+} from "@urticketbuddy/contracts";
+import cookieParser from "cookie-parser";
+import request from "supertest";
+import { AppModule } from "../src/app.module";
+import { BloomService } from "../src/common/bloom/bloom.service";
+import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
+import {
+  AUDIT_LOG_REPOSITORY,
+  DATA_SOURCE,
+  EVENT_REPOSITORY,
+  EVENT_SEAT_REPOSITORY,
+  GATE_SCAN_REPOSITORY,
+  LEDGER_ENTRY_REPOSITORY,
+  MONGO_CONNECTION,
+  ORDER_ITEM_REPOSITORY,
+  ORDER_REPOSITORY,
+  PLATFORM_SETTING_REPOSITORY,
+  REDIS_CLIENT,
+  REDIS_SCRIPTS_WRAPPER,
+  REFRESH_TOKEN_REPOSITORY,
+  RESALE_LISTING_REPOSITORY,
+  TICKET_REPOSITORY,
+  USER_REPOSITORY,
+  VENUE_REPOSITORY,
+} from "../src/database/database.tokens";
+import { TicketsService } from "../src/modules/tickets/tickets.service";
+
+jest.setTimeout(30000);
+
+describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
+  let app: INestApplication;
+  let jwtService: JwtService;
+  let ticketsService: TicketsService;
+
+  const env = loadEnv();
+  const eventId = "e1000000-0000-0000-0000-000000000001";
+  const sellerId = "u1000000-0000-0000-0000-000000000001";
+  const buyer1Id = "u2000000-0000-0000-0000-000000000002";
+  const buyer2Id = "u3000000-0000-0000-0000-000000000003";
+  const gateStaffId = "u4000000-0000-0000-0000-000000000004";
+
+  const issuedTicketId = "a1000000-0000-0000-0000-000000000001";
+  const checkedInTicketId = "a2000000-0000-0000-0000-000000000002";
+  const voidTicketId = "a3000000-0000-0000-0000-000000000003";
+  const revokedTicketId = "a4000000-0000-0000-0000-000000000004";
+
+  let sellerToken: string;
+  let buyer1Token: string;
+  let buyer2Token: string;
+  let gateStaffToken: string;
+
+  const futureEvent = {
+    id: eventId,
+    name: "Resale Concert",
+    startTime: new Date(Date.now() + 86_400_000),
+    status: "PUBLISHED",
+  };
+
+  // In-memory stores
+  const ticketsStore = new Map<string, Record<string, unknown>>();
+  const listingsStore = new Map<string, Record<string, unknown>>();
+  const ledgerStore: Array<Record<string, unknown>> = [];
+  const gateScansStore: Array<Record<string, unknown>> = [];
+  const redisLockStore = new Map<string, string>();
+  const redisNonces = new Set<string>();
+
+  const mockTicketRepo = {
+    findOne: jest.fn(
+      async ({
+        where,
+        relations,
+      }: {
+        where: { id: string };
+        relations?: string[];
+      }) => {
+        const ticket = ticketsStore.get(where.id);
+        if (!ticket) return null;
+        const copy = { ...ticket };
+        if (relations?.includes("event")) {
+          copy.event = futureEvent;
+        }
+        return copy;
+      },
+    ),
+    find: jest.fn(async () => Array.from(ticketsStore.values())),
+    save: jest.fn(async (ticket: Record<string, unknown>) => {
+      const saved = { ...ticket, updatedAt: new Date() };
+      ticketsStore.set(String(ticket.id), saved);
+      return { ...saved };
+    }),
+    update: jest.fn(
+      async (
+        criteria: { id: string; status?: string; seedVersion?: number },
+        partial: Record<string, unknown>,
+      ) => {
+        const existing = ticketsStore.get(criteria.id);
+        if (!existing) return { affected: 0 };
+        if (criteria.status && existing.status !== criteria.status) {
+          return { affected: 0 };
+        }
+        if (
+          criteria.seedVersion !== undefined &&
+          existing.seedVersion !== criteria.seedVersion
+        ) {
+          return { affected: 0 };
+        }
+        ticketsStore.set(criteria.id, { ...existing, ...partial });
+        return { affected: 1 };
+      },
+    ),
+  };
+
+  const mockListingRepo = {
+    create: jest.fn((data: Record<string, unknown>) => ({
+      id: randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data,
+    })),
+    save: jest.fn(async (listing: Record<string, unknown>) => {
+      const saved = { ...listing, updatedAt: new Date() };
+      listingsStore.set(String(saved.id), saved);
+      return { ...saved };
+    }),
+    findOne: jest.fn(
+      async ({
+        where,
+        relations,
+      }: {
+        where: { id?: string; ticketId?: string; status?: string };
+        relations?: string[];
+      }) => {
+        for (const item of listingsStore.values()) {
+          if (where.id && item.id !== where.id) continue;
+          if (where.ticketId && item.ticketId !== where.ticketId) continue;
+          if (where.status && item.status !== where.status) continue;
+          const copy = { ...item };
+          if (relations?.includes("ticket") && item.ticketId) {
+            copy.ticket = ticketsStore.get(item.ticketId as string) ?? null;
+          }
+          if (relations?.includes("event")) {
+            copy.event = futureEvent;
+          }
+          return copy;
+        }
+        return null;
+      },
+    ),
+    findAndCount: jest.fn(
+      async ({
+        where,
+        skip = 0,
+        take = 20,
+      }: {
+        where: { status?: string; eventId?: string };
+        skip?: number;
+        take?: number;
+      }) => {
+        const all = Array.from(listingsStore.values()).filter((item) => {
+          if (where.status && item.status !== where.status) return false;
+          if (where.eventId && item.eventId !== where.eventId) return false;
+          return true;
+        });
+        return [all.slice(skip, skip + take), all.length];
+      },
+    ),
+    createQueryBuilder: jest.fn(() => {
+      let filterEventId: string | undefined;
+      let skipVal = 0;
+      let takeVal = 20;
+      const qb = {
+        innerJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn((clause: string, params?: { eventId?: string }) => {
+          if (clause.includes("eventId") && params?.eventId) {
+            filterEventId = params.eventId;
+          }
+          return qb;
+        }),
+        orderBy: jest.fn().mockReturnThis(),
+        addOrderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn((n: number) => {
+          skipVal = n;
+          return qb;
+        }),
+        take: jest.fn((n: number) => {
+          takeVal = n;
+          return qb;
+        }),
+        getManyAndCount: jest.fn(async () => {
+          const all = Array.from(listingsStore.values()).filter((item) => {
+            if (item.status !== ResaleListingStatus.ACTIVE) return false;
+            if (filterEventId && item.eventId !== filterEventId) return false;
+            return futureEvent.startTime.getTime() > Date.now();
+          });
+          return [all.slice(skipVal, skipVal + takeVal), all.length];
+        }),
+      };
+      return qb;
+    }),
+  };
+
+  const mockLedgerRepo = {
+    create: jest.fn((data: Record<string, unknown>) => ({
+      id: randomUUID(),
+      createdAt: new Date(),
+      ...data,
+    })),
+    save: jest.fn(async (entries: Array<Record<string, unknown>>) => {
+      const list = Array.isArray(entries) ? entries : [entries];
+      for (const entry of list) {
+        ledgerStore.push({ ...entry });
+      }
+      return list;
+    }),
+  };
+
+  const mockGateScanRepo = {
+    create: jest.fn((data: Record<string, unknown>) => ({
+      id: randomUUID(),
+      ...data,
+    })),
+    save: jest.fn(async (scan: Record<string, unknown>) => {
+      gateScansStore.push(scan);
+      return scan;
+    }),
+  };
+
+  const mockRedisClient = {
+    status: "ready",
+    set: jest.fn(
+      async (
+        key: string,
+        val: string,
+        _exFlag?: string,
+        _ttl?: number,
+        nxFlag?: string,
+      ) => {
+        if (nxFlag === "NX") {
+          if (key.startsWith("resale_lock:")) {
+            if (redisLockStore.has(key)) return null;
+            redisLockStore.set(key, val);
+            return "OK";
+          }
+          if (redisNonces.has(key)) return null;
+          redisNonces.add(key);
+          return "OK";
+        }
+        redisLockStore.set(key, val);
+        return "OK";
+      },
+    ),
+    get: jest.fn(async (key: string) => redisLockStore.get(key) ?? null),
+    del: jest.fn(async (key: string) => {
+      redisLockStore.delete(key);
+      redisNonces.delete(key);
+      return 1;
+    }),
+    call: jest.fn(async () => 1),
+    sadd: jest.fn(async () => 1),
+    sismember: jest.fn(async () => 1),
+    eval: jest.fn(
+      async (_script: string, _numKeys: number, key: string, val: string) => {
+        if (redisLockStore.get(key) === val) {
+          redisLockStore.delete(key);
+          return 1;
+        }
+        return 0;
+      },
+    ),
+  };
+
+  const mockDataSource = {
+    isInitialized: true,
+    getRepository: jest.fn(() => ({
+      find: jest.fn(async () => []),
+      findOne: jest.fn(async () => null),
+      save: jest.fn(async (e: unknown) => e),
+      create: jest.fn((e: unknown) => e),
+    })),
+    transaction: jest.fn(
+      async (
+        cb: (manager: {
+          findOne: (
+            Entity: { name: string },
+            opts: { where: { id: string } },
+          ) => Promise<Record<string, unknown> | null>;
+          create: (
+            Entity: { name: string },
+            data: Record<string, unknown>,
+          ) => Record<string, unknown>;
+          save: (Entity: { name: string }, data: unknown) => Promise<unknown>;
+          update: typeof mockTicketRepo.update;
+        }) => Promise<unknown>,
+      ) => {
+        const manager = {
+          findOne: async (
+            Entity: { name: string },
+            opts: { where: { id: string } },
+          ) => {
+            if (Entity.name === "ResaleListing") {
+              return mockListingRepo.findOne({ where: { id: opts.where.id } });
+            }
+            if (Entity.name === "Ticket") {
+              return mockTicketRepo.findOne({ where: { id: opts.where.id } });
+            }
+            return null;
+          },
+          create: (Entity: { name: string }, data: Record<string, unknown>) => {
+            if (Entity.name === "LedgerEntry") {
+              return mockLedgerRepo.create(data);
+            }
+            return data;
+          },
+          save: async (Entity: { name: string }, data: unknown) => {
+            if (Entity.name === "LedgerEntry") {
+              return mockLedgerRepo.save(
+                data as Array<Record<string, unknown>>,
+              );
+            }
+            if (Entity.name === "Ticket") {
+              return mockTicketRepo.save(data as Record<string, unknown>);
+            }
+            if (Entity.name === "ResaleListing") {
+              return mockListingRepo.save(data as Record<string, unknown>);
+            }
+            return data;
+          },
+          update: mockTicketRepo.update,
+        };
+        return cb(manager);
+      },
+    ),
+  };
+
+  const mockBloomService = {
+    mightExist: jest.fn(async () => true),
+    addTicket: jest.fn(async () => true),
+  };
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(DATA_SOURCE)
+      .useValue(mockDataSource)
+      .overrideProvider(MONGO_CONNECTION)
+      .useValue({ readyState: 1 })
+      .overrideProvider(VENUE_REPOSITORY)
+      .useValue({})
+      .overrideProvider(EVENT_REPOSITORY)
+      .useValue({ findOne: jest.fn(async () => futureEvent) })
+      .overrideProvider(EVENT_SEAT_REPOSITORY)
+      .useValue({})
+      .overrideProvider(ORDER_REPOSITORY)
+      .useValue({})
+      .overrideProvider(ORDER_ITEM_REPOSITORY)
+      .useValue({})
+      .overrideProvider(USER_REPOSITORY)
+      .useValue({})
+      .overrideProvider(REFRESH_TOKEN_REPOSITORY)
+      .useValue({})
+      .overrideProvider(TICKET_REPOSITORY)
+      .useValue(mockTicketRepo)
+      .overrideProvider(GATE_SCAN_REPOSITORY)
+      .useValue(mockGateScanRepo)
+      .overrideProvider(RESALE_LISTING_REPOSITORY)
+      .useValue(mockListingRepo)
+      .overrideProvider(LEDGER_ENTRY_REPOSITORY)
+      .useValue(mockLedgerRepo)
+      .overrideProvider(PLATFORM_SETTING_REPOSITORY)
+      .useValue({
+        findOne: jest.fn(async () => null),
+        save: jest.fn(async (e: unknown) => e),
+        create: jest.fn((e: unknown) => e),
+      })
+      .overrideProvider(AUDIT_LOG_REPOSITORY)
+      .useValue({
+        find: jest.fn(async () => []),
+        save: jest.fn(async (e: unknown) => e),
+        create: jest.fn((e: unknown) => e),
+      })
+      .overrideProvider(REDIS_CLIENT)
+      .useValue(mockRedisClient)
+      .overrideProvider(REDIS_SCRIPTS_WRAPPER)
+      .useValue({})
+      .overrideProvider(BloomService)
+      .useValue(mockBloomService)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix("api/v1");
+    app.use(cookieParser());
+    app.useGlobalFilters(new GlobalHttpExceptionFilter());
+    await app.init();
+
+    jwtService = app.get(JwtService);
+    ticketsService = app.get(TicketsService);
+
+    sellerToken = jwtService.sign(
+      { sub: sellerId, email: "seller@test.com", role: UserRole.CUSTOMER },
+      { secret: env.JWT_SECRET },
+    );
+    buyer1Token = jwtService.sign(
+      { sub: buyer1Id, email: "buyer1@test.com", role: UserRole.CUSTOMER },
+      { secret: env.JWT_SECRET },
+    );
+    buyer2Token = jwtService.sign(
+      { sub: buyer2Id, email: "buyer2@test.com", role: UserRole.CUSTOMER },
+      { secret: env.JWT_SECRET },
+    );
+    gateStaffToken = jwtService.sign(
+      { sub: gateStaffId, email: "gate@test.com", role: UserRole.GATE_STAFF },
+      { secret: env.JWT_SECRET },
+    );
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  beforeEach(() => {
+    ticketsStore.clear();
+    listingsStore.clear();
+    ledgerStore.length = 0;
+    gateScansStore.length = 0;
+    redisLockStore.clear();
+    redisNonces.clear();
+
+    ticketsStore.set(issuedTicketId, {
+      id: issuedTicketId,
+      eventId,
+      eventSeatId: "c1000000-0000-0000-0000-000000000001",
+      orderId: "d1000000-0000-0000-0000-000000000001",
+      ownerId: sellerId,
+      status: TicketStatus.ISSUED,
+      seedVersion: 1,
+      faceValueMinor: 10000,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    ticketsStore.set(checkedInTicketId, {
+      id: checkedInTicketId,
+      eventId,
+      eventSeatId: "c2000000-0000-0000-0000-000000000002",
+      orderId: "d2000000-0000-0000-0000-000000000002",
+      ownerId: sellerId,
+      status: TicketStatus.CHECKED_IN,
+      seedVersion: 1,
+      faceValueMinor: 10000,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    ticketsStore.set(voidTicketId, {
+      id: voidTicketId,
+      eventId,
+      eventSeatId: "c3000000-0000-0000-0000-000000000003",
+      orderId: "d3000000-0000-0000-0000-000000000003",
+      ownerId: sellerId,
+      status: TicketStatus.VOID,
+      seedVersion: 1,
+      faceValueMinor: 10000,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    ticketsStore.set(revokedTicketId, {
+      id: revokedTicketId,
+      eventId,
+      eventSeatId: "c4000000-0000-0000-0000-000000000004",
+      orderId: "d4000000-0000-0000-0000-000000000004",
+      ownerId: sellerId,
+      status: TicketStatus.REVOKED,
+      seedVersion: 1,
+      faceValueMinor: 10000,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  });
+
+  it("allows listing at exact 110% cap (201) and rejects 1 minor unit above cap (400)", async () => {
+    // 10000 * 110 / 100 = 11000; 11001 exceeds cap
+    const overCapRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 11001 })
+      .expect(400);
+
+    expect(overCapRes.body.error.code).toBe(
+      ErrorCode.RESALE_PRICE_CAP_EXCEEDED,
+    );
+
+    const atCapRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 11000 })
+      .expect(201);
+
+    expect(atCapRes.body.askingPriceMinor).toBe(11000);
+    expect(atCapRes.body.status).toBe(ResaleListingStatus.ACTIVE);
+
+    // Public GET /api/v1/resale/listings returns the active listing
+    const browseRes = await request(app.getHttpServer())
+      .get(`/api/v1/resale/listings?eventId=${eventId}&page=1&pageSize=10`)
+      .expect(200);
+
+    expect(browseRes.body.total).toBe(1);
+    expect(browseRes.body.items[0].id).toBe(atCapRes.body.id);
+  });
+
+  it("rejects listing non-ISSUED tickets (CHECKED_IN, VOID, REVOKED) and duplicate active listings with 409 Conflict", async () => {
+    // 1. CHECKED_IN ticket rejected
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: checkedInTicketId, askingPriceMinor: 10000 })
+      .expect(409);
+
+    // 2. VOID ticket rejected
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: voidTicketId, askingPriceMinor: 10000 })
+      .expect(409);
+
+    // 3. REVOKED ticket rejected
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: revokedTicketId, askingPriceMinor: 10000 })
+      .expect(409);
+
+    // 4. Initial listing succeeds
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10500 })
+      .expect(201);
+
+    // 5. Duplicate active listing for the same ticket rejected
+    const dupRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(409);
+
+    expect(dupRes.body.error.code).toBe(ErrorCode.CONFLICT);
+  });
+
+  it("allows seller to lower price or withdraw, and rejects price increases, non-owner updates, or exceeding cap", async () => {
+    // Create initial listing at 11000
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 11000 })
+      .expect(201);
+    const listingId = createRes.body.id as string;
+
+    // 1. Lower price to 10500 -> 200
+    const lowerRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 10500 })
+      .expect(200);
+    expect(lowerRes.body.askingPriceMinor).toBe(10500);
+
+    // 2. Reject raising price (10500 -> 10600) -> 400 VALIDATION_ERROR
+    const raiseRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 10600 })
+      .expect(400);
+    expect(raiseRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+
+    // 3. Reject price above 110% cap (12000 > 11000) -> 400 RESALE_PRICE_CAP_EXCEEDED
+    const capRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 12000 })
+      .expect(400);
+    expect(capRes.body.error.code).toBe(ErrorCode.RESALE_PRICE_CAP_EXCEEDED);
+
+    // 4. Non-owner cannot update listing -> 403 FORBIDDEN
+    const forbiddenRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .send({ askingPriceMinor: 9000 })
+      .expect(403);
+    expect(forbiddenRes.body.error.code).toBe(ErrorCode.FORBIDDEN);
+
+    // 5. Seller withdraws listing -> 200
+    const withdrawRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ status: ResaleListingStatus.WITHDRAWN })
+      .expect(200);
+    expect(withdrawRes.body.status).toBe(ResaleListingStatus.WITHDRAWN);
+
+    // 6. Cannot update an already withdrawn listing -> 409 CONFLICT
+    const inactiveRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 8000 })
+      .expect(409);
+    expect(inactiveRes.body.error.code).toBe(ErrorCode.CONFLICT);
+  });
+
+  it("paginates active listings and isolates eventId filters cleanly", async () => {
+    // Create an active listing
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(201);
+
+    // 1. Default pagination returns items
+    const browseRes = await request(app.getHttpServer())
+      .get("/api/v1/resale/listings?page=1&pageSize=10")
+      .expect(200);
+    expect(browseRes.body.page).toBe(1);
+    expect(browseRes.body.pageSize).toBe(10);
+    expect(browseRes.body.total).toBeGreaterThanOrEqual(1);
+
+    // 2. Matching eventId filter returns the listing
+    const eventMatchRes = await request(app.getHttpServer())
+      .get(`/api/v1/resale/listings?eventId=${eventId}`)
+      .expect(200);
+    expect(eventMatchRes.body.total).toBe(1);
+
+    // 3. Non-matching eventId returns empty array
+    const otherEventId = "e9999999-9999-9999-9999-999999999999";
+    const noMatchRes = await request(app.getHttpServer())
+      .get(`/api/v1/resale/listings?eventId=${otherEventId}`)
+      .expect(200);
+    expect(noMatchRes.body.total).toBe(0);
+    expect(noMatchRes.body.items).toHaveLength(0);
+
+    // 4. Invalid eventId UUID returns 400 VALIDATION_ERROR
+    const invalidIdRes = await request(app.getHttpServer())
+      .get("/api/v1/resale/listings?eventId=not-a-uuid")
+      .expect(400);
+    expect(invalidIdRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+  });
+
+  it("handles payment failure by returning 400 PAYMENT_FAILED and releasing the Redis lock", async () => {
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(201);
+    const listingId = createRes.body.id as string;
+
+    // Buyer1 attempts purchase with tok_fail -> 400 PAYMENT_FAILED
+    const failRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .set("Idempotency-Key", "fail-idem-key-1")
+      .send({ paymentMethodToken: "tok_fail" })
+      .expect(400);
+
+    expect(failRes.body.error.code).toBe(ErrorCode.PAYMENT_FAILED);
+
+    // Lock must be released: Buyer2 can now immediately acquire the lock and purchase
+    const succeedRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer2Token}`)
+      .set("Idempotency-Key", "succeed-idem-key-1")
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(201);
+
+    expect(succeedRes.body.status).toBe(ResaleListingStatus.SOLD);
+    expect(succeedRes.body.buyerId).toBe(buyer2Id);
+  });
+
+  it("requires Idempotency-Key and returns cached result on retry without re-charging", async () => {
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(201);
+    const listingId = createRes.body.id as string;
+
+    // 1. Missing Idempotency-Key -> 400 VALIDATION_ERROR
+    const missingKeyRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(400);
+    expect(missingKeyRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+
+    // 2. Successful purchase with Idempotency-Key
+    const firstPurchaseRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .set("Idempotency-Key", "retry-idem-key-999")
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(201);
+
+    // 3. Re-submitting identical purchase returns cached response
+    const retryPurchaseRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .set("Idempotency-Key", "retry-idem-key-999")
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(201);
+
+    expect(retryPurchaseRes.body).toEqual(firstPurchaseRes.body);
+  });
+
+  it("handles two concurrent buyers racing for the same listing: one succeeds and one gets 409 Conflict", async () => {
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 11000 })
+      .expect(201);
+
+    const listingId = createRes.body.id as string;
+
+    const [res1, res2] = await Promise.all([
+      request(app.getHttpServer())
+        .post(`/api/v1/resale/listings/${listingId}/purchase`)
+        .set("Authorization", `Bearer ${buyer1Token}`)
+        .set("Idempotency-Key", "race-idem-1")
+        .send({ paymentMethodToken: "tok_visa" }),
+      request(app.getHttpServer())
+        .post(`/api/v1/resale/listings/${listingId}/purchase`)
+        .set("Authorization", `Bearer ${buyer2Token}`)
+        .set("Idempotency-Key", "race-idem-2")
+        .send({ paymentMethodToken: "tok_visa" }),
+    ]);
+
+    const statuses = [res1.status, res2.status].sort();
+    expect(statuses).toEqual([201, 409]);
+  });
+
+  it("transfers ownership, increments seedVersion, writes balanced ledger rows, and invalidates previous owner QR token at gate/scan", async () => {
+    // Seller generates dynamic QR before resale (seedVersion = 1)
+    const oldQrRes = await request(app.getHttpServer())
+      .get(`/api/v1/tickets/${issuedTicketId}/dynamic-qr`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .expect(200);
+    const oldQrToken = oldQrRes.body.token as string;
+
+    // Create listing at 11000
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 11000 })
+      .expect(201);
+    const listingId = createRes.body.id as string;
+
+    // Buyer1 purchases listing
+    const purchaseRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .set("Idempotency-Key", "purchase-idem-1")
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(201);
+
+    expect(purchaseRes.body.buyerId).toBe(buyer1Id);
+    expect(purchaseRes.body.seedVersion).toBe(2);
+    expect(purchaseRes.body.status).toBe(ResaleListingStatus.SOLD);
+
+    // Verify ticket ownership & seedVersion in store
+    const updatedTicket = ticketsStore.get(issuedTicketId)!;
+    expect(updatedTicket.ownerId).toBe(buyer1Id);
+    expect(updatedTicket.seedVersion).toBe(2);
+
+    // Verify ledger rows sum to asking price (11000)
+    expect(ledgerStore).toHaveLength(2);
+    const commissionRow = ledgerStore.find(
+      (r) => r.kind === LedgerEntryKind.PLATFORM_COMMISSION,
+    );
+    const payoutRow = ledgerStore.find(
+      (r) => r.kind === LedgerEntryKind.SELLER_PAYOUT,
+    );
+    expect(commissionRow?.amountMinor).toBe(1100);
+    expect(payoutRow?.amountMinor).toBe(9900);
+    expect(
+      Number(commissionRow?.amountMinor) + Number(payoutRow?.amountMinor),
+    ).toBe(11000);
+
+    // Previous owner's QR token (seedVersion 1) MUST be rejected by /api/v1/gate/scan (400 TICKET_INVALID)
+    const oldScanRes = await request(app.getHttpServer())
+      .post("/api/v1/gate/scan")
+      .set("Authorization", `Bearer ${gateStaffToken}`)
+      .send({ token: oldQrToken, eventId })
+      .expect(400);
+
+    expect(oldScanRes.body.error.code).toBe(ErrorCode.TICKET_INVALID);
+
+    // New owner's QR token (seedVersion 2) succeeds at gate/scan
+    const newQr = await ticketsService.getDynamicQr(issuedTicketId, {
+      id: buyer1Id,
+      role: UserRole.CUSTOMER,
+    });
+    const newScanRes = await request(app.getHttpServer())
+      .post("/api/v1/gate/scan")
+      .set("Authorization", `Bearer ${gateStaffToken}`)
+      .send({ token: newQr.token, eventId })
+      .expect(200);
+
+    expect(newScanRes.body.result).toBe(ScanResult.VALID);
+  });
+});

@@ -210,6 +210,42 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-15] - 2026-11-21
+
+### Capped P2P Resale Marketplace API
+
+- **Ticket Key:** `UTB-15`
+- **Completion Date:** 2026-11-21 (Audit & Remediation completed 2026-11-24)
+- **Main Feature Branch:** `feat/UTB-15-resale-marketplace`
+  - Sub-task 1: `feat/UTB-15-resale-marketplace-contracts-db`
+  - Sub-task 2: `feat/UTB-15-resale-marketplace-api`
+  - Sub-task 3: `feat/UTB-15-resale-marketplace-tests`
+  - Sub-task 4: `feat/UTB-15-resale-marketplace-audit-remediation`
+- **Status:** Completed & Audited (All sub-tasks merged into `feat/UTB-15-resale-marketplace`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `apps/tester`, `README.md`, `CHANGELOG.md`, `.engram`
+- **Scope & Deliverables:**
+  - **Contracts & 110% Price Cap (`packages/contracts/src/resale.ts`)**:
+    - Implemented `maxResalePrice(faceValueMinor)` (`Math.floor((faceValueMinor * 110) / 100)`), `ResaleListingStatus`, `LedgerEntryKind`, `CreateResaleListingSchema`, `UpdateResaleListingSchema`, `PurchaseResaleListingSchema`, and `ErrorCode.RESALE_PRICE_CAP_EXCEEDED`.
+    - Added boundary and 32-bit limit unit tests in `packages/contracts/src/index.spec.ts`.
+    - Recompiled package build artifacts (`dist/`) ensuring runtime availability across workspace packages.
+  - **Database Entities & Migration (`packages/db`)**:
+    - Added `ResaleListing` (`resale_listings`) and `LedgerEntry` (`ledger_entries`) TypeORM entities with covering indexes (`idx_resale_listings_ticket_id`, `uq_resale_listings_active_ticket`, `idx_resale_listings_event_id`, `idx_resale_listings_seller_id`, `idx_ledger_entries_listing_id`).
+    - Created reversible migration `1795136850000-UTB-15-init-resale-ledger.ts` with exact TypeORM hashed FK constraint names (`FK_6f3aa262c5f7947d2adb51d3f36`, `FK_23c4922b768155c827d32122952`, `FK_06ca5804051219422c87e507899`) and `ON DELETE RESTRICT` on `ledger_entries`.
+    - Passed all 4 database consistency checks (`pnpm db:check`).
+  - **Resale Module (`apps/api/src/modules/resale`)**:
+    - Added `PlatformSettingsPort` (`PLATFORM_SETTINGS_PORT`) + `DefaultPlatformSettingsProvider` (10% / `1000` bps).
+    - Implemented `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings` (`@Public()`), and `POST /api/v1/resale/listings/:listingId/purchase` (`Idempotency-Key` deduplication, Redis `resale_lock:<listingId>`, `PaymentProvider` charge + compensating refund, PostgreSQL `SELECT ... FOR UPDATE` transaction, 2-row ledger split, `ticket.ownerId` transfer, `ticket.seedVersion += 1`, and `ticket.transferred` event).
+    - Hardened `ResaleService.updateListing` with relation loading fallbacks to prevent undefined entity property access.
+  - **Tester App Integration (`apps/tester`)**:
+    - Integrated the complete **Capped P2P Resale Marketplace** endpoint suite into the `@urticketbuddy/tester` workbench catalog (`POST /listings`, `PATCH /listings/:id`, `GET /listings`, `POST /listings/:id/purchase`).
+    - Verified clean production build (`pnpm --filter @urticketbuddy/tester build`).
+  - **Testing & Documentation**:
+    - Added comprehensive unit tests in `packages/contracts/src/index.spec.ts` (10/10 passing) and `apps/api/src/modules/resale/resale.service.spec.ts` (18/18 passing).
+    - Added 8-scenario Supertest E2E integration suite in `apps/api/test/resale.e2e-spec.ts` (8/8 passing) covering cap enforcement, non-ISSUED/duplicate rejections, price lowering/withdrawal, pagination, eventId filtering, payment failure lock release, idempotency caching, and gate scanner token invalidation.
+    - Authored dedicated technical specification in `apps/api/src/modules/resale/README.md` and updated root `README.md`, `apps/tester/README.md`, and `CHANGELOG.md`.
+
+---
+
 ## [UTB-14] - 2026-11-20
 
 ### Dynamic QR Tickets, RedisBloom Prefilter, Ticket Wallet, & Gate Scanner API

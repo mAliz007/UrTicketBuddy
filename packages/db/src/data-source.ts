@@ -10,6 +10,8 @@ import { User } from "./entities/user.entity";
 import { RefreshToken } from "./entities/refresh-token.entity";
 import { Ticket } from "./entities/ticket.entity";
 import { GateScan } from "./entities/gate-scan.entity";
+import { ResaleListing } from "./entities/resale-listing.entity";
+import { LedgerEntry } from "./entities/ledger-entry.entity";
 import { PlatformSetting } from "./entities/platform-setting.entity";
 import { AuditLog } from "./entities/audit-log.entity";
 
@@ -40,6 +42,8 @@ export const AppDataSource = new DataSource({
     RefreshToken,
     Ticket,
     GateScan,
+    ResaleListing,
+    LedgerEntry,
     PlatformSetting,
     AuditLog,
     __dirname + "/entities/**/!(*.spec|*.test).{js,ts}",

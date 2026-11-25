@@ -59,4 +59,19 @@ export class MockPaymentService implements PaymentProvider {
       transactionId,
     };
   }
+
+  async refundPayment(params: {
+    transactionId: string;
+    amount: number;
+    reason?: string;
+  }): Promise<{ success: boolean; refundId: string }> {
+    const refundId = `ref_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    this.logger.warn(
+      `Compensating refund ${refundId} issued for transaction ${params.transactionId} (${params.amount} minor): ${params.reason ?? "transaction rollback"}`,
+    );
+    return {
+      success: true,
+      refundId,
+    };
+  }
 }

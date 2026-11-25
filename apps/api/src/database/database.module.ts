@@ -10,6 +10,8 @@ import {
   RefreshToken,
   Ticket,
   GateScan,
+  ResaleListing,
+  LedgerEntry,
   PlatformSetting,
   AuditLog,
 } from "@urticketbuddy/db";
@@ -30,6 +32,8 @@ import {
   ORDER_ITEM_REPOSITORY,
   TICKET_REPOSITORY,
   GATE_SCAN_REPOSITORY,
+  RESALE_LISTING_REPOSITORY,
+  LEDGER_ENTRY_REPOSITORY,
   PLATFORM_SETTING_REPOSITORY,
   AUDIT_LOG_REPOSITORY,
   MONGO_CONNECTION,
@@ -119,6 +123,20 @@ let redisClientInstance: Redis | null = null;
       provide: GATE_SCAN_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
         return dataSource.getRepository(GateScan);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: RESALE_LISTING_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(ResaleListing);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: LEDGER_ENTRY_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(LedgerEntry);
       },
       inject: [DATA_SOURCE],
     },
@@ -216,6 +234,8 @@ let redisClientInstance: Redis | null = null;
     REFRESH_TOKEN_REPOSITORY,
     TICKET_REPOSITORY,
     GATE_SCAN_REPOSITORY,
+    RESALE_LISTING_REPOSITORY,
+    LEDGER_ENTRY_REPOSITORY,
     PLATFORM_SETTING_REPOSITORY,
     AUDIT_LOG_REPOSITORY,
     MONGO_CONNECTION,
