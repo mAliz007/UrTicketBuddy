@@ -135,6 +135,8 @@ jobs:
         run: pnpm build
 
       - name: Run unit test suites
+        env:
+          SKIP_INTEGRATION_TESTS: "true"
         run: pnpm test
 
   integration:
@@ -217,6 +219,7 @@ jobs:
 
       - name: Verify service connectivity & run integration tests
         run: |
+          pnpm --filter @urticketbuddy/redis-scripts test
           pnpm --filter @urticketbuddy/api test
           pnpm --filter @urticketbuddy/realtime test
           pnpm --filter @urticketbuddy/worker test

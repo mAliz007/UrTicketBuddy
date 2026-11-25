@@ -179,7 +179,10 @@ let redisClientInstance: Redis | null = null;
         const env = loadEnv();
         if (mongoose.connection.readyState === 0) {
           try {
-            await mongoose.connect(env.MONGO_URI);
+            await mongoose.connect(env.MONGO_URI, {
+              serverSelectionTimeoutMS: 3000,
+              connectTimeoutMS: 3000,
+            });
           } catch (err) {
             console.warn(
               "Warning: MongoDB failed to connect: " +

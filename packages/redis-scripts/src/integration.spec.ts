@@ -13,6 +13,11 @@ describe("packages/redis-scripts (Testcontainers redis-stack integration)", () =
   let skipSuite = false;
 
   beforeAll(async () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      skipSuite = true;
+      return;
+    }
+
     if (process.env.REDIS_HOST) {
       try {
         const client = new Redis({

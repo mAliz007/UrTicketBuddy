@@ -22,6 +22,11 @@ describe("ExpiryService (Testcontainers Redis Integration)", () => {
   let skipSuite = false;
 
   beforeAll(async () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      skipSuite = true;
+      return;
+    }
+
     let host = process.env.REDIS_HOST;
     let port = Number(process.env.REDIS_PORT) || 6379;
 
