@@ -12,8 +12,6 @@ import { Ticket } from "./entities/ticket.entity";
 import { GateScan } from "./entities/gate-scan.entity";
 import { PlatformSetting } from "./entities/platform-setting.entity";
 import { AuditLog } from "./entities/audit-log.entity";
-import { ResaleListing } from "./entities/resale-listing.entity";
-import { LedgerEntry } from "./entities/ledger-entry.entity";
 
 const env = loadEnv();
 
@@ -44,8 +42,6 @@ export const AppDataSource = new DataSource({
     GateScan,
     PlatformSetting,
     AuditLog,
-    ResaleListing,
-    LedgerEntry,
     __dirname + "/entities/**/!(*.spec|*.test).{js,ts}",
   ],
   migrations: [__dirname + "/migrations/**/!(*.spec|*.test).{js,ts}"],
