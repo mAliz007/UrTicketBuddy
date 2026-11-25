@@ -86,10 +86,10 @@ export class PlatformSettingsService implements PlatformSettingsPort {
   }
 
   /**
-   * Returns current commission rate in basis points (1% = 100 bps).
+   * Returns current commission rate in basis points (e.g. 10% = 1000 bps).
    */
   async getCommissionRateBps(): Promise<number> {
     const ratePercent = await this.getCommissionRate();
-    return ratePercent * 100;
+    return Math.round(ratePercent * 100);
   }
 }

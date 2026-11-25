@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  NotFoundException,
 } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import {
@@ -183,6 +184,84 @@ describe("ResaleService (Unit)", () => {
     ).rejects.toThrow(ConflictException);
   });
 
+  it("rejects non-existent tickets with NotFoundException", async () => {
+    mockTicketRepo.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.createListing(sellerId, {
+        ticketId,
+        askingPriceMinor: 1000,
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
+  it("rejects VOID and REVOKED tickets with ConflictException", async () => {
+    for (const invalidStatus of [TicketStatus.VOID, TicketStatus.REVOKED]) {
+      mockTicketRepo.findOne.mockResolvedValue({
+        id: ticketId,
+        eventId,
+        ownerId: sellerId,
+        status: invalidStatus,
+        faceValueMinor: 1000,
+        seedVersion: 1,
+        event: futureEvent,
+      });
+
+      await expect(
+        service.createListing(sellerId, {
+          ticketId,
+          askingPriceMinor: 1000,
+        }),
+      ).rejects.toThrow(ConflictException);
+    }
+  });
+
+  it("rejects listing creation if event has already started", async () => {
+    mockTicketRepo.findOne.mockResolvedValue({
+      id: ticketId,
+      eventId,
+      ownerId: sellerId,
+      status: TicketStatus.ISSUED,
+      faceValueMinor: 1000,
+      seedVersion: 1,
+      event: {
+        id: eventId,
+        startTime: new Date(Date.now() - 3600_000), // 1 hour ago
+      },
+    });
+
+    await expect(
+      service.createListing(sellerId, {
+        ticketId,
+        askingPriceMinor: 1000,
+      }),
+    ).rejects.toThrow(ConflictException);
+  });
+
+  it("rejects duplicate active listing for the same ticket with ConflictException", async () => {
+    mockTicketRepo.findOne.mockResolvedValue({
+      id: ticketId,
+      eventId,
+      ownerId: sellerId,
+      status: TicketStatus.ISSUED,
+      faceValueMinor: 1000,
+      seedVersion: 1,
+      event: futureEvent,
+    });
+    mockListingRepo.findOne.mockResolvedValue({
+      id: "existing-listing",
+      ticketId,
+      status: ResaleListingStatus.ACTIVE,
+    });
+
+    await expect(
+      service.createListing(sellerId, {
+        ticketId,
+        askingPriceMinor: 1000,
+      }),
+    ).rejects.toThrow(ConflictException);
+  });
+
   it("rejects non-owner listing creation with ForbiddenException", async () => {
     mockTicketRepo.findOne.mockResolvedValue({
       id: ticketId,
@@ -232,6 +311,59 @@ describe("ResaleService (Unit)", () => {
     expect(withdrawn.status).toBe(ResaleListingStatus.WITHDRAWN);
   });
 
+  it("rejects update on non-existent listing with NotFoundException", async () => {
+    mockListingRepo.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.updateListing("non-existent-id", sellerId, {
+        askingPriceMinor: 900,
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
+  it("rejects update on already WITHDRAWN or SOLD listing with ConflictException", async () => {
+    for (const inactiveStatus of [
+      ResaleListingStatus.WITHDRAWN,
+      ResaleListingStatus.SOLD,
+    ]) {
+      mockListingRepo.findOne.mockResolvedValue({
+        id: listingId,
+        ticketId,
+        sellerId,
+        askingPriceMinor: 1000,
+        status: inactiveStatus,
+        ticket: { faceValueMinor: 1000 },
+      });
+
+      await expect(
+        service.updateListing(listingId, sellerId, {
+          askingPriceMinor: 900,
+        }),
+      ).rejects.toThrow(ConflictException);
+    }
+  });
+
+  it("rejects seller attempting to purchase their own listing with ConflictException", async () => {
+    mockListingRepo.findOne.mockResolvedValue({
+      id: listingId,
+      ticketId,
+      eventId,
+      sellerId,
+      askingPriceMinor: 1000,
+      status: ResaleListingStatus.ACTIVE,
+      event: futureEvent,
+    });
+
+    await expect(
+      service.purchaseListing(
+        listingId,
+        sellerId,
+        { paymentMethodToken: "tok_visa" },
+        "idem-self-1",
+      ),
+    ).rejects.toThrow(ConflictException);
+  });
+
   it("splits commission (10%) and seller payout summing exactly to askingPriceMinor, transfers ownership, and increments seedVersion", async () => {
     const askingPriceMinor = 1055; // 10% floor = 105, payout = 950, sum = 1055
     const listing = {
@@ -265,9 +397,9 @@ describe("ResaleService (Unit)", () => {
 
     expect(result.commissionMinor).toBe(105);
     expect(result.sellerPayoutMinor).toBe(950);
-    expect(
-      (result.commissionMinor as number) + (result.sellerPayoutMinor as number),
-    ).toBe(askingPriceMinor);
+    expect(result.commissionMinor + result.sellerPayoutMinor).toBe(
+      askingPriceMinor,
+    );
     expect(result.buyerId).toBe(buyerId);
     expect(result.seedVersion).toBe(2);
     expect(result.status).toBe(ResaleListingStatus.SOLD);

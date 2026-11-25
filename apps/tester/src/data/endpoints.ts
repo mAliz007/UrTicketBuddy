@@ -392,6 +392,94 @@ export const ENDPOINT_CATEGORIES: EndpointCategory[] = [
     ],
   },
   {
+    name: "Capped P2P Resale Marketplace",
+    description:
+      "Capped 110% resale listings, distributed locking, and ledger transfer",
+    endpoints: [
+      {
+        id: "resale-create-listing",
+        name: "List Ticket for Resale",
+        description:
+          "Lists an ISSUED ticket for resale capped at 110% of face value",
+        category: "Capped P2P Resale Marketplace",
+        method: "POST",
+        path: "/api/v1/resale/listings",
+        requiresAuth: true,
+        defaultHeaders: {
+          "Content-Type": "application/json",
+        },
+        defaultBody: JSON.stringify(
+          {
+            ticketId: "t0000000-0000-0000-0000-000000000001",
+            askingPriceMinor: 11000,
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "resale-update-listing",
+        name: "Update or Withdraw Listing",
+        description:
+          "Seller operation: lowers asking price or withdraws an active resale listing",
+        category: "Capped P2P Resale Marketplace",
+        method: "PATCH",
+        path: "/api/v1/resale/listings/:listingId",
+        requiresAuth: true,
+        defaultParams: {
+          listingId: "l0000000-0000-0000-0000-000000000001",
+        },
+        defaultHeaders: {
+          "Content-Type": "application/json",
+        },
+        defaultBody: JSON.stringify(
+          {
+            askingPriceMinor: 10500,
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "resale-get-listings",
+        name: "Browse Active Resale Listings",
+        description:
+          "Public endpoint: returns paginated active listings for upcoming events",
+        category: "Capped P2P Resale Marketplace",
+        method: "GET",
+        path: "/api/v1/resale/listings",
+        defaultParams: {
+          page: "1",
+          pageSize: "20",
+        },
+      },
+      {
+        id: "resale-purchase-listing",
+        name: "Purchase Resale Listing",
+        description:
+          "Atomic purchase: acquires Redis lock, charges buyer, splits ledger, transfers ownership, rotates QR seed",
+        category: "Capped P2P Resale Marketplace",
+        method: "POST",
+        path: "/api/v1/resale/listings/:listingId/purchase",
+        requiresAuth: true,
+        defaultParams: {
+          listingId: "l0000000-0000-0000-0000-000000000001",
+        },
+        defaultHeaders: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": `idem-resale-${Date.now()}`,
+        },
+        defaultBody: JSON.stringify(
+          {
+            paymentMethodToken: "tok_visa",
+          },
+          null,
+          2,
+        ),
+      },
+    ],
+  },
+  {
     name: "System Health & Ingress",
     description: "Liveness and readiness checks for services and dependencies",
     endpoints: [

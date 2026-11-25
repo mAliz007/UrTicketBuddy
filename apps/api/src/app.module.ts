@@ -9,10 +9,10 @@ import { CheckoutModule } from "./modules/checkout/checkout.module";
 import { OrdersModule } from "./modules/orders/orders.module";
 import { TicketsModule } from "./modules/tickets/tickets.module";
 import { GateModule } from "./modules/gate/gate.module";
+import { ResaleModule } from "./modules/resale/resale.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { MediaModule } from "./modules/media/media.module";
-import { ResaleModule } from "./modules/resale/resale.module";
 
 @Module({
   imports: [
@@ -26,10 +26,10 @@ import { ResaleModule } from "./modules/resale/resale.module";
     OrdersModule,
     TicketsModule,
     GateModule,
+    ResaleModule,
     AdminModule,
     AnalyticsModule,
     MediaModule,
-    ResaleModule,
   ],
   controllers: [],
   providers: [],

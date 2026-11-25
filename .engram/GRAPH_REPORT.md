@@ -1,16 +1,16 @@
-# Graph Report - . (2026-11-23)
+# Graph Report - . (2026-11-25)
 
 ## Corpus Check
 
-- 249 files · ~98,006 words
+- 249 files · ~99,480 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 823 nodes · 1178 edges · 78 communities detected
+- 824 nodes · 1179 edges · 78 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
-- Edge kinds: references: 372 · contains: 347 · method: 209 · calls: 78 · imports: 73 · imports_from: 72 · implements: 25 · inherits: 2
+- Edge kinds: references: 372 · contains: 348 · method: 209 · calls: 78 · imports: 73 · imports_from: 72 · implements: 25 · inherits: 2
 
 ## Input Scope
 
@@ -21,7 +21,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `dd3bdbd`
+- Built from Git commit: `849676e`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
@@ -65,7 +65,7 @@ Nodes (30): Header(), HeaderProps, QRVisualizer(), QRVisualizerProps, RequestEdi
 ### Community 2 - "Community 2"
 
 Cohesion: 0.06
-Nodes (13): PlatformSettingsPort, PlatformSettingsService, EventSeatCatalogPort, EventsService, ChargeResult, MockPaymentService, PaymentProvider, DefaultPlatformSettingsProvider (+5 more)
+Nodes (14): PlatformSettingsPort, PlatformSettingsService, EventSeatCatalogPort, EventsService, ChargeResult, MockPaymentService, PaymentProvider, DefaultPlatformSettingsProvider (+6 more)
 
 ### Community 3 - "Community 3"
 
@@ -295,7 +295,7 @@ Nodes (2): MigrationInterface, Utb14InitTicketsGateScans1795036850000
 ### Community 48 - "Community 48"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb15InitResaleLedger1795050000000
+Nodes (2): MigrationInterface, Utb15InitResaleLedger1795136850000
 
 ### Community 49 - "Community 49"
 
@@ -444,7 +444,7 @@ Nodes (1): config
 
 ## Knowledge Gaps
 
-- **178 isolated node(s):** `config`, `SENSITIVE_KEYS`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester` (+173 more)
+- **179 isolated node(s):** `config`, `SENSITIVE_KEYS`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester` (+174 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 12`** (1 nodes): `AuthService`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -480,7 +480,7 @@ Nodes (1): config
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 47`** (2 nodes): `MigrationInterface`, `Utb14InitTicketsGateScans1795036850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (2 nodes): `MigrationInterface`, `Utb15InitResaleLedger1795050000000`
+- **Thin community `Community 48`** (2 nodes): `MigrationInterface`, `Utb15InitResaleLedger1795136850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 49`** (2 nodes): `MigrationInterface`, `Utb16InitAdminAudit1795136850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -540,13 +540,13 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `AuthService` connect `Community 12` to `Community 21`, `Community 22`?**
   _High betweenness centrality (0.013) - this node is a cross-community bridge._
 - **What connects `config`, `SENSITIVE_KEYS`, `AdminActor` to the rest of the system?**
-  _178 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _179 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.04440333024976873 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.09191583610188261 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.05897435897435897 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05731707317073171 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.05384615384615385 - nodes in this community are weakly interconnected._
 - **Should `Community 5` be split into smaller, more focused modules?**

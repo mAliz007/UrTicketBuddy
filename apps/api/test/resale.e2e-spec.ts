@@ -17,6 +17,7 @@ import { AppModule } from "../src/app.module";
 import { BloomService } from "../src/common/bloom/bloom.service";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
 import {
+  AUDIT_LOG_REPOSITORY,
   DATA_SOURCE,
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
@@ -25,6 +26,7 @@ import {
   MONGO_CONNECTION,
   ORDER_ITEM_REPOSITORY,
   ORDER_REPOSITORY,
+  PLATFORM_SETTING_REPOSITORY,
   REDIS_CLIENT,
   REDIS_SCRIPTS_WRAPPER,
   REFRESH_TOKEN_REPOSITORY,
@@ -51,6 +53,8 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
 
   const issuedTicketId = "a1000000-0000-0000-0000-000000000001";
   const checkedInTicketId = "a2000000-0000-0000-0000-000000000002";
+  const voidTicketId = "a3000000-0000-0000-0000-000000000003";
+  const revokedTicketId = "a4000000-0000-0000-0000-000000000004";
 
   let sellerToken: string;
   let buyer1Token: string;
@@ -133,14 +137,23 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
     findOne: jest.fn(
       async ({
         where,
+        relations,
       }: {
         where: { id?: string; ticketId?: string; status?: string };
+        relations?: string[];
       }) => {
         for (const item of listingsStore.values()) {
           if (where.id && item.id !== where.id) continue;
           if (where.ticketId && item.ticketId !== where.ticketId) continue;
           if (where.status && item.status !== where.status) continue;
-          return { ...item };
+          const copy = { ...item };
+          if (relations?.includes("ticket") && item.ticketId) {
+            copy.ticket = ticketsStore.get(item.ticketId as string) ?? null;
+          }
+          if (relations?.includes("event")) {
+            copy.event = futureEvent;
+          }
+          return copy;
         }
         return null;
       },
@@ -367,6 +380,18 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
       .useValue(mockListingRepo)
       .overrideProvider(LEDGER_ENTRY_REPOSITORY)
       .useValue(mockLedgerRepo)
+      .overrideProvider(PLATFORM_SETTING_REPOSITORY)
+      .useValue({
+        findOne: jest.fn(async () => null),
+        save: jest.fn(async (e: unknown) => e),
+        create: jest.fn((e: unknown) => e),
+      })
+      .overrideProvider(AUDIT_LOG_REPOSITORY)
+      .useValue({
+        find: jest.fn(async () => []),
+        save: jest.fn(async (e: unknown) => e),
+        create: jest.fn((e: unknown) => e),
+      })
       .overrideProvider(REDIS_CLIENT)
       .useValue(mockRedisClient)
       .overrideProvider(REDIS_SCRIPTS_WRAPPER)
@@ -439,6 +464,32 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    ticketsStore.set(voidTicketId, {
+      id: voidTicketId,
+      eventId,
+      eventSeatId: "c3000000-0000-0000-0000-000000000003",
+      orderId: "d3000000-0000-0000-0000-000000000003",
+      ownerId: sellerId,
+      status: TicketStatus.VOID,
+      seedVersion: 1,
+      faceValueMinor: 10000,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    ticketsStore.set(revokedTicketId, {
+      id: revokedTicketId,
+      eventId,
+      eventSeatId: "c4000000-0000-0000-0000-000000000004",
+      orderId: "d4000000-0000-0000-0000-000000000004",
+      ownerId: sellerId,
+      status: TicketStatus.REVOKED,
+      seedVersion: 1,
+      faceValueMinor: 10000,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   });
 
   it("allows listing at exact 110% cap (201) and rejects 1 minor unit above cap (400)", async () => {
@@ -471,12 +522,203 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
     expect(browseRes.body.items[0].id).toBe(atCapRes.body.id);
   });
 
-  it("rejects listing a CHECKED_IN ticket with 409 Conflict", async () => {
+  it("rejects listing non-ISSUED tickets (CHECKED_IN, VOID, REVOKED) and duplicate active listings with 409 Conflict", async () => {
+    // 1. CHECKED_IN ticket rejected
     await request(app.getHttpServer())
       .post("/api/v1/resale/listings")
       .set("Authorization", `Bearer ${sellerToken}`)
       .send({ ticketId: checkedInTicketId, askingPriceMinor: 10000 })
       .expect(409);
+
+    // 2. VOID ticket rejected
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: voidTicketId, askingPriceMinor: 10000 })
+      .expect(409);
+
+    // 3. REVOKED ticket rejected
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: revokedTicketId, askingPriceMinor: 10000 })
+      .expect(409);
+
+    // 4. Initial listing succeeds
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10500 })
+      .expect(201);
+
+    // 5. Duplicate active listing for the same ticket rejected
+    const dupRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(409);
+
+    expect(dupRes.body.error.code).toBe(ErrorCode.CONFLICT);
+  });
+
+  it("allows seller to lower price or withdraw, and rejects price increases, non-owner updates, or exceeding cap", async () => {
+    // Create initial listing at 11000
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 11000 })
+      .expect(201);
+    const listingId = createRes.body.id as string;
+
+    // 1. Lower price to 10500 -> 200
+    const lowerRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 10500 })
+      .expect(200);
+    expect(lowerRes.body.askingPriceMinor).toBe(10500);
+
+    // 2. Reject raising price (10500 -> 10600) -> 400 VALIDATION_ERROR
+    const raiseRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 10600 })
+      .expect(400);
+    expect(raiseRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+
+    // 3. Reject price above 110% cap (12000 > 11000) -> 400 RESALE_PRICE_CAP_EXCEEDED
+    const capRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 12000 })
+      .expect(400);
+    expect(capRes.body.error.code).toBe(ErrorCode.RESALE_PRICE_CAP_EXCEEDED);
+
+    // 4. Non-owner cannot update listing -> 403 FORBIDDEN
+    const forbiddenRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .send({ askingPriceMinor: 9000 })
+      .expect(403);
+    expect(forbiddenRes.body.error.code).toBe(ErrorCode.FORBIDDEN);
+
+    // 5. Seller withdraws listing -> 200
+    const withdrawRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ status: ResaleListingStatus.WITHDRAWN })
+      .expect(200);
+    expect(withdrawRes.body.status).toBe(ResaleListingStatus.WITHDRAWN);
+
+    // 6. Cannot update an already withdrawn listing -> 409 CONFLICT
+    const inactiveRes = await request(app.getHttpServer())
+      .patch(`/api/v1/resale/listings/${listingId}`)
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ askingPriceMinor: 8000 })
+      .expect(409);
+    expect(inactiveRes.body.error.code).toBe(ErrorCode.CONFLICT);
+  });
+
+  it("paginates active listings and isolates eventId filters cleanly", async () => {
+    // Create an active listing
+    await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(201);
+
+    // 1. Default pagination returns items
+    const browseRes = await request(app.getHttpServer())
+      .get("/api/v1/resale/listings?page=1&pageSize=10")
+      .expect(200);
+    expect(browseRes.body.page).toBe(1);
+    expect(browseRes.body.pageSize).toBe(10);
+    expect(browseRes.body.total).toBeGreaterThanOrEqual(1);
+
+    // 2. Matching eventId filter returns the listing
+    const eventMatchRes = await request(app.getHttpServer())
+      .get(`/api/v1/resale/listings?eventId=${eventId}`)
+      .expect(200);
+    expect(eventMatchRes.body.total).toBe(1);
+
+    // 3. Non-matching eventId returns empty array
+    const otherEventId = "e9999999-9999-9999-9999-999999999999";
+    const noMatchRes = await request(app.getHttpServer())
+      .get(`/api/v1/resale/listings?eventId=${otherEventId}`)
+      .expect(200);
+    expect(noMatchRes.body.total).toBe(0);
+    expect(noMatchRes.body.items).toHaveLength(0);
+
+    // 4. Invalid eventId UUID returns 400 VALIDATION_ERROR
+    const invalidIdRes = await request(app.getHttpServer())
+      .get("/api/v1/resale/listings?eventId=not-a-uuid")
+      .expect(400);
+    expect(invalidIdRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+  });
+
+  it("handles payment failure by returning 400 PAYMENT_FAILED and releasing the Redis lock", async () => {
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(201);
+    const listingId = createRes.body.id as string;
+
+    // Buyer1 attempts purchase with tok_fail -> 400 PAYMENT_FAILED
+    const failRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .set("Idempotency-Key", "fail-idem-key-1")
+      .send({ paymentMethodToken: "tok_fail" })
+      .expect(400);
+
+    expect(failRes.body.error.code).toBe(ErrorCode.PAYMENT_FAILED);
+
+    // Lock must be released: Buyer2 can now immediately acquire the lock and purchase
+    const succeedRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer2Token}`)
+      .set("Idempotency-Key", "succeed-idem-key-1")
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(201);
+
+    expect(succeedRes.body.status).toBe(ResaleListingStatus.SOLD);
+    expect(succeedRes.body.buyerId).toBe(buyer2Id);
+  });
+
+  it("requires Idempotency-Key and returns cached result on retry without re-charging", async () => {
+    const createRes = await request(app.getHttpServer())
+      .post("/api/v1/resale/listings")
+      .set("Authorization", `Bearer ${sellerToken}`)
+      .send({ ticketId: issuedTicketId, askingPriceMinor: 10000 })
+      .expect(201);
+    const listingId = createRes.body.id as string;
+
+    // 1. Missing Idempotency-Key -> 400 VALIDATION_ERROR
+    const missingKeyRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(400);
+    expect(missingKeyRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+
+    // 2. Successful purchase with Idempotency-Key
+    const firstPurchaseRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .set("Idempotency-Key", "retry-idem-key-999")
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(201);
+
+    // 3. Re-submitting identical purchase returns cached response
+    const retryPurchaseRes = await request(app.getHttpServer())
+      .post(`/api/v1/resale/listings/${listingId}/purchase`)
+      .set("Authorization", `Bearer ${buyer1Token}`)
+      .set("Idempotency-Key", "retry-idem-key-999")
+      .send({ paymentMethodToken: "tok_visa" })
+      .expect(201);
+
+    expect(retryPurchaseRes.body).toEqual(firstPurchaseRes.body);
   });
 
   it("handles two concurrent buyers racing for the same listing: one succeeds and one gets 409 Conflict", async () => {

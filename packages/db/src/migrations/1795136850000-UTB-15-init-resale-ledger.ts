@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Utb15InitResaleLedger1795050000000 implements MigrationInterface {
-  name = "Utb15InitResaleLedger1795050000000";
+export class Utb15InitResaleLedger1795136850000 implements MigrationInterface {
+  name = "Utb15InitResaleLedger1795136850000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 1. Create resale_listings table

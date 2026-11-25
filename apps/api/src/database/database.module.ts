@@ -10,10 +10,10 @@ import {
   RefreshToken,
   Ticket,
   GateScan,
-  PlatformSetting,
-  AuditLog,
   ResaleListing,
   LedgerEntry,
+  PlatformSetting,
+  AuditLog,
 } from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
 import mongoose from "mongoose";
@@ -32,10 +32,10 @@ import {
   ORDER_ITEM_REPOSITORY,
   TICKET_REPOSITORY,
   GATE_SCAN_REPOSITORY,
-  PLATFORM_SETTING_REPOSITORY,
-  AUDIT_LOG_REPOSITORY,
   RESALE_LISTING_REPOSITORY,
   LEDGER_ENTRY_REPOSITORY,
+  PLATFORM_SETTING_REPOSITORY,
+  AUDIT_LOG_REPOSITORY,
   MONGO_CONNECTION,
   VENUE_LAYOUT_MODEL,
   REDIS_CLIENT,
@@ -55,7 +55,7 @@ let redisClientInstance: Redis | null = null;
             await AppDataSource.initialize();
           } catch (err) {
             console.warn(
-              "Warning: AppDataSource failed to connect: " +
+              "Warning: TypeORM failed to initialize database connection: " +
                 (err instanceof Error ? err.message : String(err)),
             );
           }
@@ -85,20 +85,6 @@ let redisClientInstance: Redis | null = null;
       inject: [DATA_SOURCE],
     },
     {
-      provide: ORDER_REPOSITORY,
-      useFactory: (dataSource: DataSource) => {
-        return dataSource.getRepository(Order);
-      },
-      inject: [DATA_SOURCE],
-    },
-    {
-      provide: ORDER_ITEM_REPOSITORY,
-      useFactory: (dataSource: DataSource) => {
-        return dataSource.getRepository(OrderItem);
-      },
-      inject: [DATA_SOURCE],
-    },
-    {
       provide: USER_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
         return dataSource.getRepository(User);
@@ -113,6 +99,20 @@ let redisClientInstance: Redis | null = null;
       inject: [DATA_SOURCE],
     },
     {
+      provide: ORDER_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(Order);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: ORDER_ITEM_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(OrderItem);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
       provide: TICKET_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
         return dataSource.getRepository(Ticket);
@@ -123,6 +123,20 @@ let redisClientInstance: Redis | null = null;
       provide: GATE_SCAN_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
         return dataSource.getRepository(GateScan);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: RESALE_LISTING_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(ResaleListing);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: LEDGER_ENTRY_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(LedgerEntry);
       },
       inject: [DATA_SOURCE],
     },
@@ -156,20 +170,6 @@ let redisClientInstance: Redis | null = null;
             return Reflect.get(target, prop, receiver);
           },
         });
-      },
-      inject: [DATA_SOURCE],
-    },
-    {
-      provide: RESALE_LISTING_REPOSITORY,
-      useFactory: (dataSource: DataSource) => {
-        return dataSource.getRepository(ResaleListing);
-      },
-      inject: [DATA_SOURCE],
-    },
-    {
-      provide: LEDGER_ENTRY_REPOSITORY,
-      useFactory: (dataSource: DataSource) => {
-        return dataSource.getRepository(LedgerEntry);
       },
       inject: [DATA_SOURCE],
     },
@@ -234,10 +234,10 @@ let redisClientInstance: Redis | null = null;
     REFRESH_TOKEN_REPOSITORY,
     TICKET_REPOSITORY,
     GATE_SCAN_REPOSITORY,
-    PLATFORM_SETTING_REPOSITORY,
-    AUDIT_LOG_REPOSITORY,
     RESALE_LISTING_REPOSITORY,
     LEDGER_ENTRY_REPOSITORY,
+    PLATFORM_SETTING_REPOSITORY,
+    AUDIT_LOG_REPOSITORY,
     MONGO_CONNECTION,
     VENUE_LAYOUT_MODEL,
     REDIS_CLIENT,

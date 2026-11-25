@@ -12,7 +12,7 @@ export interface PlatformSettingsPort {
   setSetting<T>(key: string, value: T): Promise<void>;
   getCommissionRate(): Promise<number>;
   setCommissionRate(rate: number): Promise<void>;
-  getCommissionRateBps?(): Promise<number>;
+  getCommissionRateBps(): Promise<number>;
 }
 
 export interface PaymentProvider {

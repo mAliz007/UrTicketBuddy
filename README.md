@@ -211,6 +211,19 @@ UrTicketBuddy/
 
 ---
 
+## Capped P2P Resale Marketplace (UTB-15)
+
+UrTicketBuddy features an integrated peer-to-peer secondary ticket exchange engineered to eliminate scalping and secondary market fraud:
+
+- **Anti-Scalping 110% Price Cap**: Enforces a strict mathematical ceiling of 110% of ticket face value (`maxResalePrice(faceValueMinor)`). Any listing attempt exceeding this limit is rejected with HTTP 400 (`RESALE_PRICE_CAP_EXCEEDED`). Resale prices can only be lowered or withdrawn; price increases are blocked.
+- **Distributed Concurrency Control**: Redis distributed locks (`resale_lock:<listingId>`, TTL 300s) guarantee single-buyer exclusivity during checkout. Competing buyers receive HTTP 409 (`CONFLICT`).
+- **Idempotency & High-Concurrency Safety**: Mandatory `Idempotency-Key` headers prevent duplicate charges and cache transaction results in Redis for 24 hours.
+- **Split Ledger Accounting**: Each completed purchase generates two balanced TypeORM `LedgerEntry` rows (`PLATFORM_COMMISSION` + `SELLER_PAYOUT`) via `PlatformSettingsPort` (default 10% / `1000` bps) summing exactly to the total asking price with zero rounding drift.
+- **Cryptographic QR Seed Invalidation (Decision D-3)**: Upon resale settlement, the ticket's `seedVersion` is incremented (+1), immediately invalidating the seller's previous 30-second dynamic QR tokens at gate turnstiles (`/api/v1/gate/scan` returns `400 TICKET_INVALID`), while the buyer receives fresh valid rotating QR codes.
+- **Full Documentation**: See [`apps/api/src/modules/resale/README.md`](apps/api/src/modules/resale/README.md).
+
+---
+
 ## Development Scripts
 
 All common workflow tasks are orchestrated via Turborepo:
