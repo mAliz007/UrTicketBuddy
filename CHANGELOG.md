@@ -14,15 +14,20 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
   - Sub-task 1: `test/UTB-17-load-stress-ci-k6-scripts`
   - Sub-task 2: `test/UTB-17-load-stress-ci-invariants`
   - Sub-task 3: `test/UTB-17-load-stress-ci-workflows-docs`
-- **Status:** Completed (Sub-tasks merged into `test/UTB-17-load-stress-ci`; PR ready for review; `main` unmerged)
-- **Packages & Directories Modified:** `infra/loadtests`, `apps/api/test`, `.github/workflows/loadtest.yml`, `docs/load-test-report.md`, `infra/README.md`, `README.md`, `CHANGELOG.md`, `.gitignore`, `.engram`
+  - Sub-task 4: `test/UTB-17-load-stress-ci-remediation` (Concurrency hardening, split-brain compensating refund, partial unique index, financial invariants)
+- **Status:** Completed & Hardened (Sub-tasks merged into `test/UTB-17-load-stress-ci`; PR ready for review; `main` unmerged)
+- **Packages & Directories Modified:** `infra/loadtests`, `apps/api`, `packages/db`, `.github/workflows/loadtest.yml`, `docs/load-test-report.md`, `infra/README.md`, `README.md`, `CHANGELOG.md`, `.gitignore`, `.engram`
 - **Scope & Deliverables:**
+  - **Concurrency Hardening & Split-Brain Remediation (`apps/api/src/modules/orders`, `packages/db`)**:
+    - Implemented automatic compensating refunds (`refundPayment()`) and Redis `unsellSeats()` rollback in `OrdersService.checkout()` when `confirmSold` or PostgreSQL transactions fail after payment authorization, completely eliminating split-brain financial loss.
+    - Added PostgreSQL partial unique index `uq_active_ticket_seat` on `tickets (eventId, eventSeatId) WHERE status IN ('ISSUED', 'CHECKED_IN')` via TypeORM migration `1795236850000-UTB-17-add-ticket-unique-seat-idx.ts`, locking double-booking prevention at the relational database engine level.
+    - Implemented `Idempotency-Key` header deduplication caching in Redis (`idempotency:checkout:<key>`, TTL 24h) returning identical order summaries on network retries without double-charging.
   - **Load Test Seeder & 1,000-VU k6 Scenarios (`infra/loadtests`)**:
     - Implemented `seed-loadtest.ts` seeding 1 test venue, 1 published event with 5,000 `EventSeat` rows (`SEC-A-1-1` .. `SEC-A-50-100`), clearing stale Redis keys, and generating 1,000 pre-signed JWT access tokens (`infra/loadtests/users.json`).
-    - Created `same-seat-1000.js` (1,000 VUs simultaneously holding `SEC-A-1-1`, asserting `holds_won == 1` and `holds_conflicted == 999`), `random-seats-1000.js` (1,000 VUs selecting 1–4 random seats with `p(95) < 250ms` and zero 5xx), `full-funnel.js` (end-to-end hold → checkout completion with `tok_visa`), and `ws-fanout-1000.js` (1,000 Socket.IO WebSocket clients verifying `seats-updated` fanout latency).
+    - Created `same-seat-1000.js` (1,000 VUs simultaneously holding `SEC-A-1-1`, asserting `holds_won == 1` and `holds_conflicted == 999`), `random-seats-1000.js` (1,000 VUs selecting 1–4 random seats with `p(95) < 250ms`, zero 5xx, and valid response rate tracking), `full-funnel.js` (end-to-end hold → checkout completion with `tok_visa` and idempotency headers), and `ws-fanout-1000.js` (1,000 Socket.IO WebSocket clients with connection ramping verifying `seats-updated` fanout latency).
   - **Post-Run DB & Redis Invariant Verifier (`infra/loadtests/verify-invariants.ts`, `apps/api/test/concurrency-invariants.e2e-spec.ts`)**:
-    - Implemented `evaluateConcurrencyInvariants` and `verifyLiveEventInvariants` asserting: (1) Zero Double-Booking across `OrderItem` and `Ticket`, (2) State Exclusivity between `seat_sold:{eventId}` and `seat_lock:{eventId}:{seatId}` / `hold_expiry:{eventId}`, and (3) Redis `SCARD seat_sold:{eventId}` ↔ PostgreSQL `SOLD` `EventSeat` & completed `OrderItem` parity.
-    - Added 1,000-User Contention Jest E2E simulation (`apps/api/test/concurrency-invariants.e2e-spec.ts`) verifying 1 winner (`201`), 999 conflicts (`409`), and zero invariant drift (4/4 tests passed).
+    - Implemented `evaluateConcurrencyInvariants` and `verifyLiveEventInvariants` with a 1-second quiescence barrier asserting: (1) Zero Double-Booking across `OrderItem` and `Ticket`, (2) State Exclusivity between `seat_sold:{eventId}` and `seat_lock:{eventId}:{seatId}` / `hold_expiry:{eventId}`, (3) Redis `SCARD seat_sold:{eventId}` ↔ PostgreSQL `SOLD` `EventSeat` & completed `OrderItem` parity, and (4) Conservation of Money ($\sum \text{Orders} \equiv \sum \text{OrderItems} \equiv \sum \text{Tickets}$).
+    - Added 1,000-User Contention Jest E2E simulation (`apps/api/test/concurrency-invariants.e2e-spec.ts`) verifying 1 winner (`201`), 999 conflicts (`409`), idempotency deduplication, and zero invariant drift (4/4 tests passed).
   - **CI Workflow & Benchmark Report (`.github/workflows/loadtest.yml`, `docs/load-test-report.md`)**:
     - Created `.github/workflows/loadtest.yml` with `pr-smoke` (50 VUs for 30s + `verify-invariants.ts`) and `nightly-stress-1000` (1,000-VU suite + artifact upload).
     - Documented benchmark metrics, p95 latencies, and reproduction runbooks in `docs/load-test-report.md` and `infra/loadtests/README.md`.

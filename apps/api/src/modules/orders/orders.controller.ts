@@ -20,10 +20,13 @@ export class OrdersController {
   async checkout(
     @Body() checkoutDto: CheckoutDto,
     @Headers("x-user-id") userIdHeader?: string,
+    @Headers("idempotency-key") idempotencyKeyHeader?: string,
   ) {
     const payload: CheckoutDto = {
       ...checkoutDto,
       userId: checkoutDto.userId || userIdHeader || undefined,
+      idempotencyKey:
+        checkoutDto.idempotencyKey || idempotencyKeyHeader || undefined,
     };
     return this.ordersService.checkout(payload);
   }

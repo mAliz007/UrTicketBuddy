@@ -12,17 +12,20 @@ import { LOADTEST_EVENT_ID } from "./seed-loadtest";
 export interface InvariantSnapshotInput {
   eventId: string;
   soldEventSeats: Array<{ id: string; seatId: string; status: string }>;
+  completedOrders?: Array<{ id: string; totalAmount: number }>;
   completedOrderItems: Array<{
     id: string;
     orderId: string;
     eventId: string;
     eventSeatId: string;
+    price?: number;
   }>;
   activeTickets: Array<{
     id: string;
     eventId: string;
     eventSeatId: string;
     status: string;
+    faceValueMinor?: number;
   }>;
   redisSoldSeatIds: string[];
   redisActiveLockSeatIds: string[];
@@ -47,6 +50,12 @@ export interface InvariantCheckReport {
     redisSoldCount: number;
     postgresSoldSeatsCount: number;
     completedOrderItemsCount: number;
+  };
+  conservationOfMoney: {
+    passed: boolean;
+    totalOrdersAmount: number;
+    totalOrderItemsAmount: number;
+    totalTicketsFaceValueMinor: number;
   };
   violations: string[];
 }
@@ -120,12 +129,50 @@ export function evaluateConcurrencyInvariants(
     );
   }
 
+  // 4. Conservation of Money & Financial Integrity Invariant
+  let conservationPassed = true;
+  let totalOrdersAmount = 0;
+  let totalOrderItemsAmount = 0;
+  let totalTicketsFaceValueMinor = 0;
+
+  if (snapshot.completedOrders && snapshot.completedOrders.length > 0) {
+    totalOrdersAmount = snapshot.completedOrders.reduce(
+      (sum, o) => sum + Number(o.totalAmount || 0),
+      0,
+    );
+    totalOrderItemsAmount = snapshot.completedOrderItems.reduce(
+      (sum, item) => sum + Number(item.price || 0),
+      0,
+    );
+    totalTicketsFaceValueMinor = snapshot.activeTickets.reduce(
+      (sum, t) => sum + Number(t.faceValueMinor || 0),
+      0,
+    );
+
+    if (totalOrdersAmount !== totalOrderItemsAmount) {
+      conservationPassed = false;
+      violations.push(
+        `Conservation of Money violated: totalOrdersAmount=${totalOrdersAmount} != totalOrderItemsAmount=${totalOrderItemsAmount}`,
+      );
+    }
+    if (
+      totalTicketsFaceValueMinor > 0 &&
+      totalOrdersAmount * 100 !== totalTicketsFaceValueMinor
+    ) {
+      conservationPassed = false;
+      violations.push(
+        `Conservation of Money violated: totalOrdersAmountMinor=${totalOrdersAmount * 100} != totalTicketsFaceValueMinor=${totalTicketsFaceValueMinor}`,
+      );
+    }
+  }
+
   return {
     eventId: snapshot.eventId,
     passed:
       zeroDoubleBookingPassed &&
       stateExclusivityPassed &&
-      redisPostgresParityPassed,
+      redisPostgresParityPassed &&
+      conservationPassed,
     zeroDoubleBooking: {
       passed: zeroDoubleBookingPassed,
       duplicateOrderItemSeats: Array.from(duplicateOrderItemSeats),
@@ -142,6 +189,12 @@ export function evaluateConcurrencyInvariants(
       postgresSoldSeatsCount,
       completedOrderItemsCount,
     },
+    conservationOfMoney: {
+      passed: conservationPassed,
+      totalOrdersAmount,
+      totalOrderItemsAmount,
+      totalTicketsFaceValueMinor,
+    },
     violations,
   };
 }
@@ -149,6 +202,9 @@ export function evaluateConcurrencyInvariants(
 export async function verifyLiveEventInvariants(
   eventId: string = process.env.EVENT_ID || LOADTEST_EVENT_ID,
 ): Promise<InvariantCheckReport> {
+  // Quiescence barrier: allow in-flight async writes & pub/sub tasks to settle
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const env = loadEnv();
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
@@ -184,6 +240,7 @@ export async function verifyLiveEventInvariants(
         orderId: item.orderId,
         eventId,
         eventSeatId: item.eventSeatId,
+        price: Number(item.price || 0),
       }));
 
     const activeTickets = (await ticketRepo.find({ where: { eventId } })).map(
@@ -192,6 +249,7 @@ export async function verifyLiveEventInvariants(
         eventId: t.eventId,
         eventSeatId: t.eventSeatId,
         status: t.status,
+        faceValueMinor: Number(t.faceValueMinor || 0),
       }),
     );
 
@@ -225,6 +283,10 @@ export async function verifyLiveEventInvariants(
         id: s.id,
         seatId: s.seatId,
         status: s.status,
+      })),
+      completedOrders: completedOrders.map((o) => ({
+        id: o.id,
+        totalAmount: Number(o.totalAmount || 0),
       })),
       completedOrderItems,
       activeTickets,

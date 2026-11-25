@@ -1,6 +1,6 @@
 import http from "k6/http";
 import { check, sleep } from "k6";
-import { Counter } from "k6/metrics";
+import { Counter, Rate } from "k6/metrics";
 import { SharedArray } from "k6/data";
 import exec from "k6/execution";
 
@@ -15,6 +15,7 @@ const users = new SharedArray("virtual_users", () => seedData.users);
 export const holdsSucceeded = new Counter("random_holds_succeeded");
 export const holdsConflicted = new Counter("random_holds_conflicted");
 export const serverErrors = new Counter("server_errors");
+export const validSeatHoldRate = new Rate("valid_seat_hold_rate");
 
 export const options = {
   scenarios: {
@@ -27,6 +28,7 @@ export const options = {
   thresholds: {
     http_req_duration: ["p(95)<250"],
     server_errors: ["count==0"],
+    valid_seat_hold_rate: ["rate>0.99"],
   },
 };
 
@@ -68,6 +70,8 @@ export default function () {
   } else if (res.status >= 500) {
     serverErrors.add(1);
   }
+
+  validSeatHoldRate.add(res.status === 201 || res.status === 409);
 
   check(res, {
     "status is 201 or 409": (r) => r.status === 201 || r.status === 409,

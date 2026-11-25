@@ -204,6 +204,7 @@
       "packages/db/src/migrations/1795036850000-UTB-14-init-tickets-gate-scans.ts",
       "packages/db/src/migrations/1795136850000-UTB-15-init-resale-ledger.ts",
       "packages/db/src/migrations/1795136850000-UTB-16-init-admin-audit.ts",
+      "packages/db/src/migrations/1795236850000-UTB-17-add-ticket-unique-seat-idx.ts",
       "packages/redis-scripts/jest.config.ts",
       "packages/redis-scripts/lua/confirm_sold.lua",
       "packages/redis-scripts/lua/expire_due.lua",
@@ -258,8 +259,8 @@
     "image": [],
     "video": []
   },
-  "total_files": 250,
-  "total_words": 98535,
+  "total_files": 251,
+  "total_words": 99403,
   "needs_graph": true,
   "warning": null,
   "skipped_sensitive": [
@@ -274,7 +275,7 @@
   "graphifyignore_patterns": 3,
   "git": {
     "source_owner": "git",
-    "source_hash": "e0e87813246fc22d6c7a987e2c6249c27872fc06",
+    "source_hash": "f80acb52ad9d01ec668ecb61192073bc958d87c0",
     "branches": [
       "feat/UTB-11-hold-expiry-worker",
       "feat/UTB-11/expiry-cron",
@@ -296,6 +297,7 @@
       "test/UTB-17-load-stress-ci",
       "test/UTB-17-load-stress-ci-invariants",
       "test/UTB-17-load-stress-ci-k6-scripts",
+      "test/UTB-17-load-stress-ci-remediation",
       "test/UTB-17-load-stress-ci-workflows-docs"
     ],
     "max_commits": 200,
@@ -307,9 +309,9 @@
     "source": "configured-default",
     "root": ".",
     "git_root": ".",
-    "head": "e0e87813246fc22d6c7a987e2c6249c27872fc06",
+    "head": "f80acb52ad9d01ec668ecb61192073bc958d87c0",
     "candidate_count": null,
-    "included_count": 250,
+    "included_count": 251,
     "excluded_untracked_count": 0,
     "excluded_ignored_count": 0,
     "excluded_sensitive_count": 7,
