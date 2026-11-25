@@ -4,14 +4,16 @@
 
 ## Files & Architecture
 
-| File                   | Description                                                                                                                                                                                              |
-| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `seed-loadtest.ts`     | Seeds 1 venue, 1 published event (`e0000000-0000-4000-8000-000000001000`), 5,000 `EventSeat` rows (`SEC-A-1-1` .. `SEC-A-50-100`), clears Redis locks, and writes 1,000 pre-signed JWTs to `users.json`. |
-| `same-seat-1000.js`    | 1,000 VUs simultaneously `POST /api/v1/checkout/hold` for `SEC-A-1-1`. Asserts `holds_won == 1` and `holds_conflicted == 999`.                                                                           |
-| `random-seats-1000.js` | 1,000 VUs contending for 1–4 random seats across 5,000 seats. Enforces `http_req_duration: ['p(95)<250']` and zero 5xx errors.                                                                           |
-| `full-funnel.js`       | End-to-end hold (`POST /api/v1/checkout/hold`) → purchase (`POST /api/v1/orders/checkout` with `tok_visa`).                                                                                              |
-| `ws-fanout-1000.js`    | 1,000 concurrent Socket.IO WebSocket connections to `apps/realtime` (`:3001`) joining `event:{eventId}` and measuring `seats-updated` broadcast latency.                                                 |
-| `verify-invariants.ts` | Post-run CLI and library verifier checking Zero Double-Booking, State Exclusivity (`seat_sold` vs `seat_lock`), and Redis-PostgreSQL `SOLD` count parity.                                                |
+| File                   | Description                                                                                                                                                                                                                                                                                                                      |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `seed-loadtest.ts`     | Seeds 1 venue, 1 published event (`e0000000-0000-4000-8000-000000001000`), 5,000 `EventSeat` rows (`SEC-A-1-1` .. `SEC-A-50-100`), clears Redis locks, and writes 1,000 pre-signed JWTs to `users.json`.                                                                                                                         |
+| `same-seat-1000.js`    | 1,000 VUs simultaneously `POST /api/v1/checkout/hold` for `SEC-A-1-1`. Asserts `holds_won == 1` and `holds_conflicted == 999`.                                                                                                                                                                                                   |
+| `random-seats-1000.js` | 1,000 VUs contending for 1–4 random seats across 5,000 seats. Enforces `http_req_duration: ['p(95)<250']`, `valid_seat_hold_rate > 0.99`, and zero 5xx errors.                                                                                                                                                                   |
+| `full-funnel.js`       | End-to-end hold (`POST /api/v1/checkout/hold`) → purchase (`POST /api/v1/orders/checkout` with `tok_visa` and `Idempotency-Key` headers).                                                                                                                                                                                        |
+| `ws-fanout-1000.js`    | 1,000 concurrent Socket.IO WebSocket connections (with connection ramping) to `apps/realtime` (`:3001`) joining `event:{eventId}` and measuring `seats-updated` broadcast latency.                                                                                                                                               |
+| `verify-invariants.ts` | Post-run CLI and library verifier (with 1-second quiescence delay) checking: (1) Zero Double-Booking, (2) State Exclusivity (`seat_sold` vs `seat_lock`/`hold_expiry`), (3) Redis-PostgreSQL `SOLD` count parity, and (4) Conservation of Money ($\sum \text{Orders} \equiv \sum \text{OrderItems} \equiv \sum \text{Tickets}$). |
+
+> See also: [Infrastructure Overview](../README.md) | [Load Test Benchmark Report](../../docs/load-test-report.md)
 
 ## Usage
 
