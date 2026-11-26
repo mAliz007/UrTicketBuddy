@@ -43,7 +43,7 @@ Every key uses the `{eventId}` hash tag so all keys for an event map to the **ex
 
 4. **`unsell_seats.lua`**
    - **Input**: `(eventId, seatIds[])`
-   - **Guarantees**: Removes specified `seatIds` from `seat_sold:{eventId}` (`SREM`) for administrative ticket revocation.
+   - **Guarantees**: Removes specified `seatIds` from `seat_sold:{eventId}` (`SREM`) for administrative ticket revocation or compensating checkout rollbacks upon transaction failure (UTB-17).
 
 5. **`extend_hold.lua`**
    - **Input**: `(eventId, userId, seatIds[]?, graceSeconds = 120, nowMs)`

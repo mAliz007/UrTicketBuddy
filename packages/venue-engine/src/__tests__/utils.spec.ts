@@ -109,6 +109,9 @@ describe("Venue Engine Utilities", () => {
             seatWidth: 20,
             gapX: 5,
             gapY: 5,
+            staggerOffset: 0,
+            aisleColumns: [],
+            aisleWidth: 0,
           },
         ],
         seats: [

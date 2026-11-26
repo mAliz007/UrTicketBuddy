@@ -123,4 +123,4 @@ const table = generateTableCluster({
 ## Testing & Performance
 
 - **Property-Based Testing**: Powered by `fast-check` to assert mathematical invariants (seat count precision, non-overlapping distances $\ge seatWidth$, and rotation vector alignment with center).
-- **Performance Benchmark**: Generates 10,000 seats in under 200 ms (achieves ~40-50 ms in benchmark).
+- **Performance Benchmark**: Generates 10,000 seats in under 200 ms (~40-60 ms typical in benchmark with V8 JIT warm-up and multi-tenant CI runner headroom).
