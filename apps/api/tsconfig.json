@@ -2,10 +2,13 @@
   "extends": "../../packages/config/tsconfig/node.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "baseUrl": "./",
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "paths": {
+      "@urticketbuddy/*": ["./node_modules/@urticketbuddy/*/dist"],
+      "ioredis": ["./node_modules/ioredis"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist"]
 }

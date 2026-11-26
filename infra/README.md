@@ -20,7 +20,7 @@ UrTicketBuddy is deployed and verified on **Oracle Cloud Infrastructure (OCI) Al
 - `docker/`: Dockerfile configurations and service setup (e.g. `pgbouncer/`, `Dockerfile.web`, etc.)
 - `nginx/`: Nginx reverse proxy configuration (`nginx.conf`) with edge CDN caching layer (`media_cache`), API microcaching (`api_cache`), rate limiting, gzip, and SPA fallback routing
 - `k8s/`: Kubernetes manifests (validated on Kind) with HPA and CronJobs
-- `loadtests/`: k6 load testing scenarios
+- `loadtests/`: 1,000-VU k6 stress test scenarios, 5,000-seat seeder, and post-run DB/Redis invariant verifier (see [Load Tests Runbook](loadtests/README.md) and [Load Test Report](../docs/load-test-report.md))
 - `scripts/`: Host bootstrap (`setup-oracle-vm.sh`), multi-DB automated backup (`backup-all.sh`), disaster recovery drill (`restore-drill.sh`), and retention pruning (`prune-backups.sh`)
 
 ---

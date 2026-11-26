@@ -1,7 +1,8 @@
 import { NestFactory } from "@nestjs/core";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import { json, urlencoded, Request, Response, NextFunction } from "express";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import type { Request, Response, NextFunction } from "express";
 import { AppModule } from "./app.module";
 import { loadEnv } from "@urticketbuddy/config";
 import { Logger } from "@nestjs/common";
@@ -11,14 +12,16 @@ import { LogRedactionInterceptor } from "./common/interceptors/log-redaction.int
 async function bootstrap() {
   const env = loadEnv();
   const logger = new Logger("ApiBootstrap");
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
+  });
 
   // Security HTTP Headers with Helmet
   app.use(helmet());
 
   // Strict Request Body Limit (100kb)
-  app.use(json({ limit: "100kb" }));
-  app.use(urlencoded({ extended: true, limit: "100kb" }));
+  app.useBodyParser("json", { limit: "100kb" });
+  app.useBodyParser("urlencoded", { extended: true, limit: "100kb" });
 
   app.use(cookieParser());
 
@@ -41,7 +44,7 @@ async function bootstrap() {
   // Strict CORS allowlist loaded from environment config (CORS_ORIGINS)
   const allowedOrigins = (env.CORS_ORIGINS || "")
     .split(",")
-    .map((s) => s.trim())
+    .map((s: string) => s.trim())
     .filter(Boolean);
 
   app.enableCors({

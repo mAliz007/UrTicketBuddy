@@ -46,3 +46,16 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - **Zero-Trust Log Redaction**: `LogRedactionInterceptor` recursively scrubs sensitive tokens and credentials (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`, `totpSecret`) from log payloads before output.
 - **Tenant Isolation**: `OwnershipGuard` verifies organizer resource tenancy (`event.organizerId === user.organizerTenantId || event.organizerId === user.id`) across multi-tenant administrative and analytics operations.
 - **Route Authorization Verification**: Automated route metadata scanner and persona matrix in `test/security-audit.e2e-spec.ts` guaranteeing zero unprotected or misconfigured endpoints.
+
+## Testing & Concurrency Verification
+
+Run unit, E2E, and typecheck suites (covering both `src/` and `test/`):
+
+```bash
+pnpm --filter @urticketbuddy/api typecheck
+pnpm --filter @urticketbuddy/api lint
+pnpm --filter @urticketbuddy/api test
+```
+
+- **1,000-User Contention & Invariants (`test/concurrency-invariants.e2e-spec.ts`)**: Simulates 1,000 concurrent buyers contending for a single seat, verifying exact `201`/`409` distribution, `Idempotency-Key` deduplication, compensating refunds (`refundPayment` + `unsellSeats`), and all 4 PostgreSQL + Redis invariants from [`infra/loadtests/README.md`](../../infra/loadtests/README.md).
+- **Orders & Checkout E2E (`test/orders.e2e-spec.ts`)**: Validates checkout transactions, pessimistic row locking (`pessimistic_write`), and failure rollbacks (see [Orders Module](src/modules/orders/README.md)).

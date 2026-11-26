@@ -130,7 +130,10 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
       ...data,
     })),
     save: jest.fn(async (listing: Record<string, unknown>) => {
-      const saved = { ...listing, updatedAt: new Date() };
+      const saved: Record<string, unknown> = {
+        ...listing,
+        updatedAt: new Date(),
+      };
       listingsStore.set(String(saved.id), saved);
       return { ...saved };
     }),
@@ -180,7 +183,7 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
       let filterEventId: string | undefined;
       let skipVal = 0;
       let takeVal = 20;
-      const qb = {
+      const qb: Record<string, jest.Mock> = {
         innerJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn((clause: string, params?: { eventId?: string }) => {

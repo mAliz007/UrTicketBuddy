@@ -200,7 +200,7 @@ UrTicketBuddy/
 │   ├── docker/          # Dockerfile and service configs (PgBouncer, Dockerfiles)
 │   ├── nginx/           # Nginx reverse proxy configuration with rate limiting & gzip
 │   ├── k8s/             # Kubernetes deployment manifests (kind-validated)
-│   ├── loadtests/       # k6 load testing scenarios
+│   ├── loadtests/       # 1,000-VU k6 stress scenarios, 5,000-seat seeder & DB/Redis invariant verifier
 │   └── scripts/         # Automation and database maintenance scripts
 └── docs/
     ├── adr/             # Architecture Decision Records (ADR-0001: Decisions D-1 to D-7)
@@ -317,6 +317,21 @@ UrTicketBuddy enforces production-grade zero-trust security controls across all 
   - _Tenant Isolation & Replay Protection_: Asserts multi-tenant event boundary enforcement via `OwnershipGuard` and token family revocation upon refresh token reuse detection.
 - **Zero-Trust Log Redaction**: `LogRedactionInterceptor` strips sensitive keys (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`) before any log payload reaches stdout or disk.
 - **CI Supply-Chain Gates**: Automated supply-chain vulnerability scans (`pnpm audit --audit-level=high`) and secret scanning configured in [`.github/workflows/security.yml`](.github/workflows/security.yml).
+
+---
+
+## High-Concurrency Stress & Load Tests (UTB-17)
+
+UrTicketBuddy validates 1,000-concurrent-user booking integrity and sub-250ms p95 latency through an automated k6 stress suite and PostgreSQL/Redis mathematical invariant verifier ([`infra/loadtests/README.md`](infra/loadtests/README.md), [`docs/load-test-report.md`](docs/load-test-report.md)):
+
+- **5,000-Seat Benchmark Seeder (`infra/loadtests/seed-loadtest.ts`)**: Seeds 1 published event with 5,000 `EventSeat` rows (`SEC-A-1-1` .. `SEC-A-50-100`) and 1,000 pre-signed virtual user JWTs (`infra/loadtests/users.json`).
+- **4 k6 Stress Scenarios**:
+  - `same-seat-1000.js`: 1,000 VUs simultaneously holding `SEC-A-1-1` (`holds_won == 1`, `holds_conflicted == 999`).
+  - `random-seats-1000.js`: 1,000 VUs holding 1–4 random seats (`p(95) < 250ms`, `valid_seat_hold_rate > 0.99`, zero 5xx).
+  - `full-funnel.js`: End-to-end hold $\rightarrow$ checkout with `Idempotency-Key` deduplication.
+  - `ws-fanout-1000.js`: 1,000 ramped Socket.IO WebSocket connections verifying `seats-updated` fan-out latency.
+- **Database & Redis Invariant Verifier (`infra/loadtests/verify-invariants.ts`)**: Enforces (1) Zero Double-Booking (backed by PostgreSQL partial unique index `uq_active_ticket_seat`), (2) Redis `seat_sold` vs `seat_lock`/`hold_expiry` exclusivity, (3) Redis `SCARD` $\leftrightarrow$ PostgreSQL `SOLD` parity, and (4) Conservation of Money ($\sum \text{Orders} \equiv \sum \text{OrderItems} \equiv \sum \text{Tickets}$).
+- **CI Workflows ([`.github/workflows/loadtest.yml`](.github/workflows/loadtest.yml))**: Runs `pr-smoke` (50 VUs / 30s + `concurrency-invariants.e2e-spec.ts` + `verify-invariants.ts`) on every PR and `nightly-stress-1000` (1,000 VUs) on schedule.
 
 ---
 

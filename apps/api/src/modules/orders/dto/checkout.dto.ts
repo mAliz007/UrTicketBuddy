@@ -3,4 +3,5 @@ export interface CheckoutDto {
   seatIds: string[];
   paymentMethodToken: string;
   userId?: string;
+  idempotencyKey?: string;
 }
