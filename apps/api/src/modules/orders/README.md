@@ -76,7 +76,22 @@ sequenceDiagram
 
 ---
 
-## 3. Endpoints
+## 3. Concurrency Hardening & Invariant Defenses (UTB-17)
+
+To prevent financial loss, split-brain states, and double-booking under extreme 1,000-user contention:
+
+1. **Compensating Refund & Rollback Pipeline**:
+   - If payment gateway authorization succeeds but subsequent `confirmSold` (Redis Lua) or the PostgreSQL ACID transaction fails (e.g. database deadlock or constraint violation), `OrdersService` immediately initiates an automatic compensating refund (`paymentProvider.refundPayment(...)`) and rolls back any sold seats via `redisScripts.unsellSeats(eventId, seatIds)`.
+2. **Idempotency Deduplication**:
+   - Every `POST /api/v1/orders/checkout` accepts an `Idempotency-Key` header. Completed order responses are cached in Redis (`idempotency:checkout:<key>`, TTL 24 hours). Duplicate network retries immediately receive the cached response without double-charging or re-allocating tickets.
+3. **Pessimistic Row Locking**:
+   - During the database transaction, target `EventSeat` rows are selected with `pessimistic_write` (`SELECT ... FOR UPDATE`), serializing concurrent transactions that target the same event seats.
+4. **Relational Double-Booking Guard**:
+   - PostgreSQL partial unique index `uq_active_ticket_seat` (`UNIQUE ("eventId", "eventSeatId") WHERE status IN ('ISSUED', 'CHECKED_IN')`) enforces mathematical single-ticket allocation even if application-level safeguards were bypassed.
+
+---
+
+## 4. Endpoints
 
 ### `POST /api/v1/orders/checkout`
 

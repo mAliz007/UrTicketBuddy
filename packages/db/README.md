@@ -68,9 +68,13 @@ Example:
 
 - `1794836828550-UTB-2-init-extensions.ts`: Baseline migration enabling `pgcrypto` and `uuid-ossp`.
 - `1794836850000-UTB-9-init-venues-events.ts`: Venues, Events, and EventSeats tables with foreign keys and covering indexes.
+- `1794837000000-UTB-3-init-users.ts`: Users table with unique email index, hashed passwords, and RBAC roles.
+- `1794837100000-UTB-3-init-refresh-tokens.ts`: Refresh token families with family revocation and token reuse detection.
 - `1794936850000-UTB-10-init-orders.ts`: Orders and OrderItems tables with foreign keys, covering indexes, and monetary precision.
 - `1795036850000-UTB-14-init-tickets-gate-scans.ts`: Tickets and GateScans tables with foreign keys, covering indexes, and status tracking.
+- `1795136850000-UTB-15-init-resale-ledger.ts`: Capped P2P resale listings (`resale_listings`) and split platform accounting entries (`ledger_entries`).
 - `1795136850000-UTB-16-init-admin-audit.ts`: Platform settings table (`platform_settings`), append-only audit trail (`audit_logs`) secured with PostgreSQL trigger `trg_audit_logs_immutable`, and `organizerId` column on `events`.
+- `1795236850000-UTB-17-add-ticket-unique-seat-idx.ts`: Partial unique index `uq_active_ticket_seat` on `tickets ("eventId", "eventSeatId") WHERE status IN ('ISSUED', 'CHECKED_IN')` mathematically eliminating double-booking at the relational engine level.
 
 ### Entities
 
@@ -79,8 +83,10 @@ Example:
 - `EventSeat`: Individual seat coordinate and tier record belonging to an event (`eventId` FK, `seatId` deterministic `<section>-<row>-<number>`).
 - `Order`: Customer order record with total amount, currency, status, and event association (`eventId` FK, `userId` index).
 - `OrderItem`: Line item connecting an order to an individual event seat (`orderId` FK, `eventSeatId` FK, `price`).
-- `Ticket`: Digital admission ticket with cryptographic seed version, face value, and status (`ISSUED`, `CHECKED_IN`, `VOID`, `REVOKED`).
+- `Ticket`: Digital admission ticket with cryptographic seed version, face value, status (`ISSUED`, `CHECKED_IN`, `VOID`, `REVOKED`), and partial unique seat index (`uq_active_ticket_seat`).
 - `GateScan`: Turnstile scan audit trail recording scan timestamps, scanner operator, and validation result (`VALID`, `USED`, `INVALID`, `EXPIRED`, `WRONG_EVENT`).
+- `ResaleListing`: Secondary marketplace listings with anti-scalping price ceiling (max 110% face value), seller identity, and status lifecycle (`ACTIVE`, `SOLD`, `CANCELLED`).
+- `LedgerEntry`: Balanced accounting journal recording platform commission and seller payouts on completed ticket transactions.
 - `PlatformSetting`: Dynamic key-value configuration table storing system parameters such as `commission_rate_percent` (seeding default `'10'`).
 - `AuditLog`: Immutable append-only audit log recording administrative interventions, fraud flags, revocations, and system actions.
 
