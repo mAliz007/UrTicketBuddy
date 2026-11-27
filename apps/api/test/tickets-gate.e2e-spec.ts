@@ -47,6 +47,7 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
   let ownerToken: string;
   let intruderToken: string;
   let gateStaffToken: string;
+  let otherGateStaffToken: string;
   let adminToken: string;
 
   const sampleTicket = {
@@ -206,6 +207,13 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
       sub: gateStaffId,
       email: "gatestaff@example.com",
       role: UserRole.GATE_STAFF,
+      organizerTenantId: "org-1",
+    });
+    otherGateStaffToken = jwtService.sign({
+      sub: "u5000000-0000-0000-0000-000000000005",
+      email: "otherstaff@example.com",
+      role: UserRole.GATE_STAFF,
+      organizerTenantId: "org-2",
     });
     adminToken = jwtService.sign({
       sub: adminId,
@@ -469,6 +477,24 @@ describe("Dynamic QR Tickets & Gate Scanner API (e2e - Supertest)", () => {
             s.scannedTicketRef === forgedTicketId,
         ),
       ).toBe(true);
+    });
+
+    it("should reject gate staff from another organizer tenant over real HTTP with 403 Forbidden", async () => {
+      const qrRes = await request(app.getHttpServer())
+        .get(`/api/v1/tickets/${sampleTicket.id}/dynamic-qr`)
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .expect(200);
+
+      const res = await request(app.getHttpServer())
+        .post("/api/v1/gate/scan")
+        .set("Authorization", `Bearer ${otherGateStaffToken}`)
+        .send({
+          token: qrRes.body.token,
+          eventId,
+        })
+        .expect(403);
+
+      expect(res.body.error.code).toBe(ErrorCode.FORBIDDEN);
     });
   });
 

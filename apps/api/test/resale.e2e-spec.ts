@@ -64,6 +64,7 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
   const futureEvent = {
     id: eventId,
     name: "Resale Concert",
+    organizerId: "org-resale-1",
     startTime: new Date(Date.now() + 86_400_000),
     status: "PUBLISHED",
   };
@@ -425,7 +426,12 @@ describe("Capped P2P Resale Marketplace API (e2e - Supertest)", () => {
       { secret: env.JWT_SECRET },
     );
     gateStaffToken = jwtService.sign(
-      { sub: gateStaffId, email: "gate@test.com", role: UserRole.GATE_STAFF },
+      {
+        sub: gateStaffId,
+        email: "gate@test.com",
+        role: UserRole.GATE_STAFF,
+        organizerTenantId: "org-resale-1",
+      },
       { secret: env.JWT_SECRET },
     );
   });

@@ -505,18 +505,21 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
     const results = await Promise.all(
       users.map(async (user, idx) => {
         try {
-          await checkoutController.holdSeats(user.userId, {
-            eventId,
-            seatIds: [targetSeatId],
-          });
+          await checkoutController.holdSeats(
+            { id: user.userId, role: UserRole.CUSTOMER } as any,
+            {
+              eventId,
+              seatIds: [targetSeatId],
+            },
+          );
 
           const order = await ordersController.checkout(
+            { id: user.userId, role: UserRole.CUSTOMER } as any,
             {
               eventId,
               seatIds: [targetSeatId],
               paymentMethodToken: "tok_visa",
             },
-            user.userId,
           );
 
           return {
@@ -568,7 +571,6 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
         request(app.getHttpServer())
           .post("/api/v1/checkout/hold")
           .set("Authorization", `Bearer ${u.token}`)
-          .set("x-user-id", u.userId)
           .send({ eventId, seatIds: [httpSeat] }),
       ),
     );
@@ -585,7 +587,6 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
     const checkoutRes = await request(app.getHttpServer())
       .post("/api/v1/orders/checkout")
       .set("Authorization", `Bearer ${winnerUser.token}`)
-      .set("x-user-id", winnerUser.userId)
       .set("Idempotency-Key", `e2e-http-${winnerUser.userId}`)
       .send({
         eventId,
@@ -600,7 +601,6 @@ describe("UTB-17 Concurrency Invariants & 1,000-User Contention (e2e)", () => {
     const retryRes = await request(app.getHttpServer())
       .post("/api/v1/orders/checkout")
       .set("Authorization", `Bearer ${winnerUser.token}`)
-      .set("x-user-id", winnerUser.userId)
       .set("Idempotency-Key", `e2e-http-${winnerUser.userId}`)
       .send({
         eventId,
