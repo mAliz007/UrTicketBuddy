@@ -228,22 +228,23 @@ UrTicketBuddy features an integrated peer-to-peer secondary ticket exchange engi
 
 All common workflow tasks are orchestrated via Turborepo:
 
-| Script                 | Command            | Purpose                                                         |
-| :--------------------- | :----------------- | :-------------------------------------------------------------- |
-| **Start Dev**          | `pnpm dev`         | Concurrently run all applications in development watch mode     |
-| **Build Workspace**    | `pnpm build`       | Compile all packages and build application bundles              |
-| **Lint**               | `pnpm lint`        | Run ESLint checks across all TypeScript and React files         |
-| **Type Check**         | `pnpm typecheck`   | Run `tsc --noEmit` across all workspace projects                |
-| **Run Tests**          | `pnpm test`        | Run Jest unit and integration test suites                       |
-| **Database Check**     | `pnpm db:check`    | Verify database connectivity and migration status               |
-| **Run Migrations**     | `pnpm db:migrate`  | Execute pending database migrations                             |
-| **Revert Migration**   | `pnpm db:revert`   | Roll back the most recently executed migration                  |
-| **Generate Migration** | `pnpm db:generate` | Automatically generate a migration based on entity changes      |
-| **Start Infra**        | `pnpm up`          | Start all infrastructure containers via Docker Compose          |
-| **Stop Infra**         | `pnpm down`        | Stop and remove all infrastructure containers                   |
-| **Start Prod Stack**   | `pnpm up:prod`     | Build and start all production containers with health checks    |
-| **Stop Prod Stack**    | `pnpm down:prod`   | Stop and remove all production containers                       |
-| **Architecture Graph** | `pnpm graphify`    | Generate architectural knowledge graph and visual studio report |
+| Script                 | Command               | Purpose                                                         |
+| :--------------------- | :-------------------- | :-------------------------------------------------------------- |
+| **Start Dev**          | `pnpm dev`            | Concurrently run all applications in development watch mode     |
+| **Build Workspace**    | `pnpm build`          | Compile all packages and build application bundles              |
+| **Lint**               | `pnpm lint`           | Run ESLint checks across all TypeScript and React files         |
+| **Type Check**         | `pnpm typecheck`      | Run `tsc --noEmit` across all workspace projects                |
+| **Run Tests**          | `pnpm test`           | Run Jest unit and integration test suites                       |
+| **Reindex Search**     | `pnpm search:reindex` | Rebuild versioned Elasticsearch `events` index and swap alias   |
+| **Database Check**     | `pnpm db:check`       | Verify database connectivity and migration status               |
+| **Run Migrations**     | `pnpm db:migrate`     | Execute pending database migrations                             |
+| **Revert Migration**   | `pnpm db:revert`      | Roll back the most recently executed migration                  |
+| **Generate Migration** | `pnpm db:generate`    | Automatically generate a migration based on entity changes      |
+| **Start Infra**        | `pnpm up`             | Start all infrastructure containers via Docker Compose          |
+| **Stop Infra**         | `pnpm down`           | Stop and remove all infrastructure containers                   |
+| **Start Prod Stack**   | `pnpm up:prod`        | Build and start all production containers with health checks    |
+| **Stop Prod Stack**    | `pnpm down:prod`      | Stop and remove all production containers                       |
+| **Architecture Graph** | `pnpm graphify`       | Generate architectural knowledge graph and visual studio report |
 
 ---
 

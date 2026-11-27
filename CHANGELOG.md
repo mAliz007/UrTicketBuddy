@@ -4,6 +4,26 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-11] - 2026-11-27
+
+**Branch:** `feat/UTB-11-elasticsearch-search` (Contracts commit `feat(contracts): add search-index job and search schemas [UTB-11]`)
+
+### Deliverables
+
+- **Contracts (`packages/contracts`):** Added `SEARCH_INDEX_QUEUE`, `SearchIndexJobActionSchema` (`index`, `update`, `delete`), `EventSearchGeoPointSchema`, extended `SearchIndexJobSchema`, and added `SearchBackend`, `SearchSortSchema`, `SearchEventsQuerySchema`, `SearchEventsResponseSchema`, `SearchSuggestQuerySchema`, and `SearchSuggestResponseSchema`.
+- **Configuration (`packages/config`, `.env.example`):** Added optional Elasticsearch credentials (`ELASTICSEARCH_USERNAME`, `ELASTICSEARCH_PASSWORD`, `ELASTICSEARCH_API_KEY`), `ELASTICSEARCH_INDEX_ALIAS` (default `events`), `SEARCH_CB_FAILURE_THRESHOLD` (default `3`), and `SEARCH_CB_COOLDOWN_MS` (default `30000`).
+- **API Search Module (`apps/api/src/modules/search`):**
+  - Added `@elastic/elasticsearch` client provider, `events_template` (`events_v*`), `edge_ngram` typeahead analyzer, and `events` alias initialization (`events_v1`).
+  - Added `@Public()` `GET /api/v1/search/events` (full-text `q`, `city`, `category`, `from`/`to` date range, `lat`/`lng`/`radiusKm` geo filter, price/date/relevance sort, `page`/`pageSize` max 100) and `GET /api/v1/search/suggest` (prefix typeahead on title and city, default limit 8).
+  - Implemented `SearchCircuitBreaker` with `X-Search-Backend: elasticsearch | postgres-fallback` response header and SQL fallback querying `events` + `venues` for `PUBLISHED` events.
+- **Health Check (`apps/api/src/modules/health`):** Preserved TCP probe (parsing host/port from `ELASTICSEARCH_NODE`) and added `search.eventsAliasExists` check.
+- **Worker & Reindex (`apps/worker`, root `package.json`):**
+  - Implemented idempotent BullMQ `SearchIndexProcessor` for `search-index` (`index`, `update`, `delete`, exponential backoff retry, `PUBLISHED`-only indexing).
+  - Implemented `pnpm search:reindex` CLI (`apps/worker/src/scripts/search-reindex.ts`) to index batches from Postgres into `events_v<n+1>`, atomically swap the `events` alias, and remove old indices.
+- **Tests:** Added unit tests (`search-query.builder.spec.ts`, `search-circuit-breaker.spec.ts`, `search.service.spec.ts`, `search-index.processor.spec.ts`), Supertest E2E tests (`apps/api/test/search.e2e-spec.ts`), and Elasticsearch Testcontainers integration tests (`apps/api/test/search.integration.spec.ts`).
+
+---
+
 ## [UTB-17] - 2026-11-26
 
 ### Stress & Load Tests (1,000 Concurrent Users) in CI & Platform Stabilization
