@@ -13,6 +13,7 @@ import { ResaleModule } from "./modules/resale/resale.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { MediaModule } from "./modules/media/media.module";
+import { SearchModule } from "./modules/search/search.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { MediaModule } from "./modules/media/media.module";
     AdminModule,
     AnalyticsModule,
     MediaModule,
+    SearchModule,
   ],
   controllers: [],
   providers: [],
