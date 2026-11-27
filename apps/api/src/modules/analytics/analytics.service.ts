@@ -1,17 +1,26 @@
 import {
   Injectable,
   Inject,
+  Optional,
   NotFoundException,
   ForbiddenException,
   Logger,
 } from "@nestjs/common";
 import { Repository, In } from "typeorm";
-import { Event, EventSeat, Ticket, Order, GateScan } from "@urticketbuddy/db";
+import {
+  Event,
+  EventSeat,
+  Ticket,
+  Order,
+  GateScan,
+  ResaleListing,
+} from "@urticketbuddy/db";
 import {
   UserRole,
   ErrorCode,
   TicketStatus,
   OrderStatus,
+  ResaleListingStatus,
   OrganizerAnalyticsResponse,
   EntryVelocityBucket,
 } from "@urticketbuddy/contracts";
@@ -22,6 +31,7 @@ import {
   TICKET_REPOSITORY,
   ORDER_REPOSITORY,
   GATE_SCAN_REPOSITORY,
+  RESALE_LISTING_REPOSITORY,
   REDIS_SCRIPTS_WRAPPER,
 } from "../../database/database.tokens";
 
@@ -50,6 +60,9 @@ export class AnalyticsService {
     private readonly gateScanRepository: Repository<GateScan>,
     @Inject(REDIS_SCRIPTS_WRAPPER)
     private readonly redisScriptsWrapper: RedisScriptsWrapper,
+    @Optional()
+    @Inject(RESALE_LISTING_REPOSITORY)
+    private readonly resaleListingRepository?: Repository<ResaleListing>,
   ) {}
 
   /**
@@ -164,12 +177,38 @@ export class AnalyticsService {
       );
     }
 
-    // 7. Resale Stats: Clean fallback port (Member C ownership per AGENTS.md rule 5)
+    // 7. Resale Stats: Real metrics queried from resale_listings repository (F-6)
     const resaleStats = {
       activeListings: 0,
       soldListings: 0,
       totalResaleVolume: 0,
     };
+    if (
+      this.resaleListingRepository &&
+      typeof this.resaleListingRepository.find === "function"
+    ) {
+      try {
+        const listings = await this.resaleListingRepository.find({
+          where: { eventId },
+        });
+        if (Array.isArray(listings)) {
+          for (const listing of listings) {
+            if (listing.status === ResaleListingStatus.ACTIVE) {
+              resaleStats.activeListings += 1;
+            } else if (listing.status === ResaleListingStatus.SOLD) {
+              resaleStats.soldListings += 1;
+              resaleStats.totalResaleVolume += Number(
+                listing.askingPriceMinor || 0,
+              );
+            }
+          }
+        }
+      } catch (err) {
+        this.logger.warn(
+          `Failed to fetch resale listings for event ${eventId}: ${err}`,
+        );
+      }
+    }
 
     return {
       eventId,
