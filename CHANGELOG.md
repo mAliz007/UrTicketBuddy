@@ -4,6 +4,36 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-29] - 2026-11-27
+
+### Security Blockers Remediation (Role Escalation, Global Guards, JWT Tenant Claims & Ownership)
+
+- **Ticket Key:** `UTB-29`
+- **Completion Date:** 2026-11-27
+- **Branch:** `fix/UTB-29-security-blockers`
+- **Status:** Completed & Verified
+- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **Role Escalation Prevention (`packages/contracts`, `apps/api/src/modules/auth`)**:
+    - Removed `role` from `RegisterRequestSchema` (`.strict()`) and updated `AuthService.register()` to reject client-supplied `role` with `422 Unprocessable Entity` (`VALIDATION_ERROR`) while hardcoding newly registered users to `UserRole.CUSTOMER`.
+    - Hardened `CreateGateStaffRequestSchema` (`.strict()`) and `AuthService.createGateStaff()` to forbid an `ORGANIZER` from provisioning `GATE_STAFF` for a different tenant (`403 Forbidden`).
+  - **Global `APP_GUARD` Registration (`apps/api/src/modules/auth`)**:
+    - Registered `JwtAuthGuard` and `RolesGuard` as global `APP_GUARD`s in `AuthModule` (after `ThrottlerGuard`) without affecting `apps/realtime` or `apps/worker`.
+    - Audited and retained `@Public()` solely on intentionally open routes (`health`, `auth/register`, `auth/login`, `auth/refresh`, `auth/logout`, `auth/google`, `auth/google/callback`, `GET /events/:id`, `GET /venues/:id`, `GET /resale/listings`, signed `PUT /media/upload/:purpose/:filename`, `GET /media/:purpose/:filename`).
+  - **Checkout, Hold & Order Route Hardening (`packages/contracts`, `apps/api/src/modules/checkout`, `apps/api/src/modules/orders`)**:
+    - Removed `@Public()` and `x-user-id` header trust from `CheckoutController` (`POST /checkout/hold`) and `OrdersController` (`POST /orders/checkout`).
+    - Removed `userId` from `HoldRequestSchema`, `CheckoutRequestSchema`, and `CheckoutDto`; restricted `POST /checkout/hold` and `POST /orders/checkout` to `@Roles(UserRole.CUSTOMER)` using `@CurrentUser()`.
+    - Enforced caller ownership on `GET /orders/:id` (403 `FORBIDDEN` for non-owners; `ADMIN` bypasses).
+  - **JWT Tenant Claim Propagation (`packages/contracts`, `apps/api/src/modules/auth`)**:
+    - Added `JwtClaimsSchema` / `JwtClaims` to `packages/contracts`.
+    - Updated `JwtStrategy.validate()` to preserve `organizerTenantId` on `req.user` (and reject refresh tokens used as bearer tokens), and ensured `AuthService.generateTokens()` includes `organizerTenantId` for `ORGANIZER` and `GATE_STAFF` users.
+  - **Venue & Event Tenant Ownership + Gate HTTP Isolation (`packages/db`, `apps/api`)**:
+    - Added `organizerId` column and `idx_venues_organizer_id` index to `Venue` entity with reversible migration `1795336850000-UTB-29-add-venue-organizer-id.ts`.
+    - Applied `OwnershipGuard` (with `@Public()` bypass and venue/event repository ownership checks) and service-level tenant verification to `VenuesController`, `EventsController`, and `AnalyticsController`.
+    - Hardened `GateService.scanTicket()` and `GateService.getMetrics()` so `GATE_STAFF` must present a matching `organizerTenantId` over real HTTP (`403 Forbidden` otherwise).
+
+---
+
 ## [UTB-17] - 2026-11-26
 
 ### Stress & Load Tests (1,000 Concurrent Users) in CI & Platform Stabilization

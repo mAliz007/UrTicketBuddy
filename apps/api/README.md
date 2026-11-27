@@ -44,8 +44,8 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - **Request Body Size Limits**: JSON and URL-encoded body limits restricted to `100kb` to thwart body-parser DoS attacks.
 - **RFC 6585 Rate Limiting & 429 Handling**: `GlobalHttpExceptionFilter` intercepts NestJS `ThrottlerException` and maps it to the standard error envelope `{ error: { code: ErrorCode.TOO_MANY_REQUESTS, message, requestId } }` with an HTTP `Retry-After: 60` header.
 - **Zero-Trust Log Redaction**: `LogRedactionInterceptor` recursively scrubs sensitive tokens and credentials (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`, `totpSecret`) from log payloads before output.
-- **Tenant Isolation**: `OwnershipGuard` verifies organizer resource tenancy (`event.organizerId === user.organizerTenantId || event.organizerId === user.id`) across multi-tenant administrative and analytics operations.
-- **Route Authorization Verification**: Automated route metadata scanner and persona matrix in `test/security-audit.e2e-spec.ts` guaranteeing zero unprotected or misconfigured endpoints.
+- **Tenant Isolation**: `OwnershipGuard` verifies organizer resource tenancy (`organizerId === user.organizerTenantId || organizerId === user.id`) across venues, events, analytics, and gate operations (`ADMIN` bypasses).
+- **Route Authorization Verification**: Global `JwtAuthGuard` and `RolesGuard` (`APP_GUARD` in `AuthModule`) protect all routes by default unless `@Public()` is explicitly declared; automated route metadata scanner and persona matrix in `test/security-audit.e2e-spec.ts` guarantee compliance.
 
 ## Testing & Concurrency Verification
 

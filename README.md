@@ -311,8 +311,8 @@ UrTicketBuddy enforces production-grade zero-trust security controls across all 
 
 - **Edge & Application Rate Limiting**: Dedicated Nginx `limit_req_zone` buckets protect high-traffic entry points (`/api/v1/auth` at 10 r/s, `/api/v1/checkout` at 20 r/s, `/api/v1/orders` at 15 r/s, `/api/v1/gate/scan` at 50 r/s, and `/api/v1/resale` at 20 r/s) alongside NestJS Throttler enforcing RFC 6585 `Retry-After: 60` headers on HTTP 429 errors.
 - **HTTP Hardening & Payload Guard**: Integrated `helmet` security headers (HSTS, CSP, X-Frame-Options), strict CORS allowlist validated against `CORS_ORIGINS`, and a strict `100kb` request body limit to eliminate DoS attack vectors.
-- **Automated Route Authorization Matrix**: Comprehensive automated security suite in `apps/api/test/security-audit.e2e-spec.ts` (52 assertions):
-  - _Route Table Metadata Scanner_: Programmatically audits all registered controllers via `Reflector` asserting explicit `@Public()` opt-outs or mandatory `JwtAuthGuard` / `@Roles(...)` enforcement.
+- **Automated Route Authorization Matrix**: Global `JwtAuthGuard` + `RolesGuard` (`APP_GUARD`) protect all API routes by default unless explicitly decorated with `@Public()`; comprehensive automated security suite in `apps/api/test/security-audit.e2e-spec.ts`:
+  - _Route Table Metadata Scanner_: Programmatically audits all registered controllers via `Reflector` asserting global guard registration and explicit `@Public()` opt-outs or mandatory `JwtAuthGuard` / `@Roles(...)` enforcement.
   - _Role $\times$ Route Matrix_: Validates 5 distinct personas (`Unauthenticated`, `CUSTOMER`, `GATE_STAFF`, `ORGANIZER`, `ADMIN`) across 12+ API route groups, verifying exact 401, 403, and 200/201 HTTP responses.
   - _Tenant Isolation & Replay Protection_: Asserts multi-tenant event boundary enforcement via `OwnershipGuard` and token family revocation upon refresh token reuse detection.
 - **Zero-Trust Log Redaction**: `LogRedactionInterceptor` strips sensitive keys (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`) before any log payload reaches stdout or disk.
