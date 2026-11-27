@@ -1,6 +1,8 @@
 import { INestApplication } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
-import { ErrorCode } from "@urticketbuddy/contracts";
+import { loadEnv } from "@urticketbuddy/config";
+import { ErrorCode, UserRole } from "@urticketbuddy/contracts";
 import request from "supertest";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
@@ -74,6 +76,48 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
         };
       },
     ),
+    releaseSeats: jest.fn(
+      async (eventId: string, userId: string, seatIds: string[]) => {
+        const notOwned = seatIds.filter(
+          (s) => heldSeats.get(`${eventId}:${s}`) !== userId,
+        );
+        if (notOwned.length > 0) {
+          return {
+            success: false,
+            ok: false,
+            code: ErrorCode.SEAT_NOT_HELD_BY_YOU,
+            releasedSeats: [],
+            failedSeats: notOwned,
+          };
+        }
+        for (const s of seatIds) {
+          heldSeats.delete(`${eventId}:${s}`);
+        }
+        return {
+          success: true,
+          ok: true,
+          code: "OK",
+          releasedSeats: seatIds,
+          failedSeats: [],
+        };
+      },
+    ),
+    getSnapshot: jest.fn(async (eventId: string) => {
+      const holds: Record<string, string> = {};
+      for (const [k, v] of heldSeats.entries()) {
+        if (k.startsWith(`${eventId}:`)) {
+          holds[k.slice(eventId.length + 1)] = v;
+        }
+      }
+      return { holds, sold: [] };
+    }),
+    getCounts: jest.fn(async (eventId: string) => {
+      let held = 0;
+      for (const k of heldSeats.keys()) {
+        if (k.startsWith(`${eventId}:`)) held++;
+      }
+      return { held, sold: 0 };
+    }),
   };
 
   beforeAll(async () => {
@@ -142,7 +186,7 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
     expect(res.body.seatIds).toEqual(["sec1-A-1", "sec1-A-2"]);
     expect(typeof res.body.expiresAt).toBe("number");
     expect(publishedMessages).toHaveLength(1);
-    expect(publishedMessages[0].channel).toBe(`seat-updates:${eventId}`);
+    expect(publishedMessages[0].channel).toBe("seat.state");
     expect(JSON.parse(publishedMessages[0].message)).toEqual({
       eventId,
       seatIds: ["sec1-A-1", "sec1-A-2"],
@@ -150,6 +194,57 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
       userId: userA,
       expiresAt: res.body.expiresAt,
     });
+  });
+
+  it("F-5: POST/DELETE /api/v1/events/:eventId/seats/hold (CUSTOMER only) and GET /api/v1/events/:eventId/seats/state", async () => {
+    const env = loadEnv();
+    const jwtService = new JwtService({ secret: env.JWT_SECRET });
+    const customerToken = jwtService.sign({
+      sub: userA,
+      id: userA,
+      email: "customer@example.com",
+      role: UserRole.CUSTOMER,
+    });
+    const organizerToken = jwtService.sign({
+      sub: userB,
+      id: userB,
+      email: "organizer@example.com",
+      role: UserRole.ORGANIZER,
+    });
+
+    // ORGANIZER is rejected (CUSTOMER only)
+    await request(app.getHttpServer())
+      .post(`/api/v1/events/${eventId}/seats/hold`)
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({ seatIds: ["sec1-A-1"] })
+      .expect(403);
+
+    // CUSTOMER holds seats via POST /events/:eventId/seats/hold
+    const holdRes = await request(app.getHttpServer())
+      .post(`/api/v1/events/${eventId}/seats/hold`)
+      .set("Authorization", `Bearer ${customerToken}`)
+      .send({ seatIds: ["sec1-A-1", "sec1-A-2"] })
+      .expect(201);
+
+    expect(holdRes.body.seatIds).toEqual(["sec1-A-1", "sec1-A-2"]);
+    expect(publishedMessages[0].channel).toBe("seat.state");
+
+    // GET /events/:eventId/seats/state returns active holds and counts
+    const stateRes = await request(app.getHttpServer())
+      .get(`/api/v1/events/${eventId}/seats/state`)
+      .expect(200);
+    expect(stateRes.body.counts.held).toBe(2);
+    expect(stateRes.body.holds["sec1-A-1"]).toBe(userA);
+
+    // DELETE /events/:eventId/seats/hold releases seats and publishes AVAILABLE on seat.state
+    const delRes = await request(app.getHttpServer())
+      .delete(`/api/v1/events/${eventId}/seats/hold`)
+      .set("Authorization", `Bearer ${customerToken}`)
+      .send({ seatIds: ["sec1-A-1"] })
+      .expect(200);
+
+    expect(delRes.body.state).toBe("AVAILABLE");
+    expect(publishedMessages[1].channel).toBe("seat.state");
   });
 
   it("POST /api/v1/checkout/hold returns 409 Conflict for already-held seats", async () => {

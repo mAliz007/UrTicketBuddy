@@ -300,8 +300,8 @@ The CD workflow ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) automat
 - **Health Verification**: Probes `GET /api/v1/health` with exponential backoff (10 attempts, 10s intervals) before declaring the release successful.
 - **Rollback**: Supports instant Railway rollback via `railway rollback --service <name>` or git revert.
 
-- **Admin Suite & Revocation Engine**: `PATCH /api/v1/admin/orders/:id/flag`, `DELETE /api/v1/admin/tickets/:id`, `GET|PUT /api/v1/admin/settings/commission`, `PATCH /api/v1/admin/users/:id/suspend`, `PATCH /api/v1/admin/organizers/:id/approve`, `GET /api/v1/admin/audit-logs` (see [Admin Module](apps/api/src/modules/admin/README.md), testable in Endpoint Workbench `:5174`)
-- **Organizer Analytics API**: `GET /api/v1/organizer/analytics/:eventId` (see [Analytics Module](apps/api/src/modules/analytics/README.md), testable in Endpoint Workbench `:5174`)
+- **Admin Suite & Revocation Engine**: `PATCH /api/v1/admin/orders/:id/flag`, `DELETE /api/v1/admin/tickets/:id`, `GET|PUT /api/v1/admin/settings/commission`, `PATCH /api/v1/admin/users/:id/suspend`, `PATCH /api/v1/admin/organizers/:id/approve`, `PATCH /api/v1/admin/organizers/:id/reject`, `GET /api/v1/admin/audit-logs` (see [Admin Module](apps/api/src/modules/admin/README.md), testable in Endpoint Workbench `:5174`)
+- **Organizer Analytics API**: `GET /api/v1/organizer/analytics/:eventId` with live `resaleStats` (`activeListings`, `soldListings`, `totalResaleVolume`) (see [Analytics Module](apps/api/src/modules/analytics/README.md), testable in Endpoint Workbench `:5174`)
 
 ---
 
@@ -309,14 +309,15 @@ The CD workflow ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) automat
 
 UrTicketBuddy enforces production-grade zero-trust security controls across all application layers. Complete threat model mappings, cryptographic verifications, and compliance findings are documented in [`docs/security-audit.md`](docs/security-audit.md):
 
-- **Edge & Application Rate Limiting**: Dedicated Nginx `limit_req_zone` buckets protect high-traffic entry points (`/api/v1/auth` at 10 r/s, `/api/v1/checkout` at 20 r/s, `/api/v1/orders` at 15 r/s, `/api/v1/gate/scan` at 50 r/s, and `/api/v1/resale` at 20 r/s) alongside NestJS Throttler enforcing RFC 6585 `Retry-After: 60` headers on HTTP 429 errors.
+- **Argon2id Password Hashing & Cookie-Only Refresh Tokens**: Passwords are hashed with `argon2id` (`$argon2id$v=19$m=19456,t=2,p=1$...`). Refresh tokens are issued and accepted strictly via `HttpOnly`, `SameSite=Strict` cookies (never returned or accepted in JSON bodies), protected by double-submit `XSRF-TOKEN` + `Origin`/`Referer` CSRF verification on `POST /api/v1/auth/refresh`, and persisted on Google OAuth logins after verifying `email_verified`.
+- **Edge & Redis-Backed Application Rate Limiting**: Dedicated Nginx `limit_req_zone` buckets protect high-traffic entry points alongside a Redis-backed NestJS `RedisThrottlerStorageService` (`rate:<route>:<key>`) enforcing explicit `@Throttle` limits on seat hold, checkout, gate scan, and resale routes with RFC 6585 `Retry-After: 60` headers on HTTP 429 errors.
 - **HTTP Hardening & Payload Guard**: Integrated `helmet` security headers (HSTS, CSP, X-Frame-Options), strict CORS allowlist validated against `CORS_ORIGINS`, and a strict `100kb` request body limit to eliminate DoS attack vectors.
 - **Automated Route Authorization Matrix**: Comprehensive automated security suite in `apps/api/test/security-audit.e2e-spec.ts` (52 assertions):
-  - _Route Table Metadata Scanner_: Programmatically audits all registered controllers via `Reflector` asserting explicit `@Public()` opt-outs or mandatory `JwtAuthGuard` / `@Roles(...)` enforcement.
+  - _Route Table Metadata Scanner_: Programmatically audits all registered controllers via `Reflector` asserting explicit `@Public()` opt-outs or mandatory `JwtAuthGuard` + `@Roles(...)` enforcement on 100% of endpoints.
   - _Role $\times$ Route Matrix_: Validates 5 distinct personas (`Unauthenticated`, `CUSTOMER`, `GATE_STAFF`, `ORGANIZER`, `ADMIN`) across 12+ API route groups, verifying exact 401, 403, and 200/201 HTTP responses.
   - _Tenant Isolation & Replay Protection_: Asserts multi-tenant event boundary enforcement via `OwnershipGuard` and token family revocation upon refresh token reuse detection.
 - **Zero-Trust Log Redaction**: `LogRedactionInterceptor` strips sensitive keys (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`) before any log payload reaches stdout or disk.
-- **CI Supply-Chain Gates**: Automated supply-chain vulnerability scans (`pnpm audit --audit-level=high`) and secret scanning configured in [`.github/workflows/security.yml`](.github/workflows/security.yml).
+- **CI Supply-Chain, Gitleaks & Trivy Gates**: Blocking supply-chain vulnerability scans (`pnpm audit --audit-level=high`), Gitleaks secret scanning (`gitleaks/gitleaks-action@v2`), and Trivy filesystem vulnerability scanning (`aquasecurity/trivy-action@master`) configured in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`.github/workflows/security.yml`](.github/workflows/security.yml).
 
 ---
 

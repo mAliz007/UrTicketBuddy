@@ -12,7 +12,7 @@ export enum ScanResult {
 }
 
 export const DynamicQrResponseSchema = z.object({
-  ticketId: z.string().uuid(),
+  ticketId: z.guid(),
   token: z.string(),
   expiresAt: z.string(),
   windowSeconds: z.number().default(30),
@@ -22,15 +22,15 @@ export type DynamicQrResponse = z.infer<typeof DynamicQrResponseSchema>;
 
 export const GateScanRequestSchema = z.object({
   token: z.string().min(1),
-  eventId: z.string().uuid(),
+  eventId: z.guid(),
 });
 
 export type GateScanRequest = z.infer<typeof GateScanRequestSchema>;
 
 export const GateScanResponseSchema = z.object({
-  scanId: z.string().uuid().optional(),
-  ticketId: z.string().uuid().nullable().optional(),
-  eventId: z.string().uuid(),
+  scanId: z.guid().optional(),
+  ticketId: z.guid().nullable().optional(),
+  eventId: z.guid(),
   result: z.nativeEnum(ScanResult),
   scannedAt: z.string(),
   message: z.string(),
@@ -40,10 +40,10 @@ export const GateScanResponseSchema = z.object({
 export type GateScanResponse = z.infer<typeof GateScanResponseSchema>;
 
 export const TicketResponseSchema = z.object({
-  id: z.string().uuid(),
-  eventId: z.string().uuid(),
-  eventSeatId: z.string().uuid(),
-  orderId: z.string().uuid(),
+  id: z.guid(),
+  eventId: z.guid(),
+  eventSeatId: z.guid(),
+  orderId: z.guid(),
   ownerId: z.string(),
   status: z.nativeEnum(TicketStatus),
   seedVersion: z.number().int(),
@@ -58,7 +58,7 @@ export const TicketListResponseSchema = z.array(TicketResponseSchema);
 export type TicketListResponse = z.infer<typeof TicketListResponseSchema>;
 
 export const GateMetricsResponseSchema = z.object({
-  eventId: z.string().uuid(),
+  eventId: z.guid(),
   totalScans: z.number(),
   validScans: z.number(),
   rejectedScans: z.number(),

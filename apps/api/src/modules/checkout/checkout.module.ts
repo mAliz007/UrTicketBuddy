@@ -2,7 +2,10 @@ import { Inject, Logger, Module, OnModuleDestroy } from "@nestjs/common";
 import { loadEnv } from "@urticketbuddy/config";
 import { RedisScriptsWrapper } from "@urticketbuddy/redis-scripts";
 import Redis from "ioredis";
-import { CheckoutController } from "./checkout.controller";
+import {
+  CheckoutController,
+  EventSeatsHoldController,
+} from "./checkout.controller";
 import { CheckoutService } from "./checkout.service";
 import {
   CHECKOUT_REDIS_CLIENT,
@@ -10,7 +13,7 @@ import {
 } from "./checkout.tokens";
 
 @Module({
-  controllers: [CheckoutController],
+  controllers: [CheckoutController, EventSeatsHoldController],
   providers: [
     {
       provide: CHECKOUT_REDIS_CLIENT,

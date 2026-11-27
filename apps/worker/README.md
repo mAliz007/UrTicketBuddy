@@ -16,14 +16,14 @@ Background processing engine powered by NestJS, `@nestjs/schedule`, BullMQ, and 
 - Port: `3002` (Health check endpoint only, configured via `WORKER_PORT`)
 - Health check: `GET /api/v1/health` (reports Redis status)
 
-## Hold Expiry & Auto-Release Engine (`ExpiryModule`)
+## Hold Expiry & Auto-Release Engine (`ExpiryModule` & `HoldExpiryProcessor`)
 
-`ExpiryService` (`apps/worker/src/modules/expiry/expiry.service.ts`) runs a scheduled cron job every **5 seconds** (`@Cron("*/5 * * * * *")`) with an overlap guard (`isRunning`) to prevent concurrent ticks.
+`HoldExpiryProcessor` (`apps/worker/src/processors/hold-expiry.processor.ts`) registers a **1-second repeatable BullMQ job** (`every: 1000` ms, job `expire-due-holds` on queue `hold-expiry`), backed by `ExpiryService` (`apps/worker/src/modules/expiry/expiry.service.ts`) running every **1 second** (`@Cron("*/1 * * * * *")`) with a 900ms distributed leader lease (`LEADER_LEASE_MS = 900`) and an overlap guard (`isRunning`) to prevent concurrent ticks.
 
 ### Execution Architecture
 
 ```text
-[Cron: every 5s]
+[BullMQ hold-expiry (1s repeat) / Cron: every 1s]
        │
        ▼
 1. Redis SCAN (`hold_expiry:{*}`, COUNT 100) ──► extract active eventIds
@@ -35,7 +35,7 @@ Background processing engine powered by NestJS, `@nestjs/schedule`, BullMQ, and 
        ├──► 0 seats freed ──► next event
        │
        └──► >= 1 seats freed:
-             ├──► 3. Redis PUBLISH `seat-updates:{eventId}`
+             ├──► 3. Redis PUBLISH `seat.state`
              │       payload: { eventId, seatIds, state: "AVAILABLE", source: "WORKER_EXPIRY" }
              └──► 4. (Optional) PostgreSQL `event_seats` sync
                      UPDATE status = 'AVAILABLE' WHERE eventId = :eventId AND seatId IN (...) AND status = 'HELD'

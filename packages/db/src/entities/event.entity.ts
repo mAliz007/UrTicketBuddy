@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { Venue } from "./venue.entity";
 import { EventSeat } from "./event-seat.entity";
+import { TicketTier } from "./ticket-tier.entity";
 
 @Entity("events")
 export class Event {
@@ -46,4 +47,7 @@ export class Event {
 
   @OneToMany(() => EventSeat, (seat) => seat.event)
   seats!: EventSeat[];
+
+  @OneToMany(() => TicketTier, (tier) => tier.event)
+  ticketTiers!: TicketTier[];
 }

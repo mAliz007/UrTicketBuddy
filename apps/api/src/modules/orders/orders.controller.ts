@@ -9,6 +9,7 @@ import {
   HttpStatus,
   UseGuards,
 } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { UserRole } from "@urticketbuddy/contracts";
 import { OrdersService } from "./orders.service";
 import { CheckoutDto } from "./dto/checkout.dto";
@@ -24,6 +25,7 @@ export class OrdersController {
 
   @Public()
   @Post("checkout")
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   @HttpCode(HttpStatus.CREATED)
   async checkout(
     @Body() checkoutDto: CheckoutDto,

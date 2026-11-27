@@ -22,7 +22,7 @@ export function maxResalePrice(faceValueMinor: number): number {
 
 export const CreateResaleListingSchema = z
   .object({
-    ticketId: z.string().uuid(),
+    ticketId: z.guid(),
     askingPriceMinor: z.number().int().positive().max(PG_MAX_INT32),
   })
   .strict();

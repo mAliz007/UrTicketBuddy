@@ -599,7 +599,7 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
             const hasRoles =
               controllerRoles.length > 0 || methodRoles.length > 0;
 
-            const isProtectedOrPublic = isPublic || hasJwtGuard;
+            const isProtectedOrPublic = isPublic || (hasJwtGuard && hasRoles);
 
             routeAuditLog.push({
               controller: controllerClass.name,
@@ -614,11 +614,11 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
         }
       }
 
-      // Assert comprehensive coverage of route registry
+      // Assert comprehensive coverage of route registry (@Public or @Roles required on every route)
       expect(auditedRoutesCount).toBeGreaterThanOrEqual(15);
-      expect(routeAuditLog.every((r) => r.isPublic || r.hasJwtGuard)).toBe(
-        true,
-      );
+      expect(
+        routeAuditLog.every((r) => r.isPublic || (r.hasJwtGuard && r.hasRoles)),
+      ).toBe(true);
     });
   });
 
@@ -1184,10 +1184,10 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
           expiresAt: new Date(Date.now() + 86400000),
         });
 
-        // Adversary replays the revoked old token to /api/v1/auth/refresh
+        // Adversary replays the revoked old token via HttpOnly cookie to /api/v1/auth/refresh
         const res = await request(app.getHttpServer())
           .post("/api/v1/auth/refresh")
-          .send({ refreshToken: rawOldToken })
+          .set("Cookie", `refreshToken=${rawOldToken}`)
           .expect(401);
 
         expect(res.body.error.code).toBe(ErrorCode.INVALID_REFRESH_TOKEN);
@@ -1200,7 +1200,7 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
         // Subsequent attempt with child token now also fails
         const childRes = await request(app.getHttpServer())
           .post("/api/v1/auth/refresh")
-          .send({ refreshToken: rawChildToken })
+          .set("Cookie", `refreshToken=${rawChildToken}`)
           .expect(401);
 
         expect(childRes.body.error.code).toBe(ErrorCode.INVALID_REFRESH_TOKEN);
