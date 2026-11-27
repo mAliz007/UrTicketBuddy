@@ -4,6 +4,41 @@ All notable changes, progress milestones, and ticket deliveries for the UrTicket
 
 ---
 
+## [UTB-23] - 2026-11-27
+
+### Audit Remediation: Venues/Events Gaps (F-4), Hold/Realtime Contract (F-5), Resale/Admin/Analytics Wiring (F-6) & Security Hardening (F-7)
+
+- **Ticket Key:** `UTB-23` (Fixes: `UTB-9`, `UTB-8`, `UTB-15`, `UTB-16`, `UTB-21`, `UTB-3`)
+- **Completion Date:** 2026-11-27
+- **Main Feature Branch:** `fix/UTB-23-audit-gaps-remediation`
+  - Sub-task 1 (`F-4`): `fix/UTB-23-audit-gaps-remediation/f4-venues-events`
+  - Sub-task 2 (`F-5`): `fix/UTB-23-audit-gaps-remediation/f5-hold-realtime`
+  - Sub-task 3 (`F-6`): `fix/UTB-23-audit-gaps-remediation/f6-resale-admin-analytics`
+  - Sub-task 4 (`F-7`): `fix/UTB-23-audit-gaps-remediation/f7-security-hardening`
+- **Status:** Completed & Verified
+- **Packages & Directories Modified:** `packages/contracts`, `packages/db`, `apps/api`, `apps/realtime`, `apps/worker`, `infra/nginx`, `docker-compose.yml`, `.github/workflows`, `README.md`, `CHANGELOG.md`
+- **Scope & Deliverables:**
+  - **F-4: Venues & Events Gaps (`apps/api/src/modules/venues`, `apps/api/src/modules/events`, `packages/db`)**:
+    - Added `PUT /api/v1/organizer/venues/:id/layout` (and `/api/v1/venues/:id/layout`) with MongoDB document versioning (`version`, `previousLayoutId`) and optional `expectedVersion` optimistic concurrency check.
+    - Added `GET /api/v1/events` with filters (`status`, `venueId`, `organizerId`, `search`/`q`, `from`, `to`) and pagination (`?page=&pageSize=`, max 100), plus `PATCH /api/v1/events/:id` and `POST /api/v1/events/:id/publish`.
+    - Implemented structure locking (`409 STRUCTURE_LOCKED`) on published events and their parent venue layouts; updated invalid layout validation to return `422 Unprocessable Entity` instead of `400 Bad Request`.
+    - Added `TicketTier` entity (`ticket_tiers` table) and TypeORM migration `1795336850000-UTB-23-f4-f6-tiers-venue-owner-audit-role.ts`; enqueued `search-index` BullMQ job on event publish and edit; enforced organizer tenant ownership (`403 FORBIDDEN`).
+  - **F-5: Hold & Realtime Contract (`apps/api/src/modules/checkout`, `apps/realtime`, `apps/worker`, `infra/nginx`, `docker-compose.yml`)**:
+    - Added `POST /api/v1/events/:eventId/seats/hold` (`CUSTOMER` only), `DELETE /api/v1/events/:eventId/seats/hold` (`CUSTOMER` only), and `GET /api/v1/events/:eventId/seats/state`.
+    - Standardized Redis Pub/Sub channel to `seat.state` and Socket.IO broadcast event to `seat:state` (with `room:join` and `room:leave`), integrated `@socket.io/redis-adapter` and HMAC-SHA256 JWT socket handshake authentication.
+    - Implemented 1-second repeatable BullMQ `hold-expiry` job (`every: 1000` ms) in `apps/worker` and 1-second `@Cron` schedule with 900ms leader lease.
+    - Added second realtime replica (`realtime_2` under `scale` profile in `docker-compose.yml`), listed both replicas in `infra/nginx/nginx.conf`, and added multi-replica socket integration test verifying holds on Replica 2 reach sockets on Replica 1.
+  - **F-6: Wiring Gaps in Resale, Admin & Analytics (`apps/api/src/modules/resale`, `apps/api/src/modules/admin`, `apps/api/src/modules/analytics`, `packages/db`)**:
+    - Wired `ResaleModule` `PLATFORM_SETTINGS_PORT` directly to database-backed `PlatformSettingsService` instead of hardcoded 10% default provider.
+    - Added `PATCH /api/v1/admin/organizers/:userId/reject` endpoint and applied `AuditLogInterceptor` across `AdminController`, `ResaleController`, `AuthController`, and `OrganizerController`.
+    - Provisioned restricted `INSERT` and `SELECT`-only PostgreSQL role `utb_app_audit_role` for `audit_logs` in migration `1795336850000-UTB-23-f4-f6-tiers-venue-owner-audit-role.ts`, and wired real `resaleStats` (`activeListings`, `soldListings`, `totalResaleVolume`) in `AnalyticsService`.
+  - **F-7: Security Hardening Gaps (`apps/api/src/modules/auth`, `.github/workflows`, `apps/api/test/security-audit.e2e-spec.ts`)**:
+    - Added CSRF protection (Origin/Referer validation + double-submit `XSRF-TOKEN` cookie vs `x-csrf-token` header) on `POST /api/v1/auth/refresh`, stripped `refreshToken` from HTTP JSON responses, rejected body-supplied refresh tokens, and persisted refresh tokens on OAuth login.
+    - Implemented Redis-backed `RedisThrottlerStorageService` (`rate:<route>:<key>`) with explicit `@Throttle` limits on hold, checkout, gate scan, and resale routes; updated route metadata audit test to assert `@Public()` or `@Roles(...)` on every endpoint.
+    - Switched password hashing to `argon2id` (`$argon2id$v=19$m=19456,t=2,p=1$...`), enforced Google OAuth `email_verified` check, made `pnpm audit --audit-level=high` blocking in CI, and added Gitleaks and Trivy scanners to `.github/workflows/ci.yml` and `.github/workflows/security.yml`.
+
+---
+
 ## [UTB-17] - 2026-11-26
 
 ### Stress & Load Tests (1,000 Concurrent Users) in CI & Platform Stabilization

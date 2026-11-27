@@ -3,6 +3,8 @@ import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { APP_GUARD } from "@nestjs/core";
+import Redis from "ioredis";
+import { REDIS_CLIENT } from "../../database/database.tokens";
 import { AuthController } from "./auth.controller";
 import { OrganizerController } from "./organizer.controller";
 import { UsersController } from "../users/users.controller";
@@ -12,17 +14,24 @@ import { GoogleStrategy } from "./strategies/google.strategy";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { RolesGuard } from "./guards/roles.guard";
 import { OwnershipGuard } from "./guards/ownership.guard";
+import { RedisThrottlerStorageService } from "./throttler/redis-throttler.storage";
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.register({}),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 100,
-      },
-    ]),
+    ThrottlerModule.forRootAsync({
+      inject: [REDIS_CLIENT],
+      useFactory: (redis: Redis) => ({
+        throttlers: [
+          {
+            ttl: 60000,
+            limit: 100,
+          },
+        ],
+        storage: new RedisThrottlerStorageService(redis),
+      }),
+    }),
   ],
   controllers: [AuthController, OrganizerController, UsersController],
   providers: [
@@ -32,6 +41,7 @@ import { OwnershipGuard } from "./guards/ownership.guard";
     JwtAuthGuard,
     RolesGuard,
     OwnershipGuard,
+    RedisThrottlerStorageService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
@@ -44,6 +54,7 @@ import { OwnershipGuard } from "./guards/ownership.guard";
     JwtAuthGuard,
     RolesGuard,
     OwnershipGuard,
+    RedisThrottlerStorageService,
     PassportModule,
     JwtModule,
   ],

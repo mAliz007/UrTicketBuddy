@@ -75,12 +75,14 @@ Example:
 - `1795136850000-UTB-15-init-resale-ledger.ts`: Capped P2P resale listings (`resale_listings`) and split platform accounting entries (`ledger_entries`).
 - `1795136850000-UTB-16-init-admin-audit.ts`: Platform settings table (`platform_settings`), append-only audit trail (`audit_logs`) secured with PostgreSQL trigger `trg_audit_logs_immutable`, and `organizerId` column on `events`.
 - `1795236850000-UTB-17-add-ticket-unique-seat-idx.ts`: Partial unique index `uq_active_ticket_seat` on `tickets ("eventId", "eventSeatId") WHERE status IN ('ISSUED', 'CHECKED_IN')` mathematically eliminating double-booking at the relational engine level.
+- `1795336850000-UTB-23-f4-f6-tiers-venue-owner-audit-role.ts`: Creates `ticket_tiers` table with covering FK index `idx_ticket_tiers_event_id`, adds `organizerId` + `idx_venues_organizer_id` to `venues`, and provisions restricted `SELECT, INSERT`-only database role `utb_app_audit_role` on `audit_logs`.
 
 ### Entities
 
-- `Venue`: Physical venue metadata and reference to MongoDB layout document (`layoutMongoId`).
+- `Venue`: Physical venue metadata, tenant owner (`organizerId`), and reference to versioned MongoDB layout document (`layoutMongoId`).
 - `Event`: Event instance belonging to a venue (`venueId` FK, optional `organizerId` tenant identifier).
 - `EventSeat`: Individual seat coordinate and tier record belonging to an event (`eventId` FK, `seatId` deterministic `<section>-<row>-<number>`).
+- `TicketTier`: Pricing tier for an event (`eventId` FK, `name`, `priceMinor`, `currency`, `capacity`).
 - `Order`: Customer order record with total amount, currency, status, and event association (`eventId` FK, `userId` index).
 - `OrderItem`: Line item connecting an order to an individual event seat (`orderId` FK, `eventSeatId` FK, `price`).
 - `Ticket`: Digital admission ticket with cryptographic seed version, face value, status (`ISSUED`, `CHECKED_IN`, `VOID`, `REVOKED`), and partial unique seat index (`uq_active_ticket_seat`).

@@ -1,11 +1,23 @@
 import { Controller, Get, Put, Body, UseGuards } from "@nestjs/common";
-import { AuthUser, UpdateProfileRequest } from "@urticketbuddy/contracts";
+import {
+  AuthUser,
+  UpdateProfileRequest,
+  UserRole,
+} from "@urticketbuddy/contracts";
 import { AuthService } from "../auth/auth.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { Roles } from "../auth/decorators/roles.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 
 @Controller("users")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(
+  UserRole.CUSTOMER,
+  UserRole.ORGANIZER,
+  UserRole.GATE_STAFF,
+  UserRole.ADMIN,
+)
 export class UsersController {
   constructor(private readonly authService: AuthService) {}
 
