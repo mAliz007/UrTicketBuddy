@@ -17,6 +17,11 @@ import {
   CreateResaleListingSchema,
   UpdateResaleListingSchema,
   PurchaseResaleListingSchema,
+  SearchIndexJobSchema,
+  SearchEventsQuerySchema,
+  SearchEventsResponseSchema,
+  SearchSuggestQuerySchema,
+  SearchBackendSchema,
 } from "./index";
 
 describe("packages/contracts", () => {
@@ -203,6 +208,72 @@ describe("packages/contracts", () => {
 
     expect(PurchaseResaleListingSchema.parse({}).paymentMethodToken).toBe(
       "tok_visa",
+    );
+  });
+
+  it("should validate SearchIndexJobSchema and search query/response schemas", () => {
+    expect(
+      SearchIndexJobSchema.safeParse({
+        action: "index",
+        eventId: "123e4567-e89b-12d3-a456-426614174000",
+        title: "Rock Concert",
+        city: "Lahore",
+        category: "music",
+        startsAt: "2026-12-01T18:00:00Z",
+        minPrice: 1000,
+        maxPrice: 5000,
+      }).success,
+    ).toBe(true);
+
+    expect(
+      SearchIndexJobSchema.safeParse({
+        entity: "event",
+        id: "123e4567-e89b-12d3-a456-426614174000",
+        action: "update",
+      }).success,
+    ).toBe(true);
+
+    expect(
+      SearchIndexJobSchema.safeParse({
+        action: "delete",
+      }).success,
+    ).toBe(false);
+
+    const parsedQuery = SearchEventsQuerySchema.parse({
+      q: "rock",
+      city: "Lahore",
+      lat: "31.5204",
+      lng: "74.3587",
+      radiusKm: "25",
+    });
+    expect(parsedQuery.page).toBe(1);
+    expect(parsedQuery.pageSize).toBe(20);
+    expect(parsedQuery.lat).toBe(31.5204);
+
+    // Partial geo params or >100 pageSize rejected
+    expect(
+      SearchEventsQuerySchema.safeParse({ lat: 31.5, lng: 74.3 }).success,
+    ).toBe(false);
+    expect(SearchEventsQuerySchema.safeParse({ pageSize: 101 }).success).toBe(
+      false,
+    );
+    expect(SearchEventsQuerySchema.safeParse({ unknown: 1 }).success).toBe(
+      false,
+    );
+
+    expect(
+      SearchEventsResponseSchema.safeParse({
+        items: [],
+        page: 1,
+        pageSize: 20,
+        total: 0,
+      }).success,
+    ).toBe(true);
+
+    expect(SearchSuggestQuerySchema.parse({ q: "roc" }).limit).toBe(8);
+    expect(SearchBackendSchema.parse("elasticsearch")).toBe("elasticsearch");
+    expect(SearchBackendSchema.parse("postgres-fallback")).toBe(
+      "postgres-fallback",
     );
   });
 });
