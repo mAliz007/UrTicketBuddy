@@ -24,6 +24,12 @@ export class TicketsController {
    * Enforces caller ownership (or ADMIN) and ISSUED status.
    */
   @Get(":ticketId/dynamic-qr")
+  @Roles(
+    UserRole.CUSTOMER,
+    UserRole.ORGANIZER,
+    UserRole.GATE_STAFF,
+    UserRole.ADMIN,
+  )
   async getDynamicQr(
     @Param("ticketId", new ParseUUIDPipe()) ticketId: string,
     @CurrentUser()
@@ -53,6 +59,12 @@ export class TicketsController {
    * Convenience route returning all tickets owned by authenticated user.
    */
   @Get("me")
+  @Roles(
+    UserRole.CUSTOMER,
+    UserRole.ORGANIZER,
+    UserRole.GATE_STAFF,
+    UserRole.ADMIN,
+  )
   async getMyTickets(
     @CurrentUser()
     user: {

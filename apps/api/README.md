@@ -14,16 +14,16 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - Port: `3000`
 - REST prefix: `/api/v1`
 - Health check: `GET /api/v1/health` (reports dependency status for Postgres, Mongo, Redis, and Elasticsearch)
-- Auth & RBAC: `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `GET /api/v1/auth/me` (see [Auth Module](src/modules/auth/README.md))
-- Venues: `POST /api/v1/venues`, `GET /api/v1/venues/:id` (see [Venues Module](src/modules/venues/README.md))
-- Events: `POST /api/v1/events`, `GET /api/v1/events/:id`, `POST /api/v1/events/:id/generate-seats` (see [Events Module](src/modules/events/README.md))
-- Checkout: `POST /api/v1/checkout/hold` — atomic Redis seat hold via `@urticketbuddy/redis-scripts` and Pub/Sub broadcast on `seat-updates:{eventId}` (see [Checkout Module](src/modules/checkout/README.md))
+- Auth & RBAC: `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/refresh` (HttpOnly cookie + CSRF double-submit & Origin check), `GET /api/v1/auth/me` (see [Auth Module](src/modules/auth/README.md))
+- Venues: `POST /api/v1/venues`, `PUT /api/v1/organizer/venues/:id/layout` (Mongo layout versioning + 422 on invalid layouts + 409 `STRUCTURE_LOCKED`), `GET /api/v1/venues/:id` (see [Venues Module](src/modules/venues/README.md))
+- Events: `POST /api/v1/events` (with `ticketTiers`), `GET /api/v1/events` (filters & pagination), `GET /api/v1/events/:id`, `PATCH /api/v1/events/:id`, `POST /api/v1/events/:id/publish` (locks structure + enqueues `search-index`), `POST /api/v1/events/:id/generate-seats` (see [Events Module](src/modules/events/README.md))
+- Seat Holds & State: `POST /api/v1/events/:eventId/seats/hold` (`CUSTOMER` only), `DELETE /api/v1/events/:eventId/seats/hold` (`CUSTOMER` only), `GET /api/v1/events/:eventId/seats/state`, and `POST /api/v1/checkout/hold` — atomic Redis seat hold via `@urticketbuddy/redis-scripts` and Pub/Sub broadcast on `seat.state` (see [Checkout Module](src/modules/checkout/README.md))
 - Orders: `POST /api/v1/orders/checkout`, `GET /api/v1/orders/:id` (see [Orders Module](src/modules/orders/README.md))
 - Dynamic QR Tickets: `GET /api/v1/tickets/:ticketId/dynamic-qr`, `PATCH /api/v1/tickets/:ticketId/rotate-key`, `GET /api/v1/users/me/tickets` (see [Tickets Module](src/modules/tickets/README.md))
 - Gate Scanner: `POST /api/v1/gate/scan`, `GET /api/v1/gate/metrics` (see [Gate Module](src/modules/gate/README.md))
-- Resale Marketplace: `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings`, `POST /api/v1/resale/listings/:listingId/purchase` (see [Resale Module](src/modules/resale/README.md))
-- Admin Suite & Audit Log: `PATCH /api/v1/admin/orders/:id/flag`, `DELETE /api/v1/admin/tickets/:id`, `GET|PUT /api/v1/admin/settings/commission`, `PATCH /api/v1/admin/users/:id/suspend`, `PATCH /api/v1/admin/organizers/:id/approve`, `GET /api/v1/admin/audit-logs` (see [Admin Module](src/modules/admin/README.md))
-- Organizer Analytics: `GET /api/v1/organizer/analytics/:eventId` (see [Analytics Module](src/modules/analytics/README.md))
+- Resale Marketplace: `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings`, `POST /api/v1/resale/listings/:listingId/purchase` (wired to DB-backed `PlatformSettingsService` commission rate; see [Resale Module](src/modules/resale/README.md))
+- Admin Suite & Audit Log: `PATCH /api/v1/admin/orders/:id/flag`, `DELETE /api/v1/admin/tickets/:id`, `GET|PUT /api/v1/admin/settings/commission`, `PATCH /api/v1/admin/users/:id/suspend`, `PATCH /api/v1/admin/organizers/:id/approve`, `PATCH /api/v1/admin/organizers/:id/reject`, `GET /api/v1/admin/audit-logs` (see [Admin Module](src/modules/admin/README.md))
+- Organizer Analytics: `GET /api/v1/organizer/analytics/:eventId` (with real `resaleStats`; see [Analytics Module](src/modules/analytics/README.md))
 
 ## Persistence Model (Polyglot)
 

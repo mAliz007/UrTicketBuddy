@@ -52,7 +52,21 @@ jobs:
         run: pnpm build
 
       - name: Supply-Chain Dependency Audit
-        run: pnpm audit --audit-level=high || echo "Supply-chain audit completed with warnings"
+        run: pnpm audit --audit-level=high
+
+      - name: Gitleaks Secret Scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trivy Filesystem Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          severity: "HIGH,CRITICAL"
+          ignore-unfixed: true
+          exit-code: "1"
 
       - name: Secret Leak & Private Key Scanner
         run: |
