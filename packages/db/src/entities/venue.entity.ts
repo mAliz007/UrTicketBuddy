@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from "typeorm";
 import { Event } from "./event.entity";
 
@@ -12,6 +13,10 @@ import { Event } from "./event.entity";
 export class Venue {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
+
+  @Index("idx_venues_organizer_id")
+  @Column({ type: "varchar", length: 255, nullable: true })
+  organizerId?: string | null;
 
   @Column({ type: "varchar", length: 255 })
   name!: string;

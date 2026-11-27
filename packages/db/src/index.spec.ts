@@ -1,8 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
-import { QueryRunner } from "typeorm";
-import { AppDataSource } from "./index";
+import { getMetadataArgsStorage, QueryRunner } from "typeorm";
+import { AppDataSource, Venue } from "./index";
 import { Utb2InitExtensions1794836828550 } from "./migrations/1794836828550-UTB-2-init-extensions";
+import { Utb29AddVenueOrganizerId1795336850000 } from "./migrations/1795336850000-UTB-29-add-venue-organizer-id";
 
 describe("packages/db", () => {
   it("should define AppDataSource with correct options", () => {
@@ -49,5 +50,46 @@ describe("packages/db", () => {
     for (const file of files) {
       expect(file).toMatch(migrationPattern);
     }
+  });
+
+  it("should define Venue organizerId and Utb29AddVenueOrganizerId up/down queries", async () => {
+    const metadataStorage = getMetadataArgsStorage();
+    expect(
+      metadataStorage.columns.some(
+        (c) => c.target === Venue && c.propertyName === "organizerId",
+      ),
+    ).toBe(true);
+    expect(
+      metadataStorage.indices.some(
+        (i) => i.target === Venue && i.name === "idx_venues_organizer_id",
+      ),
+    ).toBe(true);
+
+    const migration = new Utb29AddVenueOrganizerId1795336850000();
+    expect(migration.name).toBe("Utb29AddVenueOrganizerId1795336850000");
+
+    const queriesRan: string[] = [];
+    const mockQueryRunner = {
+      query: jest.fn().mockImplementation(async (query: string) => {
+        queriesRan.push(query);
+      }),
+    };
+
+    await migration.up(mockQueryRunner as unknown as QueryRunner);
+    expect(queriesRan).toContain(
+      `ALTER TABLE "venues" ADD COLUMN IF NOT EXISTS "organizerId" character varying(255);`,
+    );
+    expect(queriesRan).toContain(
+      `CREATE INDEX IF NOT EXISTS "idx_venues_organizer_id" ON "venues" ("organizerId");`,
+    );
+
+    queriesRan.length = 0;
+    await migration.down(mockQueryRunner as unknown as QueryRunner);
+    expect(queriesRan).toContain(
+      `DROP INDEX IF EXISTS "idx_venues_organizer_id";`,
+    );
+    expect(queriesRan).toContain(
+      `ALTER TABLE "venues" DROP COLUMN IF EXISTS "organizerId";`,
+    );
   });
 });
