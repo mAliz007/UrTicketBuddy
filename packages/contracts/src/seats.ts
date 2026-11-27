@@ -4,7 +4,6 @@ export const HoldRequestSchema = z
   .object({
     eventId: z.string().uuid(),
     seatIds: z.array(z.string().min(1)).min(1),
-    userId: z.string().uuid().optional(),
     ttlSeconds: z.number().int().positive().optional(),
     maxPerUser: z.number().int().positive().optional(),
   })

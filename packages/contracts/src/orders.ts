@@ -13,7 +13,6 @@ export const CheckoutRequestSchema = z
     eventId: z.string().uuid(),
     seatIds: z.array(z.string().min(1)).min(1),
     paymentMethodToken: z.string().min(1),
-    userId: z.string().min(1).optional(),
   })
   .strict();
 
