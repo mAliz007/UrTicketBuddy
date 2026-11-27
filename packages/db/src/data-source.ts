@@ -4,6 +4,7 @@ import { loadEnv } from "@urticketbuddy/config";
 import { Venue } from "./entities/venue.entity";
 import { Event } from "./entities/event.entity";
 import { EventSeat } from "./entities/event-seat.entity";
+import { TicketTier } from "./entities/ticket-tier.entity";
 import { Order } from "./entities/order.entity";
 import { OrderItem } from "./entities/order-item.entity";
 import { User } from "./entities/user.entity";
@@ -36,6 +37,7 @@ export const AppDataSource = new DataSource({
     Venue,
     Event,
     EventSeat,
+    TicketTier,
     Order,
     OrderItem,
     User,
