@@ -4,6 +4,7 @@ import {
   Venue,
   Event,
   EventSeat,
+  TicketTier,
   Order,
   OrderItem,
   User,
@@ -26,6 +27,7 @@ import {
   VENUE_REPOSITORY,
   EVENT_REPOSITORY,
   EVENT_SEAT_REPOSITORY,
+  TICKET_TIER_REPOSITORY,
   USER_REPOSITORY,
   REFRESH_TOKEN_REPOSITORY,
   ORDER_REPOSITORY,
@@ -81,6 +83,13 @@ let redisClientInstance: Redis | null = null;
       provide: EVENT_SEAT_REPOSITORY,
       useFactory: (dataSource: DataSource) => {
         return dataSource.getRepository(EventSeat);
+      },
+      inject: [DATA_SOURCE],
+    },
+    {
+      provide: TICKET_TIER_REPOSITORY,
+      useFactory: (dataSource: DataSource) => {
+        return dataSource.getRepository(TicketTier);
       },
       inject: [DATA_SOURCE],
     },
@@ -231,6 +240,7 @@ let redisClientInstance: Redis | null = null;
     VENUE_REPOSITORY,
     EVENT_REPOSITORY,
     EVENT_SEAT_REPOSITORY,
+    TICKET_TIER_REPOSITORY,
     ORDER_REPOSITORY,
     ORDER_ITEM_REPOSITORY,
     USER_REPOSITORY,

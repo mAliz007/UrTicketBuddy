@@ -3,6 +3,8 @@ import { Schema, model, Document, Model } from "mongoose";
 export interface VenueLayoutDocument extends Document {
   name: string;
   schemaVersion: number;
+  version: number;
+  previousLayoutId?: string | null;
   dimensions?: {
     width: number;
     height: number;
@@ -18,6 +20,8 @@ export const VenueLayoutSchema = new Schema<VenueLayoutDocument>(
   {
     name: { type: String, required: true },
     schemaVersion: { type: Number, required: true, default: 1 },
+    version: { type: Number, required: true, default: 1 },
+    previousLayoutId: { type: String, required: false, default: null },
     dimensions: {
       type: {
         width: { type: Number },
