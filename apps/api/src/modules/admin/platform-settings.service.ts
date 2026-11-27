@@ -20,6 +20,12 @@ export class PlatformSettingsService implements PlatformSettingsPort {
    * Retrieves a setting value by key, returning parsed T or null.
    */
   async getSetting<T>(key: string): Promise<T | null> {
+    if (
+      !this.platformSettingRepository ||
+      typeof this.platformSettingRepository.findOne !== "function"
+    ) {
+      return null;
+    }
     const setting = await this.platformSettingRepository.findOne({
       where: { key },
     });
@@ -62,6 +68,12 @@ export class PlatformSettingsService implements PlatformSettingsPort {
    * Returns current commission rate (0 to 50 percent). Defaults to 10.
    */
   async getCommissionRate(): Promise<number> {
+    if (
+      !this.platformSettingRepository ||
+      typeof this.platformSettingRepository.findOne !== "function"
+    ) {
+      return DEFAULT_COMMISSION_RATE;
+    }
     const setting = await this.platformSettingRepository.findOne({
       where: { key: COMMISSION_SETTING_KEY },
     });

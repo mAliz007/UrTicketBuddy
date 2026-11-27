@@ -351,6 +351,65 @@ export class AdminService {
   }
 
   /**
+   * Rejects an organizer account/application, clears organizerTenantId, and demotes to CUSTOMER.
+   */
+  async rejectOrganizer(
+    userId: string,
+    adminUser: AdminActor,
+    reason?: string,
+    ipAddress?: string,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException({
+        code: ErrorCode.NOT_FOUND,
+        message: `User ${userId} not found`,
+      });
+    }
+
+    const previousRole = user.role;
+    const previousTenantId = user.organizerTenantId ?? null;
+    user.role = UserRole.CUSTOMER;
+    user.organizerTenantId = null;
+
+    await this.userRepository.save(user);
+
+    const { actorId, actorRole } = this.extractActor(adminUser);
+    await this.auditService.recordLog({
+      actorId,
+      actorRole,
+      action: "ORGANIZER_REJECTED",
+      entityType: "User",
+      entityId: userId,
+      summary:
+        reason ||
+        `User ${userId} (${user.email}) organizer application rejected by admin.`,
+      beforeState: {
+        role: previousRole,
+        organizerTenantId: previousTenantId,
+      },
+      afterState: {
+        role: UserRole.CUSTOMER,
+        organizerTenantId: null,
+        status: "REJECTED",
+      },
+      ipAddress: ipAddress || null,
+    });
+
+    return {
+      success: true,
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      organizerTenantId: null,
+      status: "REJECTED",
+    };
+  }
+
+  /**
    * Suspends a user account and immediately revokes all of their active refresh tokens.
    */
   async suspendUser(
