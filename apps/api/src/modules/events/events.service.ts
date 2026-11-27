@@ -2,6 +2,7 @@ import {
   Injectable,
   Inject,
   BadRequestException,
+  ForbiddenException,
   NotFoundException,
   Logger,
 } from "@nestjs/common";
@@ -13,7 +14,12 @@ import {
   generateArc,
   generateTableCluster,
 } from "@urticketbuddy/venue-engine";
-import { ErrorCode, SectionConfig, SeatNode } from "@urticketbuddy/contracts";
+import {
+  ErrorCode,
+  SectionConfig,
+  SeatNode,
+  UserRole,
+} from "@urticketbuddy/contracts";
 import {
   EVENT_REPOSITORY,
   VENUE_REPOSITORY,
@@ -41,9 +47,13 @@ export class EventsService implements EventSeatCatalogPort {
     private readonly venueLayoutModel: Model<VenueLayoutDocument>,
   ) {}
 
-  async createEvent(dto: CreateEventDto): Promise<{
+  async createEvent(
+    dto: CreateEventDto,
+    creator?: { id?: string; role?: string; organizerTenantId?: string | null },
+  ): Promise<{
     id: string;
     venueId: string;
+    organizerId: string | null;
     name: string;
     startTime: Date;
     status: string;
@@ -94,8 +104,23 @@ export class EventsService implements EventSeatCatalogPort {
       });
     }
 
+    const callerTenantId = creator
+      ? creator.organizerTenantId || creator.id || null
+      : null;
+
+    if (creator && creator.role !== UserRole.ADMIN) {
+      if (venue.organizerId && venue.organizerId !== callerTenantId) {
+        throw new ForbiddenException({
+          code: ErrorCode.FORBIDDEN,
+          message:
+            "Cross-tenant access forbidden: venue belongs to another organizer",
+        });
+      }
+    }
+
     const event = this.eventRepository.create({
       venueId: dto.venueId,
+      organizerId: callerTenantId || venue.organizerId || null,
       name: dto.name.trim(),
       startTime: startDate,
       status: dto.status || "DRAFT",
@@ -106,6 +131,7 @@ export class EventsService implements EventSeatCatalogPort {
     return {
       id: savedEvent.id,
       venueId: savedEvent.venueId,
+      organizerId: savedEvent.organizerId ?? null,
       name: savedEvent.name,
       startTime: savedEvent.startTime,
       status: savedEvent.status,
@@ -130,7 +156,10 @@ export class EventsService implements EventSeatCatalogPort {
     return event;
   }
 
-  async generateSeats(eventId: string): Promise<{
+  async generateSeats(
+    eventId: string,
+    actor?: { id?: string; role?: string; organizerTenantId?: string | null },
+  ): Promise<{
     eventId: string;
     venueId: string;
     totalSeatsGenerated: number;
@@ -156,6 +185,18 @@ export class EventsService implements EventSeatCatalogPort {
         code: ErrorCode.NOT_FOUND,
         message: `Venue with id ${event.venueId} not found`,
       });
+    }
+
+    if (actor && actor.role !== UserRole.ADMIN) {
+      const callerTenantId = actor.organizerTenantId || actor.id || null;
+      const ownerTenantId = event.organizerId ?? venue.organizerId ?? null;
+      if (ownerTenantId && ownerTenantId !== callerTenantId) {
+        throw new ForbiddenException({
+          code: ErrorCode.FORBIDDEN,
+          message:
+            "Cross-tenant access forbidden: event belongs to another organizer",
+        });
+      }
     }
 
     // 3. Fetch VenueLayout from MongoDB

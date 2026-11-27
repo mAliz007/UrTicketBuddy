@@ -6,7 +6,8 @@ Manages ticketing events and mathematical parametric seat generation.
 
 ## 1. Overview
 
-- **Events**: Created and linked directly to a physical venue (`venueId` FK).
+- **Events**: Created and linked directly to a physical venue (`venueId` FK) and scoped to the owning organizer (`organizerId` tenant identifier).
+- **Authorization & Tenant Isolation**: `POST /api/v1/events` and `POST /api/v1/events/:id/generate-seats` require `ORGANIZER` or `ADMIN` and enforce `OwnershipGuard` (blocking cross-tenant mutations with `403 Forbidden`; `ADMIN` bypasses). `GET /api/v1/events/:id` is `@Public()`.
 - **Seat Generation**: Triggers on-demand parametric seat layout calculations using `@urticketbuddy/venue-engine`.
 - **Chunked Bulk Insert**: Batches seat row insertions into PostgreSQL in chunks of 1,000 to prevent database memory exhaustion and maximum parameter overflow.
 - **Port Implementation**: Implements `EventSeatCatalogPort` for querying seat availability across the platform.

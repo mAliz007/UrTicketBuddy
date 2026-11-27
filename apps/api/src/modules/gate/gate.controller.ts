@@ -42,7 +42,7 @@ export class GateController {
       userId?: string;
       email?: string;
       role?: string;
-      organizerTenantId?: string;
+      organizerTenantId?: string | null;
     },
   ) {
     const scannedBy = user?.id || user?.userId || user?.email || "gate-staff";
@@ -64,7 +64,7 @@ export class GateController {
       userId?: string;
       email?: string;
       role?: string;
-      organizerTenantId?: string;
+      organizerTenantId?: string | null;
     },
   ) {
     if (!eventId) {

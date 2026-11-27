@@ -28,8 +28,12 @@ export class VenuesService {
     private readonly venueLayoutModel: Model<VenueLayoutDocument>,
   ) {}
 
-  async createVenue(dto: CreateVenueDto): Promise<{
+  async createVenue(
+    dto: CreateVenueDto,
+    creator?: { id?: string; role?: string; organizerTenantId?: string | null },
+  ): Promise<{
     id: string;
+    organizerId: string | null;
     name: string;
     location: string;
     layoutMongoId: string;
@@ -88,7 +92,12 @@ export class VenuesService {
     const layoutMongoId = savedLayout._id.toString();
 
     // 3. Persist venue to PostgreSQL
+    const organizerId = creator
+      ? creator.organizerTenantId || creator.id || null
+      : null;
+
     const venue = this.venueRepository.create({
+      organizerId,
       name: dto.name.trim(),
       location: dto.location.trim(),
       layoutMongoId,
@@ -97,6 +106,7 @@ export class VenuesService {
 
     return {
       id: savedVenue.id,
+      organizerId: savedVenue.organizerId ?? null,
       name: savedVenue.name,
       location: savedVenue.location,
       layoutMongoId: savedVenue.layoutMongoId,

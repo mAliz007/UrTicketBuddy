@@ -107,7 +107,11 @@ export class GateService {
   async scanTicket(
     dto: ScanTicketDto,
     scannedBy: string,
-    scannerUser?: { id?: string; role?: string; organizerTenantId?: string },
+    scannerUser?: {
+      id?: string;
+      role?: string;
+      organizerTenantId?: string | null;
+    },
   ): Promise<GateScanResponse> {
     const parsed = GateScanRequestSchema.safeParse(dto);
     if (!parsed.success) {
@@ -136,21 +140,24 @@ export class GateService {
     if (scannerUser && scannerUser.role !== UserRole.ADMIN) {
       const organizerTenantId = scannerUser.organizerTenantId;
       const scannerId = scannerUser.id;
-      if (organizerTenantId) {
+      if (scannerUser.role === UserRole.GATE_STAFF) {
         if (
+          !organizerTenantId ||
           !eventOrganizerId ||
-          (eventOrganizerId !== organizerTenantId &&
-            eventOrganizerId !== scannerId)
+          eventOrganizerId !== organizerTenantId
         ) {
           throw new ForbiddenException({
             code: ErrorCode.FORBIDDEN,
             message: "Forbidden: Event belongs to a different organizer",
           });
         }
-      } else if (scannerUser.role === UserRole.ORGANIZER) {
+      } else {
+        const callerTenantId = organizerTenantId || scannerId;
         if (
           !eventOrganizerId ||
-          (scannerId && eventOrganizerId !== scannerId)
+          !callerTenantId ||
+          (eventOrganizerId !== organizerTenantId &&
+            eventOrganizerId !== scannerId)
         ) {
           throw new ForbiddenException({
             code: ErrorCode.FORBIDDEN,
@@ -471,7 +478,11 @@ export class GateService {
    */
   async getMetrics(
     eventId: string,
-    scannerUser?: { id?: string; role?: string; organizerTenantId?: string },
+    scannerUser?: {
+      id?: string;
+      role?: string;
+      organizerTenantId?: string | null;
+    },
   ): Promise<GateMetricsResponse> {
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
@@ -488,21 +499,24 @@ export class GateService {
     if (scannerUser && scannerUser.role !== UserRole.ADMIN) {
       const organizerTenantId = scannerUser.organizerTenantId;
       const scannerId = scannerUser.id;
-      if (organizerTenantId) {
+      if (scannerUser.role === UserRole.GATE_STAFF) {
         if (
+          !organizerTenantId ||
           !eventOrganizerId ||
-          (eventOrganizerId !== organizerTenantId &&
-            eventOrganizerId !== scannerId)
+          eventOrganizerId !== organizerTenantId
         ) {
           throw new ForbiddenException({
             code: ErrorCode.FORBIDDEN,
             message: "Forbidden: Event belongs to a different organizer",
           });
         }
-      } else if (scannerUser.role === UserRole.ORGANIZER) {
+      } else {
+        const callerTenantId = organizerTenantId || scannerId;
         if (
           !eventOrganizerId ||
-          (scannerId && eventOrganizerId !== scannerId)
+          !callerTenantId ||
+          (eventOrganizerId !== organizerTenantId &&
+            eventOrganizerId !== scannerId)
         ) {
           throw new ForbiddenException({
             code: ErrorCode.FORBIDDEN,
