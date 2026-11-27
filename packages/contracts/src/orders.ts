@@ -10,7 +10,7 @@ export enum OrderStatus {
 
 export const CheckoutRequestSchema = z
   .object({
-    eventId: z.string().uuid(),
+    eventId: z.guid(),
     seatIds: z.array(z.string().min(1)).min(1),
     paymentMethodToken: z.string().min(1),
     userId: z.string().min(1).optional(),
@@ -20,9 +20,9 @@ export const CheckoutRequestSchema = z
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
 
 export const OrderItemDtoSchema = z.object({
-  id: z.string().uuid(),
-  orderId: z.string().uuid(),
-  eventSeatId: z.string().uuid(),
+  id: z.guid(),
+  orderId: z.guid(),
+  eventSeatId: z.guid(),
   price: z.number().positive(),
   createdAt: z.union([z.date(), z.string()]).optional(),
 });
@@ -30,9 +30,9 @@ export const OrderItemDtoSchema = z.object({
 export type OrderItemDto = z.infer<typeof OrderItemDtoSchema>;
 
 export const OrderResponseSchema = z.object({
-  id: z.string().uuid(),
+  id: z.guid(),
   userId: z.string(),
-  eventId: z.string().uuid(),
+  eventId: z.guid(),
   totalAmount: z.number().nonnegative(),
   currency: z.string(),
   status: z.nativeEnum(OrderStatus),

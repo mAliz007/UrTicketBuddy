@@ -17,7 +17,7 @@ export class UTB23F4F6TiersVenueOwnerAuditRole1795336850000 implements Migration
     // 2. Create ticket_tiers table with PK, FK to events, and covering FK index (F-4)
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS "ticket_tiers" (
-        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+        "id" uuid NOT NULL DEFAULT gen_random_uuid(),
         "eventId" uuid NOT NULL,
         "name" character varying(100) NOT NULL,
         "priceMinor" integer NOT NULL,
@@ -25,8 +25,8 @@ export class UTB23F4F6TiersVenueOwnerAuditRole1795336850000 implements Migration
         "capacity" integer,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_ticket_tiers_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_ticket_tiers_event_id" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+        CONSTRAINT "PK_917cfec124fa5e8ce04d1e7b865" PRIMARY KEY ("id"),
+        CONSTRAINT "FK_a9059a9111a2206081a347d3b6e" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE NO ACTION
       )
     `);
 

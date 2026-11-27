@@ -216,6 +216,13 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  tar-fs@>=2.0.0 <2.1.4: ">=2.1.4"
+  undici@<6.29.1: ">=6.29.1"
+  "@fastify/busboy@<3.2.1": ">=3.2.1"
+  pdfjs-dist@<6.2.108: ">=6.2.108"
+  zod: ^4.6.6
+
 importers:
   .:
     devDependencies:
@@ -227,7 +234,7 @@ importers:
         version: 19.8.1
       "@sentropic/graphify":
         specifier: ^0.19.1
-        version: 0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@3.25.76)
+        version: 0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@4.6.7)
       "@typescript-eslint/eslint-plugin":
         specifier: ^8.24.1
         version: 8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.39.5(jiti@2.6.1)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3))(eslint@9.39.5(jiti@2.6.1)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
@@ -618,8 +625,8 @@ importers:
         specifier: ^16.4.7
         version: 16.6.1
       zod:
-        specifier: ^3.24.2
-        version: 3.25.76
+        specifier: ^4.6.6
+        version: 4.6.7
     devDependencies:
       "@types/jest":
         specifier: ^29.5.14
@@ -640,8 +647,8 @@ importers:
   packages/contracts:
     dependencies:
       zod:
-        specifier: ^3.24.2
-        version: 3.25.76
+        specifier: ^4.6.6
+        version: 4.6.7
     devDependencies:
       "@types/jest":
         specifier: ^29.5.14
@@ -775,7 +782,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   "@ai-sdk/cohere@3.0.78":
     resolution:
@@ -784,7 +791,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   "@ai-sdk/gateway@3.0.237":
     resolution:
@@ -793,7 +800,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   "@ai-sdk/google@3.0.146":
     resolution:
@@ -802,7 +809,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   "@ai-sdk/mistral@3.0.81":
     resolution:
@@ -811,7 +818,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   "@ai-sdk/openai@3.0.143":
     resolution:
@@ -820,7 +827,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   "@ai-sdk/provider-utils@2.2.8":
     resolution:
@@ -829,7 +836,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.23.8
+      zod: ^4.6.6
 
   "@ai-sdk/provider-utils@4.0.66":
     resolution:
@@ -838,7 +845,7 @@ packages:
       }
     engines: { node: ">=18.17" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   "@ai-sdk/provider@1.1.3":
     resolution:
@@ -1693,13 +1700,6 @@ packages:
       }
     engines: { node: ^18.18.0 || ^20.9.0 || >=21.1.0 }
 
-  "@fastify/busboy@2.1.1":
-    resolution:
-      {
-        integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==,
-      }
-    engines: { node: ">=14" }
-
   "@google-cloud/common@6.1.0":
     resolution:
       {
@@ -2230,7 +2230,7 @@ packages:
     engines: { node: ">=18" }
     peerDependencies:
       "@cfworker/json-schema": ^4.1.1
-      zod: ^3.25 || ^4.0
+      zod: ^4.6.6
     peerDependenciesMeta:
       "@cfworker/json-schema":
         optional: true
@@ -3802,7 +3802,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.6
 
   ajv-formats@3.0.1:
     resolution:
@@ -4478,12 +4478,6 @@ packages:
         integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==,
       }
     engines: { node: ">= 20.19.0" }
-
-  chownr@1.1.4:
-    resolution:
-      {
-        integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==,
-      }
 
   chrome-trace-event@1.0.4:
     resolution:
@@ -5692,12 +5686,6 @@ packages:
         integrity: sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A==,
       }
     engines: { node: ">= 0.8" }
-
-  fs-constants@1.0.0:
-    resolution:
-      {
-        integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==,
-      }
 
   fs-extra@10.1.0:
     resolution:
@@ -7246,12 +7234,6 @@ packages:
     engines: { node: ">=20" }
     hasBin: true
 
-  mkdirp-classic@0.5.3:
-    resolution:
-      {
-        integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==,
-      }
-
   mkdirp@1.0.4:
     resolution:
       {
@@ -7584,7 +7566,7 @@ packages:
       }
     engines: { node: ">=18" }
     peerDependencies:
-      zod: ^3.0.0
+      zod: ^4.6.6
     peerDependenciesMeta:
       zod:
         optional: true
@@ -7861,10 +7843,10 @@ packages:
         integrity: sha512-KG8UEiEVkR3wGEb4m5yZkVCzigAD+cVEJck2CzYZO37ZGJfctvVptVO192MwrtPhzONn6go8ylnOdMhKqi4nfg==,
       }
 
-  pdfjs-dist@6.1.200:
+  pdfjs-dist@6.5.438:
     resolution:
       {
-        integrity: sha512-o8MolyzirkkLrcdsae/HEOiIcXWI7DS5zGpvqW8xTC2YUsW30rltFw2bDGvw/fskUdEMrQm2br68jzDS5BH2vw==,
+        integrity: sha512-vg8Pw1x+AFKy4AMDvhuWl5cOYV8d698UoEANoFFhc79hqXDnZQqnOXoxw3HG907WHOg1JYOvLhP756boddFxpA==,
       }
     engines: { node: ">=22.13.0 || >=24" }
 
@@ -8998,24 +8980,11 @@ packages:
       }
     engines: { node: ">=6" }
 
-  tar-fs@2.0.1:
-    resolution:
-      {
-        integrity: sha512-6tzWDMeroL87uF/+lin46k+Q+46rAJ0SyPGz7OW7wTgblI273hsBqk2C1j0/xNadNLKDTUL9BukSjB7cwgmlPA==,
-      }
-
   tar-fs@3.1.3:
     resolution:
       {
         integrity: sha512-/hU4AXnIdZu+Gvl1pk0oI5f5HxWsCJRtY2aFaJdk9VvyL48DWU6iU5WAIPG+wIi1YvWA6eTJvIviP/tMAZZNwQ==,
       }
-
-  tar-stream@2.2.0:
-    resolution:
-      {
-        integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==,
-      }
-    engines: { node: ">=6" }
 
   tar-stream@3.2.2:
     resolution:
@@ -9635,13 +9604,6 @@ packages:
         integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==,
       }
 
-  undici@5.29.0:
-    resolution:
-      {
-        integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==,
-      }
-    engines: { node: ">=14.0" }
-
   undici@6.29.1:
     resolution:
       {
@@ -10074,13 +10036,7 @@ packages:
         integrity: sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==,
       }
     peerDependencies:
-      zod: ^3.25.28 || ^4
-
-  zod@3.25.76:
-    resolution:
-      {
-        integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==,
-      }
+      zod: ^4.6.6
 
   zod@4.6.7:
     resolution:
@@ -10089,57 +10045,57 @@ packages:
       }
 
 snapshots:
-  "@ai-sdk/anthropic@3.0.142(zod@3.25.76)":
+  "@ai-sdk/anthropic@3.0.142(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 3.0.19
-      "@ai-sdk/provider-utils": 4.0.66(zod@3.25.76)
-      zod: 3.25.76
+      "@ai-sdk/provider-utils": 4.0.66(zod@4.6.7)
+      zod: 4.6.7
 
-  "@ai-sdk/cohere@3.0.78(zod@3.25.76)":
+  "@ai-sdk/cohere@3.0.78(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 3.0.19
-      "@ai-sdk/provider-utils": 4.0.66(zod@3.25.76)
-      zod: 3.25.76
+      "@ai-sdk/provider-utils": 4.0.66(zod@4.6.7)
+      zod: 4.6.7
 
-  "@ai-sdk/gateway@3.0.237(zod@3.25.76)":
+  "@ai-sdk/gateway@3.0.237(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 3.0.19
-      "@ai-sdk/provider-utils": 4.0.66(zod@3.25.76)
+      "@ai-sdk/provider-utils": 4.0.66(zod@4.6.7)
       "@vercel/oidc": 3.2.0
-      zod: 3.25.76
+      zod: 4.6.7
 
-  "@ai-sdk/google@3.0.146(zod@3.25.76)":
+  "@ai-sdk/google@3.0.146(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 3.0.19
-      "@ai-sdk/provider-utils": 4.0.66(zod@3.25.76)
-      zod: 3.25.76
+      "@ai-sdk/provider-utils": 4.0.66(zod@4.6.7)
+      zod: 4.6.7
 
-  "@ai-sdk/mistral@3.0.81(zod@3.25.76)":
+  "@ai-sdk/mistral@3.0.81(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 3.0.19
-      "@ai-sdk/provider-utils": 4.0.66(zod@3.25.76)
-      zod: 3.25.76
+      "@ai-sdk/provider-utils": 4.0.66(zod@4.6.7)
+      zod: 4.6.7
 
-  "@ai-sdk/openai@3.0.143(zod@3.25.76)":
+  "@ai-sdk/openai@3.0.143(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 3.0.19
-      "@ai-sdk/provider-utils": 4.0.66(zod@3.25.76)
-      zod: 3.25.76
+      "@ai-sdk/provider-utils": 4.0.66(zod@4.6.7)
+      zod: 4.6.7
 
-  "@ai-sdk/provider-utils@2.2.8(zod@3.25.76)":
+  "@ai-sdk/provider-utils@2.2.8(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 1.1.3
       nanoid: 3.3.20
       secure-json-parse: 2.7.0
-      zod: 3.25.76
+      zod: 4.6.7
 
-  "@ai-sdk/provider-utils@4.0.66(zod@3.25.76)":
+  "@ai-sdk/provider-utils@4.0.66(zod@4.6.7)":
     dependencies:
       "@ai-sdk/provider": 3.0.19
       "@standard-schema/spec": 1.1.0
       eventsource-parser: 3.1.1
       undici: 6.29.1
-      zod: 3.25.76
+      zod: 4.6.7
 
   "@ai-sdk/provider@1.1.3":
     dependencies:
@@ -10705,8 +10661,6 @@ snapshots:
       "@eslint/core": 0.17.0
       levn: 0.4.1
 
-  "@fastify/busboy@2.1.1": {}
-
   "@google-cloud/common@6.1.0(supports-color@8.1.1)":
     dependencies:
       "@google-cloud/projectify": 4.0.0
@@ -11202,7 +11156,7 @@ snapshots:
   "@mixmark-io/domino@2.2.0":
     optional: true
 
-  "@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@3.25.76)":
+  "@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@4.6.7)":
     dependencies:
       "@hono/node-server": 2.1.8(hono@4.13.18)
       ajv: 8.20.0
@@ -11219,8 +11173,8 @@ snapshots:
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
-      zod: 3.25.76
-      zod-to-json-schema: 3.25.2(zod@3.25.76)
+      zod: 4.6.7
+      zod-to-json-schema: 3.25.2(zod@4.6.7)
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -11606,16 +11560,16 @@ snapshots:
   "@rollup/rollup-win32-x64-msvc@4.68.3":
     optional: true
 
-  "@sentropic/engram@0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@3.25.76)":
+  "@sentropic/engram@0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@4.6.7)":
     dependencies:
-      "@ai-sdk/anthropic": 3.0.142(zod@3.25.76)
-      "@ai-sdk/cohere": 3.0.78(zod@3.25.76)
-      "@ai-sdk/google": 3.0.146(zod@3.25.76)
-      "@ai-sdk/mistral": 3.0.81(zod@3.25.76)
-      "@ai-sdk/openai": 3.0.143(zod@3.25.76)
+      "@ai-sdk/anthropic": 3.0.142(zod@4.6.7)
+      "@ai-sdk/cohere": 3.0.78(zod@4.6.7)
+      "@ai-sdk/google": 3.0.146(zod@4.6.7)
+      "@ai-sdk/mistral": 3.0.81(zod@4.6.7)
+      "@ai-sdk/openai": 3.0.143(zod@4.6.7)
       "@sentropic/graph": 0.3.1
       "@sentropic/llm-mesh": 0.19.3
-      ai: 6.0.332(zod@3.25.76)
+      ai: 6.0.332(zod@4.6.7)
       commander: 14.0.3
       csv-parse: 6.2.1
       graphology: 0.26.0(graphology-types@0.24.8)
@@ -11624,12 +11578,12 @@ snapshots:
       graphology-shortest-path: 2.1.0(graphology-types@0.24.8)
       graphology-types: 0.24.8
       mistral-ocr: 0.1.3
-      ollama-ai-provider: 1.2.0(zod@3.25.76)
+      ollama-ai-provider: 1.2.0(zod@4.6.7)
       web-tree-sitter: 0.26.13
       yaml: 2.9.1
     optionalDependencies:
       "@google-cloud/spanner": 8.13.0(supports-color@8.1.1)
-      "@modelcontextprotocol/sdk": 1.32.2(supports-color@8.1.1)(zod@3.25.76)
+      "@modelcontextprotocol/sdk": 1.32.2(supports-color@8.1.1)(zod@4.6.7)
       chokidar: 5.0.0
       neo4j-driver: 6.3.2
       officeparser: 7.8.0(supports-color@8.1.1)
@@ -11662,9 +11616,9 @@ snapshots:
 
   "@sentropic/graph@0.3.1": {}
 
-  "@sentropic/graphify@0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@3.25.76)":
+  "@sentropic/graphify@0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@4.6.7)":
     dependencies:
-      "@sentropic/engram": 0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@3.25.76)
+      "@sentropic/engram": 0.19.1(@napi-rs/canvas@1.1.1)(supports-color@8.1.1)(zod@4.6.7)
     transitivePeerDependencies:
       - "@cfworker/json-schema"
       - "@napi-rs/canvas"
@@ -12236,13 +12190,13 @@ snapshots:
   agent-base@7.1.4:
     optional: true
 
-  ai@6.0.332(zod@3.25.76):
+  ai@6.0.332(zod@4.6.7):
     dependencies:
-      "@ai-sdk/gateway": 3.0.237(zod@3.25.76)
+      "@ai-sdk/gateway": 3.0.237(zod@4.6.7)
       "@ai-sdk/provider": 3.0.19
-      "@ai-sdk/provider-utils": 4.0.66(zod@3.25.76)
+      "@ai-sdk/provider-utils": 4.0.66(zod@4.6.7)
       "@opentelemetry/api": 1.10.0
-      zod: 3.25.76
+      zod: 4.6.7
 
   ajv-formats@3.0.1:
     dependencies:
@@ -12654,8 +12608,6 @@ snapshots:
       readdirp: 5.1.1
     optional: true
 
-  chownr@1.1.4: {}
-
   chrome-trace-event@1.0.4: {}
 
   ci-info@3.9.0: {}
@@ -12932,12 +12884,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  dockerode@3.3.5(supports-color@8.1.1):
+  dockerode@3.3.5(bare-buffer@3.7.2)(supports-color@8.1.1):
     dependencies:
       "@balena/dockerignore": 1.0.2
       docker-modem: 3.0.8(supports-color@8.1.1)
-      tar-fs: 2.0.1
+      tar-fs: 3.1.3(bare-buffer@3.7.2)
     transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - react-native-b4a
       - supports-color
 
   docx@9.15.4:
@@ -13461,8 +13416,6 @@ snapshots:
   fraction.js@5.3.4: {}
 
   fresh@2.0.0: {}
-
-  fs-constants@1.0.0: {}
 
   fs-extra@10.1.0:
     dependencies:
@@ -14523,8 +14476,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  mkdirp-classic@0.5.3: {}
-
   mkdirp@1.0.4: {}
 
   mnemonist@0.39.8:
@@ -14693,20 +14644,20 @@ snapshots:
       "@xmldom/xmldom": 0.9.12
       fflate: 0.8.3
       file-type: 22.3.0(supports-color@8.1.1)
-      pdfjs-dist: 6.1.200
+      pdfjs-dist: 6.5.438
       tesseract.js: 7.0.0
     transitivePeerDependencies:
       - encoding
       - supports-color
     optional: true
 
-  ollama-ai-provider@1.2.0(zod@3.25.76):
+  ollama-ai-provider@1.2.0(zod@4.6.7):
     dependencies:
       "@ai-sdk/provider": 1.1.3
-      "@ai-sdk/provider-utils": 2.2.8(zod@3.25.76)
+      "@ai-sdk/provider-utils": 2.2.8(zod@4.6.7)
       partial-json: 0.1.7
     optionalDependencies:
-      zod: 3.25.76
+      zod: 4.6.7
 
   on-finished@2.4.2:
     dependencies:
@@ -14866,7 +14817,7 @@ snapshots:
 
   pause@0.0.1: {}
 
-  pdfjs-dist@6.1.200:
+  pdfjs-dist@6.5.438:
     optionalDependencies:
       "@napi-rs/canvas": 1.1.1
     optional: true
@@ -15614,13 +15565,6 @@ snapshots:
 
   tapable@2.3.4: {}
 
-  tar-fs@2.0.1:
-    dependencies:
-      chownr: 1.1.4
-      mkdirp-classic: 0.5.3
-      pump: 3.0.4
-      tar-stream: 2.2.0
-
   tar-fs@3.1.3(bare-buffer@3.7.2):
     dependencies:
       pump: 3.0.4
@@ -15632,14 +15576,6 @@ snapshots:
       - bare-abort-controller
       - bare-buffer
       - react-native-b4a
-
-  tar-stream@2.2.0:
-    dependencies:
-      bl: 4.1.0
-      end-of-stream: 1.4.5
-      fs-constants: 1.0.0
-      inherits: 2.0.4
-      readable-stream: 3.6.2
 
   tar-stream@3.2.2(bare-buffer@3.7.2):
     dependencies:
@@ -15721,14 +15657,14 @@ snapshots:
       byline: 5.0.0
       debug: 4.4.3(supports-color@8.1.1)
       docker-compose: 0.24.8
-      dockerode: 3.3.5(supports-color@8.1.1)
+      dockerode: 3.3.5(bare-buffer@3.7.2)(supports-color@8.1.1)
       get-port: 5.1.1
       proper-lockfile: 4.1.2
       properties-reader: 2.3.0
       ssh-remote-port-forward: 1.0.4
       tar-fs: 3.1.3(bare-buffer@3.7.2)
       tmp: 0.2.7
-      undici: 5.29.0
+      undici: 6.29.1
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -16025,10 +15961,6 @@ snapshots:
 
   undici-types@8.9.0: {}
 
-  undici@5.29.0:
-    dependencies:
-      "@fastify/busboy": 2.1.1
-
   undici@6.29.1: {}
 
   unicorn-magic@0.1.0: {}
@@ -16258,15 +16190,8 @@ snapshots:
   zlibjs@0.3.1:
     optional: true
 
-  zod-to-json-schema@3.25.2(zod@3.25.76):
-    dependencies:
-      zod: 3.25.76
-    optional: true
-
   zod-to-json-schema@3.25.2(zod@4.6.7):
     dependencies:
       zod: 4.6.7
-
-  zod@3.25.76: {}
 
   zod@4.6.7: {}

@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -64,6 +66,7 @@ jobs:
         with:
           scan-type: "fs"
           scan-ref: "."
+          scanners: "vuln"
           severity: "HIGH,CRITICAL"
           ignore-unfixed: true
           exit-code: "1"
