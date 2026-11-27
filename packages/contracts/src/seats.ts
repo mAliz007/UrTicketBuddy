@@ -22,3 +22,23 @@ export const HoldResponseSchema = z
   .strict();
 
 export type HoldResponse = z.infer<typeof HoldResponseSchema>;
+
+export const EventSeatsHoldBodySchema = z
+  .object({
+    eventId: z.string().uuid().optional(),
+    seatIds: z.array(z.string().min(1)).min(1),
+    ttlSeconds: z.number().int().positive().optional(),
+    maxPerUser: z.number().int().positive().optional(),
+  })
+  .strict();
+
+export type EventSeatsHoldBody = z.infer<typeof EventSeatsHoldBodySchema>;
+
+export const ReleaseSeatsRequestSchema = z
+  .object({
+    eventId: z.string().uuid().optional(),
+    seatIds: z.array(z.string().min(1)).min(1),
+  })
+  .strict();
+
+export type ReleaseSeatsRequest = z.infer<typeof ReleaseSeatsRequestSchema>;

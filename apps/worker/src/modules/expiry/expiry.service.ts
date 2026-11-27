@@ -42,7 +42,7 @@ export interface ExpiryMetrics {
 const HOLD_EXPIRY_KEY_PATTERN = "hold_expiry:{*}";
 const HOLD_EXPIRY_KEY_REGEX = /^hold_expiry:\{([^}]+)\}$/;
 const LEADER_LOCK_KEY = "worker:expiry:leader";
-const LEADER_LEASE_MS = 4500;
+const LEADER_LEASE_MS = 900;
 const TICK_WARN_THRESHOLD_MS = 4000;
 const SCAN_COUNT = 100;
 const EVENT_CONCURRENCY = 10;
@@ -104,7 +104,7 @@ export class ExpiryService implements OnModuleDestroy {
     }
   }
 
-  @Cron("*/5 * * * * *")
+  @Cron("*/1 * * * * *")
   async handleCron(): Promise<void> {
     if (this.isShuttingDown) {
       return;
@@ -312,10 +312,7 @@ export class ExpiryService implements OnModuleDestroy {
       source: "WORKER_EXPIRY",
     };
 
-    await this.redis.publish(
-      `seat-updates:${eventId}`,
-      JSON.stringify(payload),
-    );
+    await this.redis.publish("seat.state", JSON.stringify(payload));
   }
 
   private async syncPostgresSeats(
