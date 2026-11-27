@@ -95,13 +95,13 @@ To prevent financial loss, split-brain states, and double-booking under extreme 
 
 ### `POST /api/v1/orders/checkout`
 
+- **Auth**: JWT Bearer (`CUSTOMER` role required via `@Roles(UserRole.CUSTOMER)`); caller `userId` is resolved strictly from `@CurrentUser()`.
 - **Request Body**:
   ```json
   {
     "eventId": "a0000000-0000-0000-0000-000000000001",
     "seatIds": ["SEC-A-1", "SEC-A-2"],
-    "paymentMethodToken": "tok_visa",
-    "userId": "usr_123"
+    "paymentMethodToken": "tok_visa"
   }
   ```
 - **Success Response (`201 Created`)**:

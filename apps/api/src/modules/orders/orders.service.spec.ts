@@ -2,8 +2,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   NotFoundException,
 } from "@nestjs/common";
+import { UserRole } from "@urticketbuddy/contracts";
 import { OrdersService, DEFAULT_SEAT_PRICE } from "./orders.service";
 import { MockPaymentService } from "./payment/mock-payment.service";
 import {
@@ -127,7 +129,7 @@ describe("OrdersService", () => {
   describe("checkout", () => {
     it("should reject invalid checkout request payload", async () => {
       await expect(
-        service.checkout({
+        service.checkout(userId, {
           eventId: "invalid-uuid",
           seatIds: [],
           paymentMethodToken: "",
@@ -142,9 +144,8 @@ describe("OrdersService", () => {
       mockRedisClient.get.mockResolvedValue(null);
 
       await expect(
-        service.checkout({
+        service.checkout(userId, {
           eventId,
-          userId,
           seatIds: [seatId1],
           paymentMethodToken: "tok_visa",
         }),
@@ -162,9 +163,8 @@ describe("OrdersService", () => {
       });
 
       await expect(
-        service.checkout({
+        service.checkout(userId, {
           eventId,
-          userId,
           seatIds: [seatId1],
           paymentMethodToken: "tok_visa",
         }),
@@ -183,9 +183,8 @@ describe("OrdersService", () => {
       mockEventSeatRepo.find.mockResolvedValue([]);
 
       await expect(
-        service.checkout({
+        service.checkout(userId, {
           eventId,
-          userId,
           seatIds: [seatId1],
           paymentMethodToken: "tok_visa",
         }),
@@ -208,9 +207,8 @@ describe("OrdersService", () => {
       });
 
       await expect(
-        service.checkout({
+        service.checkout(userId, {
           eventId,
-          userId,
           seatIds: [seatId1],
           paymentMethodToken: "tok_fail",
         }),
@@ -238,9 +236,8 @@ describe("OrdersService", () => {
       });
 
       await expect(
-        service.checkout({
+        service.checkout(userId, {
           eventId,
-          userId,
           seatIds: [seatId1],
           paymentMethodToken: "tok_visa",
         }),
@@ -278,9 +275,8 @@ describe("OrdersService", () => {
       );
 
       await expect(
-        service.checkout({
+        service.checkout(userId, {
           eventId,
-          userId,
           seatIds: [seatId1],
           paymentMethodToken: "tok_visa",
         }),
@@ -320,9 +316,8 @@ describe("OrdersService", () => {
         soldSeats: [seatId1, seatId2],
       });
 
-      const result = await service.checkout({
+      const result = await service.checkout(userId, {
         eventId,
-        userId,
         seatIds: [seatId1, seatId2],
         paymentMethodToken: "tok_visa",
       });
@@ -351,16 +346,42 @@ describe("OrdersService", () => {
   });
 
   describe("getOrderById", () => {
-    it("should return order if found", async () => {
+    it("should return order if found for owner or ADMIN", async () => {
       const mockOrder = {
         id: "ord-1",
+        userId,
         status: "COMPLETED",
         items: [],
       };
       mockOrderRepo.findOne.mockResolvedValue(mockOrder);
 
-      const res = await service.getOrderById("ord-1");
+      const res = await service.getOrderById("ord-1", {
+        id: userId,
+        role: UserRole.CUSTOMER,
+      });
       expect(res).toEqual(mockOrder);
+
+      const adminRes = await service.getOrderById("ord-1", {
+        id: "admin-1",
+        role: UserRole.ADMIN,
+      });
+      expect(adminRes).toEqual(mockOrder);
+    });
+
+    it("should throw ForbiddenException if caller does not own the order", async () => {
+      mockOrderRepo.findOne.mockResolvedValue({
+        id: "ord-1",
+        userId,
+        status: "COMPLETED",
+        items: [],
+      });
+
+      await expect(
+        service.getOrderById("ord-1", {
+          id: "other-user",
+          role: UserRole.CUSTOMER,
+        }),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it("should throw NotFoundException if order not found", async () => {
