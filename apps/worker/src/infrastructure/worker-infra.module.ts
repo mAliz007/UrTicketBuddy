@@ -5,6 +5,7 @@ import {
   Module,
   OnModuleDestroy,
 } from "@nestjs/common";
+import { Client, ClientOptions } from "@elastic/elasticsearch";
 import { loadEnv } from "@urticketbuddy/config";
 import { AppDataSource } from "@urticketbuddy/db";
 import { RedisScriptsWrapper } from "@urticketbuddy/redis-scripts";
@@ -12,6 +13,7 @@ import Redis from "ioredis";
 import { DataSource } from "typeorm";
 import {
   WORKER_DATA_SOURCE,
+  WORKER_ELASTICSEARCH_CLIENT,
   WORKER_REDIS_CLIENT,
   WORKER_REDIS_SCRIPTS,
 } from "./worker-infra.tokens";
@@ -62,13 +64,38 @@ import {
         return AppDataSource;
       },
     },
+    {
+      provide: WORKER_ELASTICSEARCH_CLIENT,
+      useFactory: (): Client => {
+        const env = loadEnv();
+        const options: ClientOptions = {
+          node: env.ELASTICSEARCH_NODE,
+        };
+        if (env.ELASTICSEARCH_API_KEY) {
+          options.auth = { apiKey: env.ELASTICSEARCH_API_KEY };
+        } else if (env.ELASTICSEARCH_USERNAME && env.ELASTICSEARCH_PASSWORD) {
+          options.auth = {
+            username: env.ELASTICSEARCH_USERNAME,
+            password: env.ELASTICSEARCH_PASSWORD,
+          };
+        }
+        return new Client(options);
+      },
+    },
   ],
-  exports: [WORKER_REDIS_CLIENT, WORKER_REDIS_SCRIPTS, WORKER_DATA_SOURCE],
+  exports: [
+    WORKER_REDIS_CLIENT,
+    WORKER_REDIS_SCRIPTS,
+    WORKER_DATA_SOURCE,
+    WORKER_ELASTICSEARCH_CLIENT,
+  ],
 })
 export class WorkerInfraModule implements OnModuleDestroy {
   constructor(
     @Inject(WORKER_REDIS_CLIENT) private readonly redis: Redis,
     @Inject(WORKER_DATA_SOURCE) private readonly dataSource: DataSource | null,
+    @Inject(WORKER_ELASTICSEARCH_CLIENT)
+    private readonly esClient: Client | null,
   ) {}
 
   async onModuleDestroy(): Promise<void> {
@@ -77,6 +104,9 @@ export class WorkerInfraModule implements OnModuleDestroy {
     }
     if (this.dataSource?.isInitialized) {
       await this.dataSource.destroy().catch(() => undefined);
+    }
+    if (this.esClient && typeof this.esClient.close === "function") {
+      await this.esClient.close().catch(() => undefined);
     }
   }
 }
