@@ -138,6 +138,46 @@ services:
     networks:
       - urticketbuddy_network
 
+  realtime:
+    build:
+      context: .
+      dockerfile: apps/realtime/Dockerfile
+    container_name: utb_realtime
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      REALTIME_PORT: 3001
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - urticketbuddy_network
+
+  realtime_2:
+    build:
+      context: .
+      dockerfile: apps/realtime/Dockerfile
+    container_name: utb_realtime_2
+    profiles:
+      - scale
+    restart: unless-stopped
+    ports:
+      - "3011:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      REALTIME_PORT: 3001
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - urticketbuddy_network
+
   nginx:
     image: nginx:alpine
     container_name: utb_nginx
