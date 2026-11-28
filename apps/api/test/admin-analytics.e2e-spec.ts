@@ -628,4 +628,30 @@ describe("Admin Suite & Organizer Analytics API (e2e - Supertest)", () => {
     expect(invalidRateRes.status).toBe(400);
     expect(invalidRateRes.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
   });
+
+  it("Assertion 6 (F-6): PATCH /api/v1/admin/organizers/:userId/reject rejects organizer account and records audit log", async () => {
+    usersStore.set(organizer1Id, {
+      id: organizer1Id,
+      email: "org1@urticketbuddy.local",
+      role: UserRole.ORGANIZER,
+      organizerTenantId: organizer1Id,
+    });
+
+    const res = await request(app.getHttpServer())
+      .patch(`/api/v1/admin/organizers/${organizer1Id}/reject`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ reason: "Failed KYC document verification" })
+      .expect(200);
+
+    expect(res.body.success).toBe(true);
+    expect(res.body.role).toBe(UserRole.CUSTOMER);
+    expect(res.body.organizerTenantId).toBeNull();
+    expect(res.body.status).toBe("REJECTED");
+
+    const rejectAudit = auditLogsStore.find(
+      (l) => l.action === "ORGANIZER_REJECTED" && l.entityId === organizer1Id,
+    );
+    expect(rejectAudit).toBeDefined();
+    expect(rejectAudit.summary).toContain("Failed KYC");
+  });
 });

@@ -1,5 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BadRequestException, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
+import { UserRole } from "@urticketbuddy/contracts";
 import { VenuesService } from "./venues.service";
 import {
   VENUE_REPOSITORY,
@@ -78,7 +84,7 @@ describe("VenuesService", () => {
     ).rejects.toThrow(BadRequestException);
   });
 
-  it("should throw BadRequestException when layout is invalid", async () => {
+  it("should throw UnprocessableEntityException (422) when layout is invalid", async () => {
     const invalidLayout = {
       schemaVersion: 2, // invalid schemaVersion (must be 1)
       name: "Bad Arena",
@@ -90,7 +96,49 @@ describe("VenuesService", () => {
         location: "New York",
         layout: invalidLayout,
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toThrow(UnprocessableEntityException);
+  });
+
+  it("should update venue layout with Mongo versioning and enforce tenant ownership and structure lock", async () => {
+    mockVenueRepo.findOne.mockResolvedValue({
+      id: "uuid-123",
+      name: "Madison Square Garden",
+      location: "New York",
+      organizerId: "org-1",
+      layoutMongoId: "mongo-layout-v1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    mockVenueRepo.save.mockImplementation(async (v) => v);
+    MockVenueLayoutModel.findById.mockReturnValue({
+      lean: jest.fn().mockResolvedValue({ ...validLayout, version: 1 }),
+    });
+
+    // Cross-tenant organizer rejected with 403
+    await expect(
+      service.updateVenueLayout(
+        "uuid-123",
+        { layout: validLayout },
+        {
+          id: "org-2",
+          role: UserRole.ORGANIZER,
+          organizerTenantId: "org-2",
+        },
+      ),
+    ).rejects.toThrow(ForbiddenException);
+
+    // Owner organizer succeeds and bumps version to 2
+    const updated = await service.updateVenueLayout(
+      "uuid-123",
+      { layout: validLayout },
+      {
+        id: "org-1",
+        role: UserRole.ORGANIZER,
+        organizerTenantId: "org-1",
+      },
+    );
+    expect(updated.version).toBe(2);
+    expect(updated.previousLayoutId).toBe("mongo-layout-v1");
   });
 
   it("should create venue and save layout to Mongo and Postgres", async () => {

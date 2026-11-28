@@ -2,15 +2,17 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
+  Query,
   HttpCode,
   HttpStatus,
   UseGuards,
 } from "@nestjs/common";
-import { AuthUser, UserRole } from "@urticketbuddy/contracts";
+import { UserRole } from "@urticketbuddy/contracts";
 import { EventsService } from "./events.service";
-import { CreateEventDto } from "./dto/create-event.dto";
+import { CreateEventDto, EventActor } from "./dto/create-event.dto";
 import { Public } from "../auth/decorators/public.decorator";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
@@ -28,9 +30,15 @@ export class EventsController {
   @Roles(UserRole.ORGANIZER, UserRole.ADMIN)
   async createEvent(
     @Body() createEventDto: CreateEventDto,
-    @CurrentUser() user?: AuthUser,
+    @CurrentUser() user?: EventActor,
   ) {
     return this.eventsService.createEvent(createEventDto, user);
+  }
+
+  @Public()
+  @Get()
+  async getEvents(@Query() query: Record<string, unknown>) {
+    return this.eventsService.getEvents(query);
   }
 
   @Public()
@@ -39,10 +47,34 @@ export class EventsController {
     return this.eventsService.getEventById(id);
   }
 
+  @Patch(":id")
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRole.ORGANIZER, UserRole.ADMIN)
+  async updateEvent(
+    @Param("id") id: string,
+    @Body() body: unknown,
+    @CurrentUser() user?: EventActor,
+  ) {
+    return this.eventsService.updateEvent(id, body, user);
+  }
+
+  @Post(":id/publish")
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRole.ORGANIZER, UserRole.ADMIN)
+  async publishEvent(
+    @Param("id") id: string,
+    @CurrentUser() user?: EventActor,
+  ) {
+    return this.eventsService.publishEvent(id, user);
+  }
+
   @Post(":id/generate-seats")
   @HttpCode(HttpStatus.OK)
   @Roles(UserRole.ORGANIZER, UserRole.ADMIN)
-  async generateSeats(@Param("id") id: string, @CurrentUser() user?: AuthUser) {
+  async generateSeats(
+    @Param("id") id: string,
+    @CurrentUser() user?: EventActor,
+  ) {
     return this.eventsService.generateSeats(id, user);
   }
 }

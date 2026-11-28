@@ -130,7 +130,44 @@ export const VenueLayoutSchema = z
       .optional(),
     sections: z.array(SectionConfigSchema).default([]),
     seats: z.array(SeatNodeSchema).default([]),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
   })
   .strict();
 export type VenueLayout = z.infer<typeof VenueLayoutSchema>;
+
+export const TicketTierInputSchema = z
+  .object({
+    id: z.string().optional(),
+    name: z.string().min(1).max(100),
+    priceMinor: z.number().int().nonnegative(),
+    currency: z.string().min(3).max(10).default("PKR"),
+    capacity: z.number().int().positive().nullable().optional(),
+  })
+  .strict();
+export type TicketTierInput = z.infer<typeof TicketTierInputSchema>;
+
+export const EventsQuerySchema = z
+  .object({
+    page: z.coerce.number().int().min(1).default(1),
+    pageSize: z.coerce.number().int().min(1).max(100).default(20),
+    status: z.string().optional(),
+    venueId: z.guid().optional(),
+    organizerId: z.string().optional(),
+    search: z.string().optional(),
+    q: z.string().optional(),
+    from: z.string().optional(),
+    to: z.string().optional(),
+  })
+  .strict();
+export type EventsQuery = z.infer<typeof EventsQuerySchema>;
+
+export const UpdateEventRequestSchema = z
+  .object({
+    name: z.string().min(1).max(255).optional(),
+    startTime: z.string().optional(),
+    status: z.enum(["DRAFT", "PUBLISHED", "CANCELLED"]).optional(),
+    venueId: z.guid().optional(),
+    ticketTiers: z.array(TicketTierInputSchema).optional(),
+  })
+  .strict();
+export type UpdateEventRequest = z.infer<typeof UpdateEventRequestSchema>;

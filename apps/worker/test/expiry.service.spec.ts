@@ -118,7 +118,7 @@ describe("ExpiryService (Unit)", () => {
 
     expect(result).toEqual({ [eventId]: freedSeats });
     expect(mockRedis.publish).toHaveBeenCalledWith(
-      `seat-updates:${eventId}`,
+      "seat.state",
       JSON.stringify({
         eventId,
         seatIds: freedSeats,
@@ -181,7 +181,7 @@ describe("ExpiryService (Unit)", () => {
       "worker:expiry:leader",
       expect.any(String),
       "PX",
-      4500,
+      900,
       "NX",
     );
     expect(mockRedis.eval).toHaveBeenCalledTimes(1);

@@ -182,11 +182,12 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       );
       expect(hasRefreshCookie).toBe(true);
 
-      // Verify password hashed
+      // Verify password hashed with Argon2id (F-7) and refreshToken omitted from JSON body
+      expect(res.body.refreshToken).toBeUndefined();
       const stored = usersStore.get(res.body.user.id);
       expect(stored).toBeDefined();
       expect(stored.passwordHash).not.toBe("SecurePassword123!");
-      expect(stored.passwordHash.startsWith("$2")).toBe(true);
+      expect(stored.passwordHash.startsWith("$argon2id$")).toBe(true);
     });
 
     it("should reject registration with 409 Conflict if email is already taken", async () => {

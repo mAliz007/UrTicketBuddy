@@ -1,0 +1,16 @@
+title = "UrTicketBuddy Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow synthetic test fixtures, mock tokens in specs, and example env templates"
+paths = [
+  '''\.env\.example$''',
+  '''\.spec\.ts$''',
+  '''\.e2e-spec\.ts$''',
+  '''\.test\.ts$''',
+  '''^infra/loadtests/''',
+  '''^docs/''',
+  '''^\.engram/''',
+]

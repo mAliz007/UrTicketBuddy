@@ -10,6 +10,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { AuthUser, ErrorCode, UserRole } from "@urticketbuddy/contracts";
 import { OrdersService } from "./orders.service";
 import { CheckoutDto } from "./dto/checkout.dto";
@@ -24,6 +25,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post("checkout")
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserRole.CUSTOMER)
   async checkout(

@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Optional,
   NestInterceptor,
   ExecutionContext,
   CallHandler,
@@ -10,16 +11,16 @@ import { AuditService } from "./audit.service";
 
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
-  constructor(private readonly auditService: AuditService) {}
+  constructor(@Optional() private readonly auditService?: AuditService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const http = context.switchToHttp();
     const req = http.getRequest();
-    const method = req.method;
+    const method = req?.method;
 
     // Automatically audit mutating HTTP operations (POST, PUT, PATCH, DELETE)
     const isMutation = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
-    if (!isMutation) {
+    if (!isMutation || !this.auditService) {
       return next.handle();
     }
 
@@ -50,7 +51,7 @@ export class AuditLogInterceptor implements NestInterceptor {
       tap({
         next: (responseBody) => {
           this.auditService
-            .recordLog({
+            ?.recordLog({
               actorId: String(actorId),
               actorRole: String(actorRole),
               action,
@@ -63,7 +64,7 @@ export class AuditLogInterceptor implements NestInterceptor {
                   ? (responseBody as Record<string, unknown>)
                   : null,
             })
-            .catch(() => {
+            ?.catch(() => {
               // Non-blocking interceptor failure suppression
             });
         },

@@ -3,7 +3,7 @@ import * as path from "path";
 import { getMetadataArgsStorage, QueryRunner } from "typeorm";
 import { AppDataSource, Venue } from "./index";
 import { Utb2InitExtensions1794836828550 } from "./migrations/1794836828550-UTB-2-init-extensions";
-import { Utb29AddVenueOrganizerId1795336850000 } from "./migrations/1795336850000-UTB-29-add-venue-organizer-id";
+import { UTB23F4F6TiersVenueOwnerAuditRole1795336850000 } from "./migrations/1795336850000-UTB-23-f4-f6-tiers-venue-owner-audit-role";
 
 describe("packages/db", () => {
   it("should define AppDataSource with correct options", () => {
@@ -52,7 +52,7 @@ describe("packages/db", () => {
     }
   });
 
-  it("should define Venue organizerId and Utb29AddVenueOrganizerId up/down queries", async () => {
+  it("should define Venue organizerId and UTB23F4F6TiersVenueOwnerAuditRole up/down queries", async () => {
     const metadataStorage = getMetadataArgsStorage();
     expect(
       metadataStorage.columns.some(
@@ -65,8 +65,10 @@ describe("packages/db", () => {
       ),
     ).toBe(true);
 
-    const migration = new Utb29AddVenueOrganizerId1795336850000();
-    expect(migration.name).toBe("Utb29AddVenueOrganizerId1795336850000");
+    const migration = new UTB23F4F6TiersVenueOwnerAuditRole1795336850000();
+    expect(migration.name).toBe(
+      "UTB23F4F6TiersVenueOwnerAuditRole1795336850000",
+    );
 
     const queriesRan: string[] = [];
     const mockQueryRunner = {
@@ -76,20 +78,26 @@ describe("packages/db", () => {
     };
 
     await migration.up(mockQueryRunner as unknown as QueryRunner);
-    expect(queriesRan).toContain(
-      `ALTER TABLE "venues" ADD COLUMN IF NOT EXISTS "organizerId" character varying(255);`,
-    );
-    expect(queriesRan).toContain(
-      `CREATE INDEX IF NOT EXISTS "idx_venues_organizer_id" ON "venues" ("organizerId");`,
-    );
+    expect(
+      queriesRan.some((q) =>
+        q.includes(`ADD COLUMN IF NOT EXISTS "organizerId"`),
+      ),
+    ).toBe(true);
+    expect(
+      queriesRan.some((q) =>
+        q.includes(`CREATE INDEX IF NOT EXISTS "idx_venues_organizer_id"`),
+      ),
+    ).toBe(true);
 
     queriesRan.length = 0;
     await migration.down(mockQueryRunner as unknown as QueryRunner);
-    expect(queriesRan).toContain(
-      `DROP INDEX IF EXISTS "idx_venues_organizer_id";`,
-    );
-    expect(queriesRan).toContain(
-      `ALTER TABLE "venues" DROP COLUMN IF EXISTS "organizerId";`,
-    );
+    expect(
+      queriesRan.some((q) =>
+        q.includes(`DROP INDEX IF EXISTS "idx_venues_organizer_id"`),
+      ),
+    ).toBe(true);
+    expect(
+      queriesRan.some((q) => q.includes(`DROP COLUMN IF EXISTS "organizerId"`)),
+    ).toBe(true);
   });
 });

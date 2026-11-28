@@ -117,9 +117,9 @@ describe("ExpiryService (Testcontainers Redis Integration)", () => {
     });
     expect(holdResult.success).toBe(true);
 
-    // Subscribe to seat-updates:{eventId}
+    // Subscribe to seat.state
     const receivedMessages: string[] = [];
-    const channel = `seat-updates:${eventId}`;
+    const channel = "seat.state";
     await subscriber.subscribe(channel);
     subscriber.on("message", (ch, msg) => {
       if (ch === channel) {

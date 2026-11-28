@@ -55,7 +55,7 @@ describe("CheckoutService", () => {
       maxPerUser: undefined,
     });
     expect(mockRedis.publish).toHaveBeenCalledWith(
-      `seat-updates:${eventId}`,
+      "seat.state",
       JSON.stringify({
         eventId,
         seatIds,
