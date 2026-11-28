@@ -82,9 +82,9 @@ export class VenuesService {
     actor?: VenueActor,
   ): Promise<{
     id: string;
+    organizerId: string | null;
     name: string;
     location: string;
-    organizerId?: string | null;
     layoutMongoId: string;
     version: number;
     createdAt: Date;
@@ -128,26 +128,28 @@ export class VenuesService {
     const layoutMongoId = savedLayout._id.toString();
 
     const organizerId =
-      dto.organizerId ??
-      actor?.organizerTenantId ??
-      actor?.id ??
-      actor?.userId ??
-      null;
+      actor?.role === UserRole.ADMIN
+        ? (dto.organizerId ??
+          actor?.organizerTenantId ??
+          actor?.id ??
+          actor?.userId ??
+          null)
+        : (actor?.organizerTenantId ?? actor?.id ?? actor?.userId ?? null);
 
     // 3. Persist venue to PostgreSQL
     const venue = this.venueRepository.create({
+      organizerId,
       name: dto.name.trim(),
       location: dto.location.trim(),
-      organizerId,
       layoutMongoId,
     });
     const savedVenue = await this.venueRepository.save(venue);
 
     return {
       id: savedVenue.id,
+      organizerId: savedVenue.organizerId ?? null,
       name: savedVenue.name,
       location: savedVenue.location,
-      organizerId: savedVenue.organizerId,
       layoutMongoId: savedVenue.layoutMongoId,
       version: 1,
       createdAt: savedVenue.createdAt,

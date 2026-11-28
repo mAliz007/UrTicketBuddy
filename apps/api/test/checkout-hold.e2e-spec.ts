@@ -174,10 +174,28 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
   const userA = "22222222-2222-4222-8222-222222222222";
   const userB = "33333333-3333-4333-8333-333333333333";
 
+  const env = loadEnv();
+  const jwtService = new JwtService({ secret: env.JWT_SECRET });
+  const userAToken = jwtService.sign({
+    sub: userA,
+    email: "usera@example.com",
+    role: UserRole.CUSTOMER,
+  });
+  const userBToken = jwtService.sign({
+    sub: userB,
+    email: "userb@example.com",
+    role: UserRole.CUSTOMER,
+  });
+  const organizerToken = jwtService.sign({
+    sub: "44444444-4444-4444-8444-444444444444",
+    email: "org@example.com",
+    role: UserRole.ORGANIZER,
+  });
+
   it("POST /api/v1/checkout/hold holds seats, publishes Pub/Sub with expiresAt, and returns expiresAt", async () => {
     const res = await request(app.getHttpServer())
       .post("/api/v1/checkout/hold")
-      .set("x-user-id", userA)
+      .set("Authorization", `Bearer ${userAToken}`)
       .send({ eventId, seatIds: ["sec1-A-1", "sec1-A-2"] })
       .expect(201);
 
@@ -250,13 +268,13 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
   it("POST /api/v1/checkout/hold returns 409 Conflict for already-held seats", async () => {
     await request(app.getHttpServer())
       .post("/api/v1/checkout/hold")
-      .set("x-user-id", userA)
+      .set("Authorization", `Bearer ${userAToken}`)
       .send({ eventId, seatIds: ["sec1-A-1"] })
       .expect(201);
 
     const conflictRes = await request(app.getHttpServer())
       .post("/api/v1/checkout/hold")
-      .set("x-user-id", userB)
+      .set("Authorization", `Bearer ${userBToken}`)
       .send({ eventId, seatIds: ["sec1-A-1", "sec1-A-2"] })
       .expect(409);
 
@@ -267,19 +285,49 @@ describe("Checkout Hold API (e2e - Supertest)", () => {
     expect(publishedMessages).toHaveLength(1);
   });
 
-  it("POST /api/v1/checkout/hold returns 401 when x-user-id header is missing", async () => {
+  it("POST /api/v1/checkout/hold returns 401 when unauthenticated even if x-user-id header is provided", async () => {
     const res = await request(app.getHttpServer())
       .post("/api/v1/checkout/hold")
+      .set("x-user-id", userA)
       .send({ eventId, seatIds: ["sec1-A-1"] })
       .expect(401);
 
     expect(res.body.error.code).toBe(ErrorCode.UNAUTHORIZED);
   });
 
+  it("POST /api/v1/checkout/hold ignores x-user-id impersonation and rejects body userId", async () => {
+    const bodyReject = await request(app.getHttpServer())
+      .post("/api/v1/checkout/hold")
+      .set("Authorization", `Bearer ${userAToken}`)
+      .send({ eventId, seatIds: ["sec1-A-1"], userId: userB })
+      .expect(400);
+
+    expect(bodyReject.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+
+    const headerIgnored = await request(app.getHttpServer())
+      .post("/api/v1/checkout/hold")
+      .set("Authorization", `Bearer ${userAToken}`)
+      .set("x-user-id", userB)
+      .send({ eventId, seatIds: ["sec1-A-1"] })
+      .expect(201);
+
+    expect(headerIgnored.body.userId).toBe(userA);
+  });
+
+  it("POST /api/v1/checkout/hold forbids non-CUSTOMER roles with 403", async () => {
+    const res = await request(app.getHttpServer())
+      .post("/api/v1/checkout/hold")
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({ eventId, seatIds: ["sec1-A-1"] })
+      .expect(403);
+
+    expect(res.body.error.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
   it("POST /api/v1/checkout/hold returns 400 for invalid body", async () => {
     const res = await request(app.getHttpServer())
       .post("/api/v1/checkout/hold")
-      .set("x-user-id", userA)
+      .set("Authorization", `Bearer ${userAToken}`)
       .send({ eventId: "not-a-uuid", seatIds: [] })
       .expect(400);
 

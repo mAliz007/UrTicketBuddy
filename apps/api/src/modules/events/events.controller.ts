@@ -18,9 +18,10 @@ import { Roles } from "../auth/decorators/roles.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { OwnershipGuard } from "../auth/guards/ownership.guard";
 
 @Controller("events")
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, OwnershipGuard)
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
@@ -31,10 +32,7 @@ export class EventsController {
     @Body() createEventDto: CreateEventDto,
     @CurrentUser() user?: EventActor,
   ) {
-    if (user) {
-      return this.eventsService.createEvent(createEventDto, user);
-    }
-    return this.eventsService.createEvent(createEventDto);
+    return this.eventsService.createEvent(createEventDto, user);
   }
 
   @Public()
@@ -77,9 +75,6 @@ export class EventsController {
     @Param("id") id: string,
     @CurrentUser() user?: EventActor,
   ) {
-    if (user) {
-      return this.eventsService.generateSeats(id, user);
-    }
-    return this.eventsService.generateSeats(id);
+    return this.eventsService.generateSeats(id, user);
   }
 }

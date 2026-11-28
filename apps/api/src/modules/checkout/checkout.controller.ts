@@ -3,17 +3,18 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
   HttpCode,
   HttpException,
   HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
+  UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import {
+  AuthUser,
   ErrorCode,
   EventSeatsHoldBodySchema,
   HoldRequestSchema,
@@ -35,30 +36,24 @@ interface AuthenticatedCustomer {
   role?: UserRole;
 }
 
-@Public()
 @Controller("checkout")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CheckoutController {
   constructor(private readonly checkoutService: CheckoutService) {}
 
   @Post("hold")
   @Throttle({ default: { limit: 60, ttl: 60000 } })
   @HttpCode(HttpStatus.CREATED)
+  @Roles(UserRole.CUSTOMER)
   async holdSeats(
-    @Headers("x-user-id") userIdHeader: string | undefined,
+    @CurrentUser() user: AuthUser | undefined,
     @Body() body: unknown,
   ): Promise<HoldResponse> {
-    if (
-      !userIdHeader ||
-      typeof userIdHeader !== "string" ||
-      userIdHeader.trim() === ""
-    ) {
-      throw new HttpException(
-        {
-          code: ErrorCode.UNAUTHORIZED,
-          message: "Missing x-user-id header",
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
+    if (!user?.id) {
+      throw new UnauthorizedException({
+        code: ErrorCode.UNAUTHORIZED,
+        message: "Authenticated user is required",
+      });
     }
 
     const parsed = HoldRequestSchema.safeParse(body);
@@ -73,7 +68,7 @@ export class CheckoutController {
       );
     }
 
-    return this.checkoutService.holdSeats(userIdHeader.trim(), parsed.data);
+    return this.checkoutService.holdSeats(user.id, parsed.data);
   }
 }
 

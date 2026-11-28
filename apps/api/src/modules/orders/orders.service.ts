@@ -4,7 +4,9 @@ import {
   Optional,
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   NotFoundException,
+  UnauthorizedException,
   Logger,
 } from "@nestjs/common";
 import { Repository, DataSource, In } from "typeorm";
@@ -15,6 +17,7 @@ import {
   ErrorCode,
   CheckoutRequestSchema,
   OrderStatus,
+  UserRole,
 } from "@urticketbuddy/contracts";
 import {
   DATA_SOURCE,
@@ -52,7 +55,10 @@ export class OrdersService {
     private readonly bloomService?: BloomService,
   ) {}
 
-  async checkout(dto: CheckoutDto): Promise<{
+  async checkout(
+    userId: string,
+    dto: CheckoutDto,
+  ): Promise<{
     id: string;
     userId: string;
     eventId: string;
@@ -69,6 +75,13 @@ export class OrdersService {
     createdAt: Date;
     updatedAt: Date;
   }> {
+    if (!userId) {
+      throw new UnauthorizedException({
+        code: ErrorCode.UNAUTHORIZED,
+        message: "Authenticated user is required",
+      });
+    }
+
     // Extract idempotency key from DTO before strict schema validation
     const { idempotencyKey: effectiveIdempotencyKey, ...schemaPayload } = dto;
 
@@ -83,7 +96,7 @@ export class OrdersService {
     }
 
     const { eventId, seatIds, paymentMethodToken } = parsed.data;
-    const effectiveUserId = parsed.data.userId || "usr-anon";
+    const effectiveUserId = userId;
 
     if (effectiveIdempotencyKey) {
       const cached = await this.redisClient.get(
@@ -361,7 +374,10 @@ export class OrdersService {
     return result;
   }
 
-  async getOrderById(id: string): Promise<Order> {
+  async getOrderById(
+    id: string,
+    requester?: { id?: string; userId?: string; role?: string },
+  ): Promise<Order> {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: ["items", "event"],
@@ -372,6 +388,16 @@ export class OrdersService {
         code: ErrorCode.NOT_FOUND,
         message: `Order with id ${id} not found`,
       });
+    }
+
+    if (requester && requester.role !== UserRole.ADMIN) {
+      const callerId = requester.id || requester.userId;
+      if (!callerId || order.userId !== callerId) {
+        throw new ForbiddenException({
+          code: ErrorCode.FORBIDDEN,
+          message: "Forbidden: you do not own this order",
+        });
+      }
     }
 
     return order;

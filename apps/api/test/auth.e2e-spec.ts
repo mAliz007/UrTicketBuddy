@@ -1,7 +1,9 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import request from "supertest";
 import cookieParser from "cookie-parser";
+import { loadEnv } from "@urticketbuddy/config";
 import { ErrorCode, UserRole } from "@urticketbuddy/contracts";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
@@ -150,7 +152,6 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
         password: "SecurePassword123!",
         firstName: "Alice",
         lastName: "Smith",
-        role: UserRole.CUSTOMER,
       };
 
       const res = await request(app.getHttpServer())
@@ -210,6 +211,41 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
       expect(res.body.error).toBeDefined();
       expect(res.body.error.code).toBe(ErrorCode.EMAIL_ALREADY_EXISTS);
     });
+
+    it("should reject self-registration with role ADMIN or ORGANIZER with 422", async () => {
+      const adminAttempt = await request(app.getHttpServer())
+        .post("/api/v1/auth/register")
+        .send({
+          email: "escalate-admin@example.com",
+          password: "Password123!",
+          firstName: "Escalate",
+          lastName: "Admin",
+          role: UserRole.ADMIN,
+        })
+        .expect(422);
+
+      expect(adminAttempt.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+
+      const organizerAttempt = await request(app.getHttpServer())
+        .post("/api/v1/auth/register")
+        .send({
+          email: "escalate-org@example.com",
+          password: "Password123!",
+          firstName: "Escalate",
+          lastName: "Org",
+          role: UserRole.ORGANIZER,
+        })
+        .expect(422);
+
+      expect(organizerAttempt.body.error.code).toBe(ErrorCode.VALIDATION_ERROR);
+      expect(
+        Array.from(usersStore.values()).some(
+          (u) =>
+            u.email === "escalate-admin@example.com" ||
+            u.email === "escalate-org@example.com",
+        ),
+      ).toBe(false);
+    });
   });
 
   describe("POST /api/v1/auth/login", () => {
@@ -219,7 +255,6 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
         password: "CarolPassword123!",
         firstName: "Carol",
         lastName: "Danvers",
-        role: UserRole.CUSTOMER,
       });
     });
 
@@ -258,6 +293,62 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
 
       expect(res.body.error).toBeDefined();
       expect(res.body.error.code).toBe(ErrorCode.INVALID_CREDENTIALS);
+    });
+
+    it("should include organizerTenantId claim in JWT issued at login for ORGANIZER and GATE_STAFF", async () => {
+      const bcrypt = await import("bcryptjs");
+      const hash = await bcrypt.hash("TenantPass123!", 10);
+      const orgTenantId = "11111111-1111-4111-8111-111111111111";
+
+      usersStore.set("usr-org-login", {
+        id: "usr-org-login",
+        email: "org-login@example.com",
+        passwordHash: hash,
+        firstName: "Org",
+        lastName: "Login",
+        role: UserRole.ORGANIZER,
+        organizerTenantId: orgTenantId,
+        isSuspended: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      usersStore.set("usr-staff-login", {
+        id: "usr-staff-login",
+        email: "staff-login@example.com",
+        passwordHash: hash,
+        firstName: "Staff",
+        lastName: "Login",
+        role: UserRole.GATE_STAFF,
+        organizerTenantId: orgTenantId,
+        isSuspended: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      const orgRes = await request(app.getHttpServer())
+        .post("/api/v1/auth/login")
+        .send({ email: "org-login@example.com", password: "TenantPass123!" })
+        .expect(200);
+      const orgClaims = JSON.parse(
+        Buffer.from(
+          orgRes.body.accessToken.split(".")[1],
+          "base64url",
+        ).toString("utf8"),
+      );
+      expect(orgClaims.organizerTenantId).toBe(orgTenantId);
+
+      const staffRes = await request(app.getHttpServer())
+        .post("/api/v1/auth/login")
+        .send({ email: "staff-login@example.com", password: "TenantPass123!" })
+        .expect(200);
+      const staffClaims = JSON.parse(
+        Buffer.from(
+          staffRes.body.accessToken.split(".")[1],
+          "base64url",
+        ).toString("utf8"),
+      );
+      expect(staffClaims.organizerTenantId).toBe(orgTenantId);
     });
   });
 
@@ -323,29 +414,24 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
   describe("Gate Staff Provisioning (POST /api/v1/organizer/gate-staff)", () => {
     let customerToken: string;
     let organizerToken: string;
+    const organizerTenantId = "99999999-9999-4999-8999-999999999999";
 
     beforeEach(async () => {
-      const custRes = await request(app.getHttpServer())
-        .post("/api/v1/auth/register")
-        .send({
-          email: "regular@example.com",
-          password: "Password123!",
-          firstName: "Reg",
-          lastName: "Customer",
-          role: UserRole.CUSTOMER,
-        });
-      customerToken = custRes.body.accessToken;
+      const env = loadEnv();
+      const jwtService = new JwtService({ secret: env.JWT_SECRET });
 
-      const orgRes = await request(app.getHttpServer())
-        .post("/api/v1/auth/register")
-        .send({
-          email: "organizer@example.com",
-          password: "OrganizerPass123!",
-          firstName: "Org",
-          lastName: "Manager",
-          role: UserRole.ORGANIZER,
-        });
-      organizerToken = orgRes.body.accessToken;
+      customerToken = jwtService.sign({
+        sub: "usr-reg-customer",
+        email: "regular@example.com",
+        role: UserRole.CUSTOMER,
+      });
+
+      organizerToken = jwtService.sign({
+        sub: "usr-org-seeded",
+        email: "organizer@example.com",
+        role: UserRole.ORGANIZER,
+        organizerTenantId,
+      });
     });
 
     it("should reject customer attempts to provision gate staff with 403 Forbidden", async () => {
@@ -378,6 +464,23 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
 
       expect(res.body.email).toBe("scanner@example.com");
       expect(res.body.role).toBe(UserRole.GATE_STAFF);
+      expect(res.body.organizerTenantId).toBe(organizerTenantId);
+    });
+
+    it("should reject organizer provisioning gate staff for another tenant", async () => {
+      const res = await request(app.getHttpServer())
+        .post("/api/v1/organizer/gate-staff")
+        .set("Authorization", `Bearer ${organizerToken}`)
+        .send({
+          email: "cross-tenant-staff@example.com",
+          password: "ScannerPass123!",
+          firstName: "Cross",
+          lastName: "Tenant",
+          organizerTenantId: "88888888-8888-4888-8888-888888888888",
+        })
+        .expect(403);
+
+      expect(res.body.error.code).toBe(ErrorCode.FORBIDDEN);
     });
   });
 
@@ -427,27 +530,20 @@ describe("Auth & RBAC API (e2e - Supertest)", () => {
     let customerToken: string;
 
     beforeEach(async () => {
-      const adm = await request(app.getHttpServer())
-        .post("/api/v1/auth/register")
-        .send({
-          email: "superadmin@example.com",
-          password: "AdminPass123!",
-          firstName: "Super",
-          lastName: "Admin",
-          role: UserRole.ADMIN,
-        });
-      adminToken = adm.body.accessToken;
+      const env = loadEnv();
+      const jwtService = new JwtService({ secret: env.JWT_SECRET });
 
-      const cust = await request(app.getHttpServer())
-        .post("/api/v1/auth/register")
-        .send({
-          email: "regular2@example.com",
-          password: "Password123!",
-          firstName: "Reg",
-          lastName: "Two",
-          role: UserRole.CUSTOMER,
-        });
-      customerToken = cust.body.accessToken;
+      adminToken = jwtService.sign({
+        sub: "usr-admin-seeded",
+        email: "superadmin@example.com",
+        role: UserRole.ADMIN,
+      });
+
+      customerToken = jwtService.sign({
+        sub: "usr-reg-two",
+        email: "regular2@example.com",
+        role: UserRole.CUSTOMER,
+      });
     });
 
     it("should allow ADMIN to access admin-only route with 200 OK", async () => {

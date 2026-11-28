@@ -49,7 +49,6 @@ describe("AuthController", () => {
         password: "Password123!",
         firstName: "Test",
         lastName: "User",
-        role: UserRole.CUSTOMER,
       };
 
       const serviceResponse = {

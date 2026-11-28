@@ -7,14 +7,15 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
+  UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
-import { UserRole } from "@urticketbuddy/contracts";
+import { AuthUser, ErrorCode, UserRole } from "@urticketbuddy/contracts";
 import { OrdersService } from "./orders.service";
 import { CheckoutDto } from "./dto/checkout.dto";
-import { Public } from "../auth/decorators/public.decorator";
 import { Roles } from "../auth/decorators/roles.decorator";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 
@@ -23,27 +24,33 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Public()
   @Post("checkout")
   @Throttle({ default: { limit: 60, ttl: 60000 } })
   @HttpCode(HttpStatus.CREATED)
+  @Roles(UserRole.CUSTOMER)
   async checkout(
+    @CurrentUser() user: AuthUser | undefined,
     @Body() checkoutDto: CheckoutDto,
-    @Headers("x-user-id") userIdHeader?: string,
     @Headers("idempotency-key") idempotencyKeyHeader?: string,
   ) {
+    if (!user?.id) {
+      throw new UnauthorizedException({
+        code: ErrorCode.UNAUTHORIZED,
+        message: "Authenticated user is required",
+      });
+    }
+
     const payload: CheckoutDto = {
       ...checkoutDto,
-      userId: checkoutDto.userId || userIdHeader || undefined,
       idempotencyKey:
         checkoutDto.idempotencyKey || idempotencyKeyHeader || undefined,
     };
-    return this.ordersService.checkout(payload);
+    return this.ordersService.checkout(user.id, payload);
   }
 
   @Get(":id")
   @Roles(UserRole.CUSTOMER, UserRole.ORGANIZER, UserRole.ADMIN)
-  async getOrderById(@Param("id") id: string) {
-    return this.ordersService.getOrderById(id);
+  async getOrderById(@Param("id") id: string, @CurrentUser() user: AuthUser) {
+    return this.ordersService.getOrderById(id, user);
   }
 }

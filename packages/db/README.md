@@ -79,7 +79,7 @@ Example:
 
 ### Entities
 
-- `Venue`: Physical venue metadata, tenant owner (`organizerId`), and reference to versioned MongoDB layout document (`layoutMongoId`).
+- `Venue`: Physical venue metadata, tenant owner (`organizerId` indexed), and reference to versioned MongoDB layout document (`layoutMongoId`).
 - `Event`: Event instance belonging to a venue (`venueId` FK, optional `organizerId` tenant identifier).
 - `EventSeat`: Individual seat coordinate and tier record belonging to an event (`eventId` FK, `seatId` deterministic `<section>-<row>-<number>`).
 - `TicketTier`: Pricing tier for an event (`eventId` FK, `name`, `priceMinor`, `currency`, `capacity`).

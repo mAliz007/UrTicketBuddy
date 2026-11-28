@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
   BadRequestException,
+  UnprocessableEntityException,
   NotFoundException,
   Logger,
 } from "@nestjs/common";
@@ -55,6 +56,18 @@ export class AuthService {
     data: RegisterRequestInput,
     res?: Response,
   ): Promise<AuthResponse> {
+    if (
+      data &&
+      typeof data === "object" &&
+      "role" in data &&
+      (data as Record<string, unknown>).role !== undefined
+    ) {
+      throw new UnprocessableEntityException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Role cannot be specified during registration",
+      });
+    }
+
     const parsed = RegisterRequestSchema.safeParse(data);
     if (!parsed.success) {
       throw new BadRequestException({
@@ -64,7 +77,7 @@ export class AuthService {
       });
     }
 
-    const { email, password, firstName, lastName, role } = parsed.data;
+    const { email, password, firstName, lastName } = parsed.data;
 
     const existing = await this.userRepository.findOne({
       where: { email: email.toLowerCase() },
@@ -84,7 +97,7 @@ export class AuthService {
       passwordHash,
       firstName,
       lastName,
-      role: role || UserRole.CUSTOMER,
+      role: UserRole.CUSTOMER,
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -364,10 +377,25 @@ export class AuthService {
       });
     }
 
-    const tenantId =
-      organizerTenantId ||
-      creator.organizerTenantId ||
-      (creator.role === UserRole.ORGANIZER ? creator.id : null);
+    let tenantId: string | null = null;
+    if (creator.role === UserRole.ORGANIZER) {
+      const creatorTenantId = creator.organizerTenantId || creator.id;
+      if (organizerTenantId && organizerTenantId !== creatorTenantId) {
+        throw new ForbiddenException({
+          code: ErrorCode.FORBIDDEN,
+          message:
+            "Cross-tenant access forbidden: cannot provision gate staff for another organizer",
+        });
+      }
+      tenantId = creatorTenantId;
+    } else if (creator.role === UserRole.ADMIN) {
+      tenantId = organizerTenantId || creator.organizerTenantId || null;
+    } else {
+      throw new ForbiddenException({
+        code: ErrorCode.FORBIDDEN,
+        message: "Only ORGANIZER or ADMIN can provision gate staff",
+      });
+    }
 
     const passwordHash = await hashPasswordArgon2id(password);
     const staff = this.userRepository.create({
@@ -491,11 +519,15 @@ export class AuthService {
   }> {
     const env = loadEnv();
 
+    const organizerTenantId =
+      user.organizerTenantId ??
+      (user.role === UserRole.ORGANIZER ? user.id : null);
+
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
-      organizerTenantId: user.organizerTenantId,
+      organizerTenantId,
     };
 
     const accessToken = await this.jwtService.signAsync(

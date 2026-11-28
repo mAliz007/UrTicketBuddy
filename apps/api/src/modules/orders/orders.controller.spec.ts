@@ -1,4 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { AuthUser, UserRole } from "@urticketbuddy/contracts";
 import { OrdersController } from "./orders.controller";
 import { OrdersService } from "./orders.service";
 
@@ -32,15 +33,23 @@ describe("OrdersController", () => {
     expect(service).toBeDefined();
   });
 
-  it("should call ordersService.checkout with merged userId from header", async () => {
+  it("should call ordersService.checkout with authenticated user.id from JWT", async () => {
     const dto = {
       eventId: "a0000000-0000-0000-0000-000000000001",
       seatIds: ["SEC-A-1"],
       paymentMethodToken: "tok_visa",
     };
+    const user: AuthUser = {
+      id: "usr-jwt-1",
+      email: "buyer@example.com",
+      firstName: "Buyer",
+      lastName: "One",
+      role: UserRole.CUSTOMER,
+      createdAt: new Date(),
+    };
     const expectedResult = {
       id: "ord-1",
-      userId: "usr-header",
+      userId: "usr-jwt-1",
       eventId: dto.eventId,
       totalAmount: 1000,
       currency: "PKR",
@@ -52,22 +61,30 @@ describe("OrdersController", () => {
     };
     mockOrdersService.checkout.mockResolvedValue(expectedResult);
 
-    const result = await controller.checkout(dto, "usr-header");
+    const result = await controller.checkout(user, dto, "idem-123");
 
-    expect(service.checkout).toHaveBeenCalledWith({
+    expect(service.checkout).toHaveBeenCalledWith("usr-jwt-1", {
       ...dto,
-      userId: "usr-header",
+      idempotencyKey: "idem-123",
     });
     expect(result).toEqual(expectedResult);
   });
 
-  it("should call ordersService.getOrderById", async () => {
+  it("should call ordersService.getOrderById with caller user context", async () => {
+    const user: AuthUser = {
+      id: "usr-jwt-1",
+      email: "buyer@example.com",
+      firstName: "Buyer",
+      lastName: "One",
+      role: UserRole.CUSTOMER,
+      createdAt: new Date(),
+    };
     const expectedOrder = { id: "ord-1", status: "COMPLETED" };
     mockOrdersService.getOrderById.mockResolvedValue(expectedOrder);
 
-    const result = await controller.getOrderById("ord-1");
+    const result = await controller.getOrderById("ord-1", user);
 
-    expect(service.getOrderById).toHaveBeenCalledWith("ord-1");
+    expect(service.getOrderById).toHaveBeenCalledWith("ord-1", user);
     expect(result).toEqual(expectedOrder);
   });
 });

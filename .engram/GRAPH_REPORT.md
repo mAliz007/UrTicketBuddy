@@ -1,16 +1,16 @@
-# Graph Report - . (2026-11-27)
+# Graph Report - . (2026-11-28)
 
 ## Corpus Check
 
-- 260 files · ~107,039 words
+- 260 files · ~113,280 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 947 nodes · 1416 edges · 80 communities detected
+- 951 nodes · 1428 edges · 79 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
-- Edge kinds: references: 460 · contains: 416 · method: 249 · calls: 107 · imports: 77 · imports_from: 76 · implements: 29 · inherits: 2
+- Edge kinds: references: 465 · contains: 418 · method: 251 · calls: 108 · imports: 78 · imports_from: 77 · implements: 29 · inherits: 2
 
 ## Input Scope
 
@@ -21,7 +21,7 @@
 
 ## Graph Freshness
 
-- Built from Git commit: `7566610`
+- Built from Git commit: `f1eecca`
 - Compare this hash to `git rev-parse HEAD` before trusting freshness-sensitive graph output.
 
 ## God Nodes (most connected - your core abstractions)
@@ -40,15 +40,15 @@
 ## Surprising Connections (you probably didn't know these)
 
 - `AdminService` --references--> `Injectable` [EXTRACTED]
-  apps/api/src/modules/admin/admin.service.ts → _Bridges community 18 → community 16_
+  apps/api/src/modules/admin/admin.service.ts → _Bridges community 19 → community 17_
 - `AuditService` --references--> `Injectable` [EXTRACTED]
-  apps/api/src/modules/admin/audit.service.ts → _Bridges community 41 → community 16_
+  apps/api/src/modules/admin/audit.service.ts → _Bridges community 41 → community 17_
 - `PlatformSettingsService` --references--> `Injectable` [EXTRACTED]
-  apps/api/src/modules/admin/platform-settings.service.ts → _Bridges community 5 → community 16_
+  apps/api/src/modules/admin/platform-settings.service.ts → _Bridges community 5 → community 17_
 - `AuthService` --references--> `Injectable` [EXTRACTED]
-  apps/api/src/modules/auth/auth.service.ts → _Bridges community 10 → community 16_
+  apps/api/src/modules/auth/auth.service.ts → _Bridges community 10 → community 17_
 - `BloomService` --references--> `Injectable` [EXTRACTED]
-  apps/api/src/common/bloom/bloom.service.ts → _Bridges community 35 → community 16_
+  apps/api/src/common/bloom/bloom.service.ts → _Bridges community 35 → community 17_
 
 ## Communities
 
@@ -70,7 +70,7 @@ Nodes (30): Header(), HeaderProps, QRVisualizer(), QRVisualizerProps, RequestEdi
 ### Community 3 - "Community 3"
 
 Cohesion: 0.05
-Nodes (36): AuthResponse, AuthResponseSchema, AuthUser, AuthUserSchema, CreateGateStaffRequest, CreateGateStaffRequestSchema, LoginRequest, LoginRequestSchema (+28 more)
+Nodes (38): AuthResponse, AuthResponseSchema, AuthUser, AuthUserSchema, CreateGateStaffRequest, CreateGateStaffRequestSchema, JwtClaims, JwtClaimsSchema (+30 more)
 
 ### Community 4 - "Community 4"
 
@@ -115,46 +115,46 @@ Nodes (12): base64UrlEncode(), clearStaleRedisEventState(), generate1000VirtualU
 ### Community 12 - "Community 12"
 
 Cohesion: 0.13
-Nodes (6): createSeatLockClient(), getCounts(), getSnapshot(), RedisKeys, RedisScriptsWrapper, registerRedisScripts()
+Nodes (10): MigrationInterface, Utb2InitExtensions1794836828550, MigrationInterface, UTB23F4F6TiersVenueOwnerAuditRole1795336850000, CONFIRM_SOLD_LUA, EXPIRE_DUE_LUA, EXTEND_HOLD_LUA, HOLD_SEATS_LUA (+2 more)
 
 ### Community 13 - "Community 13"
+
+Cohesion: 0.13
+Nodes (6): createSeatLockClient(), getCounts(), getSnapshot(), RedisKeys, RedisScriptsWrapper, registerRedisScripts()
+
+### Community 14 - "Community 14"
 
 Cohesion: 0.17
 Nodes (5): Cron, ExpiryMetrics, ExpiryService, OnModuleDestroy, SeatExpiryPubSubPayload
 
-### Community 14 - "Community 14"
+### Community 15 - "Community 15"
 
 Cohesion: 0.13
 Nodes (14): AdminReasonDto, AdminReasonSchema, AuditLogDto, AuditLogQuery, AuditLogQuerySchema, CommissionSettingsResponse, FlagOrderResponse, PaginatedAuditLogs (+6 more)
 
-### Community 15 - "Community 15"
+### Community 16 - "Community 16"
 
 Cohesion: 0.19
 Nodes (7): GenerateArcParams, GenerateGridParams, GenerateTableClusterParams, TableClusterGroup, TableClusterTransform, buildSeatId(), rowToLabel()
 
-### Community 16 - "Community 16"
+### Community 17 - "Community 17"
 
 Cohesion: 0.14
-Nodes (7): AuditLogInterceptor, NestInterceptor, AnalyticsRequester, AnalyticsService, CanActivate, OwnershipGuard, Injectable
+Nodes (6): AuditLogInterceptor, NestInterceptor, AnalyticsRequester, AnalyticsService, Injectable, GoogleStrategy
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 
 Cohesion: 0.26
 Nodes (2): EventSeatCatalogPort, EventsService
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 
 Cohesion: 0.23
 Nodes (2): AdminActor, AdminService
 
-### Community 19 - "Community 19"
-
-Cohesion: 0.18
-Nodes (8): MigrationInterface, Utb2InitExtensions1794836828550, CONFIRM_SOLD_LUA, EXPIRE_DUE_LUA, EXTEND_HOLD_LUA, HOLD_SEATS_LUA, RELEASE_SEATS_LUA, UNSELL_SEATS_LUA
-
 ### Community 20 - "Community 20"
 
-Cohesion: 0.36
+Cohesion: 0.33
 Nodes (2): Inject, Optional
 
 ### Community 21 - "Community 21"
@@ -284,48 +284,48 @@ Nodes (1): JwtAuthGuard
 
 ### Community 46 - "Community 46"
 
-Cohesion: 0.40
-Nodes (2): CanActivate, RolesGuard
+Cohesion: 0.50
+Nodes (2): CanActivate, OwnershipGuard
 
 ### Community 47 - "Community 47"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb9InitVenuesEvents1794836850000
+Nodes (2): CanActivate, RolesGuard
 
 ### Community 48 - "Community 48"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb3InitUsers1794837000000
+Nodes (2): MigrationInterface, Utb9InitVenuesEvents1794836850000
 
 ### Community 49 - "Community 49"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb10InitOrders1794936850000
+Nodes (2): MigrationInterface, Utb3InitUsers1794837000000
 
 ### Community 50 - "Community 50"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb14InitTicketsGateScans1795036850000
+Nodes (2): MigrationInterface, Utb10InitOrders1794936850000
 
 ### Community 51 - "Community 51"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb15InitResaleLedger1795136850000
+Nodes (2): MigrationInterface, Utb14InitTicketsGateScans1795036850000
 
 ### Community 52 - "Community 52"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb16InitAdminAudit1795136850000
+Nodes (2): MigrationInterface, Utb15InitResaleLedger1795136850000
 
 ### Community 53 - "Community 53"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, Utb17AddTicketUniqueSeatIdx1795236850000
+Nodes (2): MigrationInterface, Utb16InitAdminAudit1795136850000
 
 ### Community 54 - "Community 54"
 
 Cohesion: 0.40
-Nodes (2): MigrationInterface, UTB23F4F6TiersVenueOwnerAuditRole1795336850000
+Nodes (2): MigrationInterface, Utb17AddTicketUniqueSeatIdx1795236850000
 
 ### Community 55 - "Community 55"
 
@@ -369,18 +369,18 @@ Nodes (3): ErrorCode, ErrorEnvelope, ErrorEnvelopeSchema
 
 ### Community 63 - "Community 63"
 
-Cohesion: 0.50
-Nodes (1): GoogleStrategy
+Cohesion: 0.67
+Nodes (2): CreateEventDto, EventActor
 
 ### Community 64 - "Community 64"
 
 Cohesion: 0.67
-Nodes (2): CreateEventDto, EventActor
+Nodes (2): CreateVenueDto, VenueActor
 
 ### Community 65 - "Community 65"
 
-Cohesion: 0.67
-Nodes (2): CreateVenueDto, VenueActor
+Cohesion: 1.00
+Nodes (1): config
 
 ### Community 66 - "Community 66"
 
@@ -400,44 +400,44 @@ Nodes (1): config
 ### Community 69 - "Community 69"
 
 Cohesion: 1.00
-Nodes (1): config
-
-### Community 70 - "Community 70"
-
-Cohesion: 1.00
 Nodes (1): CurrentUser
 
-### Community 73 - "Community 73"
+### Community 72 - "Community 72"
 
 Cohesion: 1.00
 Nodes (1): CheckoutDto
 
-### Community 74 - "Community 74"
+### Community 73 - "Community 73"
 
 Cohesion: 1.00
 Nodes (1): GenerateUploadUrlDto
 
-### Community 75 - "Community 75"
+### Community 74 - "Community 74"
 
 Cohesion: 1.00
 Nodes (1): LoginDto
 
-### Community 76 - "Community 76"
+### Community 75 - "Community 75"
 
 Cohesion: 1.00
 Nodes (1): RegisterDto
 
-### Community 77 - "Community 77"
+### Community 76 - "Community 76"
 
 Cohesion: 1.00
 Nodes (1): ScanTicketDto
+
+### Community 77 - "Community 77"
+
+Cohesion: 1.00
+Nodes (1): config
 
 ### Community 78 - "Community 78"
 
 Cohesion: 1.00
 Nodes (1): config
 
-### Community 79 - "Community 79"
+### Community 80 - "Community 80"
 
 Cohesion: 1.00
 Nodes (1): config
@@ -447,20 +447,15 @@ Nodes (1): config
 Cohesion: 1.00
 Nodes (1): config
 
-### Community 82 - "Community 82"
-
-Cohesion: 1.00
-Nodes (1): config
-
 ## Knowledge Gaps
 
-- **227 isolated node(s):** `config`, `SENSITIVE_KEYS`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester` (+222 more)
+- **229 isolated node(s):** `config`, `SENSITIVE_KEYS`, `AdminActor`, `RecordAuditLogParams`, `AnalyticsRequester` (+224 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 10`** (1 nodes): `AuthService`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 17`** (2 nodes): `EventSeatCatalogPort`, `EventsService`
+- **Thin community `Community 18`** (2 nodes): `EventSeatCatalogPort`, `EventsService`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 18`** (2 nodes): `AdminActor`, `AdminService`
+- **Thin community `Community 19`** (2 nodes): `AdminActor`, `AdminService`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 20`** (2 nodes): `Inject`, `Optional`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -482,23 +477,23 @@ Nodes (1): config
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 45`** (1 nodes): `JwtAuthGuard`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (2 nodes): `CanActivate`, `RolesGuard`
+- **Thin community `Community 46`** (2 nodes): `CanActivate`, `OwnershipGuard`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (2 nodes): `MigrationInterface`, `Utb9InitVenuesEvents1794836850000`
+- **Thin community `Community 47`** (2 nodes): `CanActivate`, `RolesGuard`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (2 nodes): `MigrationInterface`, `Utb3InitUsers1794837000000`
+- **Thin community `Community 48`** (2 nodes): `MigrationInterface`, `Utb9InitVenuesEvents1794836850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (2 nodes): `MigrationInterface`, `Utb10InitOrders1794936850000`
+- **Thin community `Community 49`** (2 nodes): `MigrationInterface`, `Utb3InitUsers1794837000000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (2 nodes): `MigrationInterface`, `Utb14InitTicketsGateScans1795036850000`
+- **Thin community `Community 50`** (2 nodes): `MigrationInterface`, `Utb10InitOrders1794936850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (2 nodes): `MigrationInterface`, `Utb15InitResaleLedger1795136850000`
+- **Thin community `Community 51`** (2 nodes): `MigrationInterface`, `Utb14InitTicketsGateScans1795036850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (2 nodes): `MigrationInterface`, `Utb16InitAdminAudit1795136850000`
+- **Thin community `Community 52`** (2 nodes): `MigrationInterface`, `Utb15InitResaleLedger1795136850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (2 nodes): `MigrationInterface`, `Utb17AddTicketUniqueSeatIdx1795236850000`
+- **Thin community `Community 53`** (2 nodes): `MigrationInterface`, `Utb16InitAdminAudit1795136850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (2 nodes): `MigrationInterface`, `UTB23F4F6TiersVenueOwnerAuditRole1795336850000`
+- **Thin community `Community 54`** (2 nodes): `MigrationInterface`, `Utb17AddTicketUniqueSeatIdx1795236850000`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 57`** (2 nodes): `JwtPayload`, `JwtStrategy`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -508,11 +503,11 @@ Nodes (1): config
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 61`** (2 nodes): `Env`, `envSchema`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 63`** (1 nodes): `GoogleStrategy`
+- **Thin community `Community 63`** (2 nodes): `CreateEventDto`, `EventActor`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 64`** (2 nodes): `CreateEventDto`, `EventActor`
+- **Thin community `Community 64`** (2 nodes): `CreateVenueDto`, `VenueActor`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 65`** (2 nodes): `CreateVenueDto`, `VenueActor`
+- **Thin community `Community 65`** (1 nodes): `config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 66`** (1 nodes): `config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -520,44 +515,42 @@ Nodes (1): config
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 68`** (1 nodes): `config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 69`** (1 nodes): `config`
+- **Thin community `Community 69`** (1 nodes): `CurrentUser`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 70`** (1 nodes): `CurrentUser`
+- **Thin community `Community 72`** (1 nodes): `CheckoutDto`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 73`** (1 nodes): `CheckoutDto`
+- **Thin community `Community 73`** (1 nodes): `GenerateUploadUrlDto`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 74`** (1 nodes): `GenerateUploadUrlDto`
+- **Thin community `Community 74`** (1 nodes): `LoginDto`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 75`** (1 nodes): `LoginDto`
+- **Thin community `Community 75`** (1 nodes): `RegisterDto`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 76`** (1 nodes): `RegisterDto`
+- **Thin community `Community 76`** (1 nodes): `ScanTicketDto`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 77`** (1 nodes): `ScanTicketDto`
+- **Thin community `Community 77`** (1 nodes): `config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 78`** (1 nodes): `config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 79`** (1 nodes): `config`
+- **Thin community `Community 80`** (1 nodes): `config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 81`** (1 nodes): `config`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 82`** (1 nodes): `config`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `AuthService` connect `Community 10` to `Community 20`, `Community 16`?**
+- **Why does `AuthService` connect `Community 10` to `Community 20`, `Community 17`?**
   _High betweenness centrality (0.011) - this node is a cross-community bridge._
-- **Why does `EventsService` connect `Community 17` to `Community 5`, `Community 20`, `Community 16`?**
+- **Why does `EventsService` connect `Community 18` to `Community 5`, `Community 20`, `Community 17`?**
   _High betweenness centrality (0.011) - this node is a cross-community bridge._
 - **What connects `config`, `SENSITIVE_KEYS`, `AdminActor` to the rest of the system?**
-  _227 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _229 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.050562597920524144 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05098988748041589 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.045328399629972246 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.09191583610188261 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.05384615384615385 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05110336817653891 - nodes in this community are weakly interconnected._

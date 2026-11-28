@@ -192,7 +192,7 @@ export class EventsService implements EventSeatCatalogPort {
   ): Promise<{
     id: string;
     venueId: string;
-    organizerId?: string | null;
+    organizerId: string | null;
     name: string;
     startTime: Date;
     status: string;
@@ -244,27 +244,24 @@ export class EventsService implements EventSeatCatalogPort {
       });
     }
 
+    const callerTenantId = actor
+      ? actor.organizerTenantId || actor.id || actor.userId || null
+      : null;
+
     if (actor && actor.role !== UserRole.ADMIN && venue.organizerId) {
-      const tenantId = actor.organizerTenantId;
-      const userId = actor.id || actor.userId;
-      const isVenueOwner =
-        (tenantId && venue.organizerId === tenantId) ||
-        (userId && venue.organizerId === userId);
-      if (!isVenueOwner) {
+      if (venue.organizerId !== callerTenantId) {
         throw new ForbiddenException({
           code: ErrorCode.FORBIDDEN,
-          message: "Forbidden: You do not own this venue",
+          message:
+            "Cross-tenant access forbidden: venue belongs to another organizer",
         });
       }
     }
 
     const organizerId =
-      dto.organizerId ??
-      actor?.organizerTenantId ??
-      actor?.id ??
-      actor?.userId ??
-      venue.organizerId ??
-      null;
+      actor?.role === UserRole.ADMIN
+        ? (dto.organizerId ?? callerTenantId ?? venue.organizerId ?? null)
+        : (callerTenantId ?? venue.organizerId ?? null);
 
     const event = this.eventRepository.create({
       venueId: dto.venueId,
@@ -288,7 +285,7 @@ export class EventsService implements EventSeatCatalogPort {
     return {
       id: savedEvent.id,
       venueId: savedEvent.venueId,
-      organizerId: savedEvent.organizerId,
+      organizerId: savedEvent.organizerId ?? null,
       name: savedEvent.name,
       startTime: savedEvent.startTime,
       status: savedEvent.status,
@@ -606,10 +603,13 @@ export class EventsService implements EventSeatCatalogPort {
       });
     }
 
-    return this.generateSeatsInternal(event);
+    return this.generateSeatsInternal(event, actor);
   }
 
-  private async generateSeatsInternal(event: Event): Promise<{
+  private async generateSeatsInternal(
+    event: Event,
+    actor?: EventActor,
+  ): Promise<{
     eventId: string;
     venueId: string;
     totalSeatsGenerated: number;
@@ -624,6 +624,19 @@ export class EventsService implements EventSeatCatalogPort {
         code: ErrorCode.NOT_FOUND,
         message: `Venue with id ${event.venueId} not found`,
       });
+    }
+
+    if (actor && actor.role !== UserRole.ADMIN) {
+      const callerTenantId =
+        actor.organizerTenantId || actor.id || actor.userId || null;
+      const ownerTenantId = event.organizerId ?? venue.organizerId ?? null;
+      if (ownerTenantId && ownerTenantId !== callerTenantId) {
+        throw new ForbiddenException({
+          code: ErrorCode.FORBIDDEN,
+          message:
+            "Cross-tenant access forbidden: event belongs to another organizer",
+        });
+      }
     }
 
     // 3. Fetch VenueLayout from MongoDB

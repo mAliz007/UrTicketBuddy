@@ -17,9 +17,10 @@ import { Roles } from "../auth/decorators/roles.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { OwnershipGuard } from "../auth/guards/ownership.guard";
 
 @Controller(["venues", "organizer/venues"])
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, OwnershipGuard)
 export class VenuesController {
   constructor(private readonly venuesService: VenuesService) {}
 
@@ -30,10 +31,7 @@ export class VenuesController {
     @Body() createVenueDto: CreateVenueDto,
     @CurrentUser() user?: VenueActor,
   ) {
-    if (user) {
-      return this.venuesService.createVenue(createVenueDto, user);
-    }
-    return this.venuesService.createVenue(createVenueDto);
+    return this.venuesService.createVenue(createVenueDto, user);
   }
 
   @Put(":id/layout")

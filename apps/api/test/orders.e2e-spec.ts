@@ -24,6 +24,9 @@ jest.setTimeout(30000);
 describe("Orders & Checkout API (e2e - Supertest)", () => {
   let app: INestApplication;
   let customerToken: string;
+  let otherCustomerToken: string;
+  let organizerToken: string;
+  let adminToken: string;
 
   const eventId = "e0000000-0000-0000-0000-000000000001";
   const userId = "usr-vip-999";
@@ -229,6 +232,24 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
       email: "customer@example.com",
       role: UserRole.CUSTOMER,
     });
+    otherCustomerToken = jwtService.sign({
+      sub: otherUserId,
+      id: otherUserId,
+      email: "other@example.com",
+      role: UserRole.CUSTOMER,
+    });
+    organizerToken = jwtService.sign({
+      sub: "org-orders-test",
+      id: "org-orders-test",
+      email: "org@example.com",
+      role: UserRole.ORGANIZER,
+    });
+    adminToken = jwtService.sign({
+      sub: "admin-orders-test",
+      id: "admin-orders-test",
+      email: "admin@example.com",
+      role: UserRole.ADMIN,
+    });
   });
 
   afterAll(async () => {
@@ -265,11 +286,11 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
       eventId,
       seatIds: [seat1.seatId, seat2.seatId],
       paymentMethodToken: "tok_visa_success",
-      userId,
     };
 
     const res = await request(app.getHttpServer())
       .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${customerToken}`)
       .send(payload)
       .expect(201);
 
@@ -307,11 +328,11 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
       eventId,
       seatIds: [seat1.seatId],
       paymentMethodToken: "tok_visa",
-      userId,
     };
 
     const res = await request(app.getHttpServer())
       .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${customerToken}`)
       .send(payload)
       .expect(409);
 
@@ -332,11 +353,11 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
       eventId,
       seatIds: [seat1.seatId],
       paymentMethodToken: "tok_visa",
-      userId,
     };
 
     const res = await request(app.getHttpServer())
       .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${customerToken}`)
       .send(payload)
       .expect(409);
 
@@ -356,11 +377,11 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
       eventId,
       seatIds: [seat1.seatId],
       paymentMethodToken: "tok_fail", // Triggers simulated payment gateway failure
-      userId,
     };
 
     const res = await request(app.getHttpServer())
       .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${customerToken}`)
       .send(payload)
       .expect(400);
 
@@ -372,6 +393,39 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
     expect(orderItemsStore.size).toBe(0);
     expect(eventSeatsStore.get(seat1.id).status).toBe("AVAILABLE");
     expect(redisSold.has(seat1.seatId)).toBe(false);
+  });
+
+  it("POST /api/v1/orders/checkout - should return 401 when unauthenticated and block body userId / x-user-id impersonation / non-CUSTOMER roles", async () => {
+    await request(app.getHttpServer())
+      .post("/api/v1/orders/checkout")
+      .set("x-user-id", userId)
+      .send({
+        eventId,
+        seatIds: [seat1.seatId],
+        paymentMethodToken: "tok_visa",
+      })
+      .expect(401);
+
+    await request(app.getHttpServer())
+      .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${customerToken}`)
+      .send({
+        eventId,
+        seatIds: [seat1.seatId],
+        paymentMethodToken: "tok_visa",
+        userId: otherUserId,
+      })
+      .expect(400);
+
+    await request(app.getHttpServer())
+      .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({
+        eventId,
+        seatIds: [seat1.seatId],
+        paymentMethodToken: "tok_visa",
+      })
+      .expect(403);
   });
 
   it("GET /api/v1/orders/:id - should return order details with line items", async () => {
@@ -403,6 +457,18 @@ describe("Orders & Checkout API (e2e - Supertest)", () => {
     expect(res.body.id).toBe(orderId);
     expect(res.body.userId).toBe(userId);
     expect(res.body.items).toHaveLength(1);
+
+    // Another customer cannot read this order
+    await request(app.getHttpServer())
+      .get(`/api/v1/orders/${orderId}`)
+      .set("Authorization", `Bearer ${otherCustomerToken}`)
+      .expect(403);
+
+    // ADMIN can read any order
+    await request(app.getHttpServer())
+      .get(`/api/v1/orders/${orderId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
   });
 
   it("GET /api/v1/orders/:id - should return 404 Not Found for non-existent order", async () => {

@@ -10,12 +10,13 @@ import {
 import { UserRole } from "@urticketbuddy/contracts";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { OwnershipGuard } from "../auth/guards/ownership.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { AnalyticsService, AnalyticsRequester } from "./analytics.service";
 
 @Controller("organizer/analytics")
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, OwnershipGuard)
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 

@@ -6,9 +6,10 @@ Polyglot persistence venue management module combining PostgreSQL relational met
 
 ## 1. Overview
 
-- **PostgreSQL**: Stores physical venue metadata (`name`, `location`, `layoutMongoId`, `createdAt`, `updatedAt`).
+- **PostgreSQL**: Stores physical venue metadata (`organizerId` indexed tenant identifier, `name`, `location`, `layoutMongoId`, `createdAt`, `updatedAt`).
 - **MongoDB**: Stores rich, parametric venue layout configuration JSON adhering to the `VenueLayoutSchema` (from `@urticketbuddy/contracts`).
 - **Validation**: Incoming layouts are strictly parsed and validated using `@urticketbuddy/venue-engine`'s `parseLayout` before persistence.
+- **Authorization & Tenant Isolation**: `POST /api/v1/venues` requires `ORGANIZER` or `ADMIN` and enforces `OwnershipGuard`. `GET /api/v1/venues/:id` is `@Public()`.
 
 ---
 

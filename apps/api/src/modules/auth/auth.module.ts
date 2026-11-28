@@ -46,6 +46,14 @@ import { RedisThrottlerStorageService } from "./throttler/redis-throttler.storag
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
   exports: [
     AuthService,
