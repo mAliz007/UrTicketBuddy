@@ -13,7 +13,8 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 
 - Port: `3000`
 - REST prefix: `/api/v1`
-- Health check: `GET /api/v1/health` (reports dependency status for Postgres, Mongo, Redis, and Elasticsearch)
+- Health check: `GET /api/v1/health` (reports dependency status for Postgres, Mongo, Redis, and Elasticsearch including `search.eventsAliasExists`)
+- Event Search & Suggest: `GET /api/v1/search/events`, `GET /api/v1/search/suggest` (see [Search Module](src/modules/search/README.md))
 - Auth & RBAC: `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/refresh` (HttpOnly cookie + CSRF double-submit & Origin check), `GET /api/v1/auth/me` (see [Auth Module](src/modules/auth/README.md))
 - Venues: `POST /api/v1/venues`, `PUT /api/v1/organizer/venues/:id/layout` (Mongo layout versioning + 422 on invalid layouts + 409 `STRUCTURE_LOCKED`), `GET /api/v1/venues/:id` (see [Venues Module](src/modules/venues/README.md))
 - Events: `POST /api/v1/events` (with `ticketTiers`), `GET /api/v1/events` (filters & pagination), `GET /api/v1/events/:id`, `PATCH /api/v1/events/:id`, `POST /api/v1/events/:id/publish` (locks structure + enqueues `search-index`), `POST /api/v1/events/:id/generate-seats` (see [Events Module](src/modules/events/README.md))

@@ -32,6 +32,12 @@ export const envSchema = z
 
     // Elasticsearch
     ELASTICSEARCH_NODE: z.string().default("http://localhost:9200"),
+    ELASTICSEARCH_USERNAME: z.string().optional(),
+    ELASTICSEARCH_PASSWORD: z.string().optional(),
+    ELASTICSEARCH_API_KEY: z.string().optional(),
+    ELASTICSEARCH_INDEX_ALIAS: z.string().default("events"),
+    SEARCH_CB_FAILURE_THRESHOLD: z.coerce.number().int().min(1).default(3),
+    SEARCH_CB_COOLDOWN_MS: z.coerce.number().int().min(100).default(30000),
 
     // Secrets & Auth
     JWT_SECRET: z

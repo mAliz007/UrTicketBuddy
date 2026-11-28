@@ -11,6 +11,10 @@ describe("packages/config env loader", () => {
       expect(parsed.data.STORAGE_PROVIDER).toBe("local");
       expect(parsed.data.S3_BUCKET).toBe("urticketbuddy-media");
       expect(parsed.data.CDN_BASE_URL).toBe("http://localhost:3000/media");
+      expect(parsed.data.ELASTICSEARCH_NODE).toBe("http://localhost:9200");
+      expect(parsed.data.ELASTICSEARCH_INDEX_ALIAS).toBe("events");
+      expect(parsed.data.SEARCH_CB_FAILURE_THRESHOLD).toBe(3);
+      expect(parsed.data.SEARCH_CB_COOLDOWN_MS).toBe(30000);
     }
   });
 

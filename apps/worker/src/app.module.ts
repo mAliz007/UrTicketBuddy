@@ -4,6 +4,7 @@ import { HealthModule } from "./health/health.module";
 import { WorkerInfraModule } from "./infrastructure/worker-infra.module";
 import { ExpiryModule } from "./modules/expiry/expiry.module";
 import { HoldExpiryProcessor } from "./processors/hold-expiry.processor";
+import { SearchIndexProcessor } from "./processors/search-index.processor";
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { HoldExpiryProcessor } from "./processors/hold-expiry.processor";
     HealthModule,
     ExpiryModule,
   ],
-  providers: [HoldExpiryProcessor],
+  providers: [HoldExpiryProcessor, SearchIndexProcessor],
 })
 export class AppModule {}

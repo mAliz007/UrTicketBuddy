@@ -1,12 +1,18 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, Optional } from "@nestjs/common";
 import { loadEnv } from "@urticketbuddy/config";
 import Redis from "ioredis";
 import * as net from "net";
+import { SearchService } from "../search/search.service";
 
 @Injectable()
 export class HealthService {
   private readonly logger = new Logger(HealthService.name);
   private readonly env = loadEnv();
+
+  constructor(
+    @Optional()
+    private readonly searchService?: SearchService,
+  ) {}
 
   private checkTcpPort(
     host: string,
@@ -67,15 +73,37 @@ export class HealthService {
     const mongoUp = await this.checkTcpPort(this.env.POSTGRES_HOST, 27017);
     dependencies.mongo = mongoUp ? "up" : "down";
 
-    // 4. Check Elasticsearch (port 9200)
-    const esUp = await this.checkTcpPort(this.env.POSTGRES_HOST, 9200);
+    // 4. Check Elasticsearch (TCP probe + events alias existence)
+    let esHost = "localhost";
+    let esPort = 9200;
+    try {
+      const parsedEsUrl = new URL(this.env.ELASTICSEARCH_NODE);
+      esHost = parsedEsUrl.hostname || esHost;
+      esPort = parsedEsUrl.port
+        ? Number(parsedEsUrl.port)
+        : parsedEsUrl.protocol === "https:"
+          ? 443
+          : 9200;
+    } catch {
+      esHost = this.env.POSTGRES_HOST;
+    }
+    const esUp = await this.checkTcpPort(esHost, esPort);
     dependencies.elasticsearch = esUp ? "up" : "down";
+
+    const eventsAliasExists =
+      esUp && this.searchService
+        ? await this.searchService.checkAliasExists()
+        : false;
 
     return {
       status: "ok",
       service: "api",
       timestamp: new Date().toISOString(),
       dependencies,
+      search: {
+        alias: this.env.ELASTICSEARCH_INDEX_ALIAS,
+        eventsAliasExists,
+      },
     };
   }
 }

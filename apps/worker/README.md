@@ -54,9 +54,17 @@ Configured via `@urticketbuddy/config` (`loadEnv()`):
 ## BullMQ Processors & Queues
 
 - `hold-expiry`: Handles releasing seats when 10-minute hold timers expire
-- `search-index`: Syncs event and venue changes to Elasticsearch
+- `search-index`: Idempotently syncs `index`, `update`, and `delete` event jobs (`PUBLISHED` only; removes `DRAFT`/`CANCELLED`) to Elasticsearch with exponential backoff retries (`packages/contracts` schemas)
 - `order-notifications`: Dispatches email/SMS confirmations
 - `ticket-seed-rotation`: Rotates HMAC QR seeds periodically
+
+## Reindex CLI
+
+Run `pnpm search:reindex` (from root) or `pnpm --filter @urticketbuddy/worker search:reindex` to build a new versioned index (`events_v<n+1>`) in batches from PostgreSQL, atomically swap the `events` alias via `updateAliases`, and delete prior versioned indices.
+
+### Elasticsearch Environment Variables
+
+- `ELASTICSEARCH_NODE`, `ELASTICSEARCH_USERNAME`, `ELASTICSEARCH_PASSWORD`, `ELASTICSEARCH_API_KEY`, `ELASTICSEARCH_INDEX_ALIAS` (defaults to `events`)
 
 ## Testing
 

@@ -8,9 +8,11 @@
     "start": "node dist/main",
     "lint": "eslint --config ../../eslint.config.mjs \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "search:reindex": "ts-node src/scripts/search-reindex.ts"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.19.2",
     "@nestjs/common": "^11.0.10",
     "@nestjs/core": "^11.0.10",
     "@nestjs/platform-express": "^11.0.10",
