@@ -6,16 +6,17 @@ import {
   UnauthorizedException,
   ForbiddenException,
   BadRequestException,
+  UnprocessableEntityException,
   NotFoundException,
   Logger,
 } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
-import * as bcrypt from "bcryptjs";
 import * as crypto from "crypto";
 import type { Response } from "express";
 import { User, RefreshToken, AuditLog } from "@urticketbuddy/db";
 import { loadEnv } from "@urticketbuddy/config";
+import { hashPasswordArgon2id, verifyPasswordArgon2id } from "./password.util";
 import {
   ErrorCode,
   UserRole,
@@ -55,6 +56,18 @@ export class AuthService {
     data: RegisterRequestInput,
     res?: Response,
   ): Promise<AuthResponse> {
+    if (
+      data &&
+      typeof data === "object" &&
+      "role" in data &&
+      (data as Record<string, unknown>).role !== undefined
+    ) {
+      throw new UnprocessableEntityException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Role cannot be specified during registration",
+      });
+    }
+
     const parsed = RegisterRequestSchema.safeParse(data);
     if (!parsed.success) {
       throw new BadRequestException({
@@ -64,7 +77,7 @@ export class AuthService {
       });
     }
 
-    const { email, password, firstName, lastName, role } = parsed.data;
+    const { email, password, firstName, lastName } = parsed.data;
 
     const existing = await this.userRepository.findOne({
       where: { email: email.toLowerCase() },
@@ -77,15 +90,14 @@ export class AuthService {
       });
     }
 
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const passwordHash = await hashPasswordArgon2id(password);
 
     const user = this.userRepository.create({
       email: email.toLowerCase(),
       passwordHash,
       firstName,
       lastName,
-      role: role || UserRole.CUSTOMER,
+      role: UserRole.CUSTOMER,
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -136,7 +148,10 @@ export class AuthService {
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    const isPasswordValid = await verifyPasswordArgon2id(
+      password,
+      user.passwordHash,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException({
         code: ErrorCode.INVALID_CREDENTIALS,
@@ -284,8 +299,12 @@ export class AuthService {
     user: User,
     res: Response,
   ): Promise<{ user: AuthUser; accessToken: string }> {
+    const familyId = crypto.randomUUID();
     const tokens = await this.generateTokens(user);
-    this.setRefreshTokenCookie(res, tokens.refreshToken);
+    await this.persistRefreshToken(user.id, tokens.refreshToken, familyId);
+    if (res) {
+      this.setRefreshTokenCookie(res, tokens.refreshToken);
+    }
     return {
       user: this.sanitizeUser(user),
       accessToken: tokens.accessToken,
@@ -296,6 +315,7 @@ export class AuthService {
     email?: string;
     firstName: string;
     lastName: string;
+    emailVerified?: boolean;
   }): Promise<User> {
     if (!profile.email) {
       throw new BadRequestException({
@@ -304,12 +324,19 @@ export class AuthService {
       });
     }
 
+    if (profile.emailVerified === false) {
+      throw new UnauthorizedException({
+        code: ErrorCode.UNAUTHORIZED,
+        message: "Google email is not verified",
+      });
+    }
+
     let user = await this.userRepository.findOne({
       where: { email: profile.email.toLowerCase() },
     });
 
     if (!user) {
-      const dummyPasswordHash = await bcrypt.hash(crypto.randomUUID(), 10);
+      const dummyPasswordHash = await hashPasswordArgon2id(crypto.randomUUID());
       user = this.userRepository.create({
         email: profile.email.toLowerCase(),
         passwordHash: dummyPasswordHash,
@@ -350,12 +377,27 @@ export class AuthService {
       });
     }
 
-    const tenantId =
-      organizerTenantId ||
-      creator.organizerTenantId ||
-      (creator.role === UserRole.ORGANIZER ? creator.id : null);
+    let tenantId: string | null = null;
+    if (creator.role === UserRole.ORGANIZER) {
+      const creatorTenantId = creator.organizerTenantId || creator.id;
+      if (organizerTenantId && organizerTenantId !== creatorTenantId) {
+        throw new ForbiddenException({
+          code: ErrorCode.FORBIDDEN,
+          message:
+            "Cross-tenant access forbidden: cannot provision gate staff for another organizer",
+        });
+      }
+      tenantId = creatorTenantId;
+    } else if (creator.role === UserRole.ADMIN) {
+      tenantId = organizerTenantId || creator.organizerTenantId || null;
+    } else {
+      throw new ForbiddenException({
+        code: ErrorCode.FORBIDDEN,
+        message: "Only ORGANIZER or ADMIN can provision gate staff",
+      });
+    }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await hashPasswordArgon2id(password);
     const staff = this.userRepository.create({
       email: email.toLowerCase(),
       passwordHash,
@@ -422,11 +464,27 @@ export class AuthService {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: "/api/v1/auth",
     });
+    const csrfToken = crypto
+      .createHmac("sha256", env.JWT_REFRESH_SECRET)
+      .update(token)
+      .digest("hex");
+    res.cookie("XSRF-TOKEN", csrfToken, {
+      httpOnly: false,
+      secure: isProd,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/api/v1/auth",
+    });
   }
 
   clearRefreshTokenCookie(res: Response): void {
     res.clearCookie("refreshToken", {
       httpOnly: true,
+      sameSite: "strict",
+      path: "/api/v1/auth",
+    });
+    res.clearCookie("XSRF-TOKEN", {
+      httpOnly: false,
       sameSite: "strict",
       path: "/api/v1/auth",
     });
@@ -461,11 +519,15 @@ export class AuthService {
   }> {
     const env = loadEnv();
 
+    const organizerTenantId =
+      user.organizerTenantId ??
+      (user.role === UserRole.ORGANIZER ? user.id : null);
+
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
-      organizerTenantId: user.organizerTenantId,
+      organizerTenantId,
     };
 
     const accessToken = await this.jwtService.signAsync(

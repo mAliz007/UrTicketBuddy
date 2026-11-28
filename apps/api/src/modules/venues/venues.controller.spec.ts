@@ -1,9 +1,20 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { AuthUser, UserRole } from "@urticketbuddy/contracts";
 import { VenuesController } from "./venues.controller";
 import { VenuesService } from "./venues.service";
 
 describe("VenuesController", () => {
   let controller: VenuesController;
+
+  const mockUser: AuthUser = {
+    id: "org-1",
+    email: "org@example.com",
+    firstName: "Org",
+    lastName: "Owner",
+    role: UserRole.ORGANIZER,
+    organizerTenantId: "org-1",
+    createdAt: new Date(),
+  };
 
   const mockVenuesService = {
     createVenue: jest.fn(),
@@ -40,8 +51,8 @@ describe("VenuesController", () => {
       layoutMongoId: "m-1",
     });
 
-    const result = await controller.createVenue(dto);
-    expect(mockVenuesService.createVenue).toHaveBeenCalledWith(dto);
+    const result = await controller.createVenue(dto, mockUser);
+    expect(mockVenuesService.createVenue).toHaveBeenCalledWith(dto, mockUser);
     expect(result.id).toBe("v-1");
   });
 

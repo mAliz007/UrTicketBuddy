@@ -7,9 +7,10 @@ import {
   TICKET_REPOSITORY,
   ORDER_REPOSITORY,
   GATE_SCAN_REPOSITORY,
+  RESALE_LISTING_REPOSITORY,
   REDIS_SCRIPTS_WRAPPER,
 } from "../../database/database.tokens";
-import { UserRole } from "@urticketbuddy/contracts";
+import { ResaleListingStatus, UserRole } from "@urticketbuddy/contracts";
 
 describe("AnalyticsService (Unit Tests)", () => {
   let service: AnalyticsService;
@@ -34,6 +35,10 @@ describe("AnalyticsService (Unit Tests)", () => {
     find: jest.fn(),
   };
 
+  const mockResaleListingRepo = {
+    find: jest.fn(),
+  };
+
   const mockRedisScriptsWrapper = {
     getCounts: jest.fn(),
   };
@@ -52,6 +57,7 @@ describe("AnalyticsService (Unit Tests)", () => {
         { provide: TICKET_REPOSITORY, useValue: mockTicketRepo },
         { provide: ORDER_REPOSITORY, useValue: mockOrderRepo },
         { provide: GATE_SCAN_REPOSITORY, useValue: mockGateScanRepo },
+        { provide: RESALE_LISTING_REPOSITORY, useValue: mockResaleListingRepo },
         { provide: REDIS_SCRIPTS_WRAPPER, useValue: mockRedisScriptsWrapper },
       ],
     }).compile();
@@ -84,6 +90,11 @@ describe("AnalyticsService (Unit Tests)", () => {
       held: 10,
       sold: 80,
     });
+    mockResaleListingRepo.find.mockResolvedValue([
+      { status: ResaleListingStatus.ACTIVE, askingPriceMinor: 5500 },
+      { status: ResaleListingStatus.SOLD, askingPriceMinor: 5200 },
+      { status: ResaleListingStatus.SOLD, askingPriceMinor: 5000 },
+    ]);
 
     const result = await service.getEventAnalytics(eventId, {
       id: "org-user-1",
@@ -97,7 +108,11 @@ describe("AnalyticsService (Unit Tests)", () => {
     expect(result.occupancyRate).toBe(80);
     expect(result.totalRevenue).toBe(80000);
     expect(result.holdStats).toEqual({ held: 10, sold: 80 });
-    expect(result.resaleStats).toBeDefined();
+    expect(result.resaleStats).toEqual({
+      activeListings: 1,
+      soldListings: 2,
+      totalResaleVolume: 10200,
+    });
     expect(result.entryVelocity.length).toBeGreaterThan(0);
   });
 

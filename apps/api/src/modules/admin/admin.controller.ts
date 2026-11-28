@@ -8,6 +8,7 @@ import {
   Body,
   Query,
   UseGuards,
+  UseInterceptors,
   HttpCode,
   HttpStatus,
   Req,
@@ -29,9 +30,11 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { AdminService, AdminActor } from "./admin.service";
+import { AuditLogInterceptor } from "./audit-log.interceptor";
 
 @Controller("admin")
 @UseGuards(JwtAuthGuard, RolesGuard)
+@UseInterceptors(AuditLogInterceptor)
 @Roles(UserRole.ADMIN)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
@@ -116,6 +119,35 @@ export class AdminController {
     }
     const ipAddress = (req.headers["x-forwarded-for"] as string) || req.ip;
     return this.adminService.approveOrganizer(
+      userId,
+      adminUser,
+      parsed.data.reason,
+      ipAddress,
+    );
+  }
+
+  /**
+   * PATCH /api/v1/admin/organizers/:userId/reject
+   * Rejects organizer application/account, clears organizerTenantId, demotes to CUSTOMER, writes audit log.
+   */
+  @Patch("organizers/:userId/reject")
+  @HttpCode(HttpStatus.OK)
+  async rejectOrganizer(
+    @Param("userId", new ParseUUIDPipe()) userId: string,
+    @CurrentUser() adminUser: AdminActor,
+    @Body() body: unknown,
+    @Req() req: Request,
+  ) {
+    const parsed = AdminReasonSchema.safeParse(body || {});
+    if (!parsed.success) {
+      throw new BadRequestException({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Invalid reason payload",
+        details: parsed.error.issues,
+      });
+    }
+    const ipAddress = (req.headers["x-forwarded-for"] as string) || req.ip;
+    return this.adminService.rejectOrganizer(
       userId,
       adminUser,
       parsed.data.reason,

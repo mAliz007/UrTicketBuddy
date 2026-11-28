@@ -212,9 +212,11 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
     };
 
     const mockRedisScripts = {
-      holdSeats: jest
-        .fn()
-        .mockResolvedValue({ success: true, expiresAt: Date.now() + 600000 }),
+      holdSeats: jest.fn(async (params: { seatIds: string[] }) => ({
+        success: true,
+        seatIds: params.seatIds,
+        expiresAt: Date.now() + 600000,
+      })),
       confirmSold: jest.fn().mockResolvedValue({ success: true, code: "OK" }),
       unsellSeats: jest.fn().mockResolvedValue({ success: true }),
       getCounts: jest.fn().mockResolvedValue({ held: 0, sold: 10 }),
@@ -599,7 +601,7 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
             const hasRoles =
               controllerRoles.length > 0 || methodRoles.length > 0;
 
-            const isProtectedOrPublic = isPublic || hasJwtGuard;
+            const isProtectedOrPublic = isPublic || (hasJwtGuard && hasRoles);
 
             routeAuditLog.push({
               controller: controllerClass.name,
@@ -614,11 +616,27 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
         }
       }
 
-      // Assert comprehensive coverage of route registry
-      expect(auditedRoutesCount).toBeGreaterThanOrEqual(15);
-      expect(routeAuditLog.every((r) => r.isPublic || r.hasJwtGuard)).toBe(
-        true,
+      // Assert global APP_GUARDs (JwtAuthGuard + RolesGuard) are registered
+      const hasGlobalJwtGuard = Array.from(modulesContainer.values()).some(
+        (m) =>
+          Array.from(m.providers.values()).some(
+            (p) => p.metatype === JwtAuthGuard,
+          ),
       );
+      const hasGlobalRolesGuard = Array.from(modulesContainer.values()).some(
+        (m) =>
+          Array.from(m.providers.values()).some(
+            (p) => p.metatype === RolesGuard,
+          ),
+      );
+      expect(hasGlobalJwtGuard).toBe(true);
+      expect(hasGlobalRolesGuard).toBe(true);
+
+      // Assert comprehensive coverage of route registry (@Public or @Roles required on every route)
+      expect(auditedRoutesCount).toBeGreaterThanOrEqual(15);
+      expect(
+        routeAuditLog.every((r) => r.isPublic || (r.hasJwtGuard && r.hasRoles)),
+      ).toBe(true);
     });
   });
 
@@ -1054,6 +1072,128 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
           .expect(200);
         expect(res.body.id).toBe(orderId);
       });
+
+      it("Other CUSTOMER -> 403 FORBIDDEN", async () => {
+        const res = await request(app.getHttpServer())
+          .get(`/api/v1/orders/${orderId}`)
+          .set("Authorization", `Bearer ${otherCustomerToken}`)
+          .expect(403);
+        expect(res.body.error.code).toBe(ErrorCode.FORBIDDEN);
+      });
+    });
+
+    describe("UTB-29 Role-by-Route Smoke Matrix (Hold, Checkout, Register, Cross-Tenant)", () => {
+      it("POST /api/v1/checkout/hold: 401 unauth, 403 non-CUSTOMER, 201 CUSTOMER", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/checkout/hold")
+          .send({ eventId: event1Id, seatIds: ["A-1-1"] })
+          .expect(401);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/checkout/hold")
+          .set("Authorization", `Bearer ${organizer1Token}`)
+          .send({ eventId: event1Id, seatIds: ["A-1-1"] })
+          .expect(403);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/checkout/hold")
+          .set("Authorization", `Bearer ${gateStaffToken}`)
+          .send({ eventId: event1Id, seatIds: ["A-1-1"] })
+          .expect(403);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/checkout/hold")
+          .set("Authorization", `Bearer ${adminToken}`)
+          .send({ eventId: event1Id, seatIds: ["A-1-1"] })
+          .expect(403);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/checkout/hold")
+          .set("Authorization", `Bearer ${customerToken}`)
+          .send({ eventId: event1Id, seatIds: ["A-1-1"] })
+          .expect(201);
+      });
+
+      it("POST /api/v1/orders/checkout: 401 unauth, 403 non-CUSTOMER, 400 body userId", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/orders/checkout")
+          .send({
+            eventId: event1Id,
+            seatIds: ["A-1-1"],
+            paymentMethodToken: "tok_visa",
+          })
+          .expect(401);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/orders/checkout")
+          .set("Authorization", `Bearer ${organizer1Token}`)
+          .send({
+            eventId: event1Id,
+            seatIds: ["A-1-1"],
+            paymentMethodToken: "tok_visa",
+          })
+          .expect(403);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/orders/checkout")
+          .set("Authorization", `Bearer ${gateStaffToken}`)
+          .send({
+            eventId: event1Id,
+            seatIds: ["A-1-1"],
+            paymentMethodToken: "tok_visa",
+          })
+          .expect(403);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/orders/checkout")
+          .set("Authorization", `Bearer ${adminToken}`)
+          .send({
+            eventId: event1Id,
+            seatIds: ["A-1-1"],
+            paymentMethodToken: "tok_visa",
+          })
+          .expect(403);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/orders/checkout")
+          .set("Authorization", `Bearer ${customerToken}`)
+          .send({
+            eventId: event1Id,
+            seatIds: ["A-1-1"],
+            paymentMethodToken: "tok_visa",
+            userId: otherCustomerId,
+          })
+          .expect(400);
+      });
+
+      it("POST /api/v1/auth/register rejects role escalation with 422", async () => {
+        await request(app.getHttpServer())
+          .post("/api/v1/auth/register")
+          .send({
+            email: "role-smoke@example.com",
+            password: "Password123!",
+            firstName: "Role",
+            lastName: "Smoke",
+            role: UserRole.ADMIN,
+          })
+          .expect(422);
+      });
+
+      it("POST /api/v1/events/:id/generate-seats and POST /api/v1/gate/scan block cross-tenant access with 403", async () => {
+        await request(app.getHttpServer())
+          .post(`/api/v1/events/${event1Id}/generate-seats`)
+          .set("Authorization", `Bearer ${organizer2Token}`)
+          .expect(403);
+
+        await request(app.getHttpServer())
+          .post("/api/v1/gate/scan")
+          .set("Authorization", `Bearer ${gateStaffToken}`)
+          .send({
+            token: "mock-qr-token-for-test",
+            eventId: event2Id,
+          })
+          .expect(403);
+      });
     });
 
     describe("Endpoint: GET /api/v1/admin/audit-logs", () => {
@@ -1184,10 +1324,10 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
           expiresAt: new Date(Date.now() + 86400000),
         });
 
-        // Adversary replays the revoked old token to /api/v1/auth/refresh
+        // Adversary replays the revoked old token via HttpOnly cookie to /api/v1/auth/refresh
         const res = await request(app.getHttpServer())
           .post("/api/v1/auth/refresh")
-          .send({ refreshToken: rawOldToken })
+          .set("Cookie", `refreshToken=${rawOldToken}`)
           .expect(401);
 
         expect(res.body.error.code).toBe(ErrorCode.INVALID_REFRESH_TOKEN);
@@ -1200,7 +1340,7 @@ describe("Security Audit, Route Authorization Matrix & Tenant Isolation (e2e)", 
         // Subsequent attempt with child token now also fails
         const childRes = await request(app.getHttpServer())
           .post("/api/v1/auth/refresh")
-          .send({ refreshToken: rawChildToken })
+          .set("Cookie", `refreshToken=${rawChildToken}`)
           .expect(401);
 
         expect(childRes.body.error.code).toBe(ErrorCode.INVALID_REFRESH_TOKEN);

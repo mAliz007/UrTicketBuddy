@@ -43,7 +43,7 @@ export const GenerateUploadUrlResponseSchema = z.object({
   fileKey: z.string().min(1),
   cdnUrl: z.string().url(),
   expiresInSeconds: z.number().int().positive(),
-  headers: z.record(z.string()),
+  headers: z.record(z.string(), z.string()),
 });
 
 export type GenerateUploadUrlResponse = z.infer<

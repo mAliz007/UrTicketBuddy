@@ -3,7 +3,9 @@ import { JwtService } from "@nestjs/jwt";
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   UnauthorizedException,
+  UnprocessableEntityException,
   NotFoundException,
 } from "@nestjs/common";
 import { UserRole } from "@urticketbuddy/contracts";
@@ -98,18 +100,42 @@ describe("AuthService", () => {
         password: "Password123!",
         firstName: "John",
         lastName: "Doe",
-        role: UserRole.CUSTOMER,
       });
 
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { email: "john@example.com" },
       });
-      expect(mockUserRepository.create).toHaveBeenCalled();
+      expect(mockUserRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ role: UserRole.CUSTOMER }),
+      );
       expect(mockUserRepository.save).toHaveBeenCalled();
       expect(mockRefreshTokenRepository.save).toHaveBeenCalled();
       expect(result.user.email).toBe("john@example.com");
+      expect(result.user.role).toBe(UserRole.CUSTOMER);
       expect(result.accessToken).toBeDefined();
       expect(result.refreshToken).toBeDefined();
+    });
+
+    it("should reject registration attempting to specify role ADMIN or ORGANIZER with 422", async () => {
+      await expect(
+        service.register({
+          email: "hacker@example.com",
+          password: "Password123!",
+          firstName: "Bad",
+          lastName: "Actor",
+          role: UserRole.ADMIN,
+        } as any),
+      ).rejects.toThrow(UnprocessableEntityException);
+
+      await expect(
+        service.register({
+          email: "hacker2@example.com",
+          password: "Password123!",
+          firstName: "Bad",
+          lastName: "Actor",
+          role: UserRole.ORGANIZER,
+        } as any),
+      ).rejects.toThrow(UnprocessableEntityException);
     });
 
     it("should throw ConflictException if email is already taken", async () => {
@@ -246,6 +272,52 @@ describe("AuthService", () => {
       expect(staff.email).toBe("scanner@example.com");
       expect(staff.role).toBe(UserRole.GATE_STAFF);
       expect(staff.organizerTenantId).toBe("tenant-1");
+    });
+
+    it("should forbid an organizer from provisioning gate staff for a different tenant", async () => {
+      const creator = {
+        id: "org-1",
+        email: "org@example.com",
+        firstName: "Organizer",
+        lastName: "Boss",
+        role: UserRole.ORGANIZER,
+        organizerTenantId: "tenant-1",
+        createdAt: new Date(),
+      };
+
+      await expect(
+        service.createGateStaff(creator, {
+          email: "scanner@example.com",
+          password: "StaffPassword123!",
+          firstName: "Staff",
+          lastName: "Scanner",
+          organizerTenantId: "22222222-2222-4222-8222-222222222222",
+        }),
+      ).rejects.toThrow(ForbiddenException);
+    });
+
+    it("should include organizerTenantId claim in JWT tokens issued at login for ORGANIZER and GATE_STAFF", async () => {
+      const orgUser = {
+        ...mockUser,
+        id: "org-user-1",
+        role: UserRole.ORGANIZER,
+        organizerTenantId: "tenant-org-1",
+      };
+      mockUserRepository.findOne.mockResolvedValueOnce(orgUser);
+
+      await service.login({
+        email: "john@example.com",
+        password: "Password123!",
+      });
+
+      expect(mockJwtService.signAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sub: "org-user-1",
+          role: UserRole.ORGANIZER,
+          organizerTenantId: "tenant-org-1",
+        }),
+        expect.any(Object),
+      );
     });
   });
 

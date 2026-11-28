@@ -9,7 +9,7 @@ The `AuthModule` provides authentication, password hashing, token rotation, and 
 ### Endpoints
 
 - **`POST /api/v1/auth/register`**:
-  - Registers a new user with `{ email, password, firstName, lastName, role? }`.
+  - Registers a new `CUSTOMER` user with `{ email, password, firstName, lastName }`. Client-supplied `role` fields are rejected with `422 Unprocessable Entity` (`VALIDATION_ERROR`).
   - Hashes passwords using `bcrypt` (10 rounds).
   - Persists the user record to PostgreSQL `users` table via `USER_REPOSITORY`.
   - Generates and returns short-lived JWT `accessToken` (15m) and sets `httpOnly`, `Secure`, `SameSite: strict` refresh token cookie.
@@ -40,13 +40,15 @@ The `AuthModule` provides authentication, password hashing, token rotation, and 
 ### Guards & Decorators
 
 - **`JwtAuthGuard`**:
-  - Validates incoming `Authorization: Bearer <token>` headers against `JWT_SECRET`.
+  - Registered globally as an `APP_GUARD` in `AuthModule` to enforce JWT authentication across all `apps/api` routes by default.
+  - Validates incoming `Authorization: Bearer <token>` headers against `JWT_SECRET` and populates `request.user` (`id`, `email`, `role`, `organizerTenantId`) via `JwtStrategy.validate`.
   - Bypassed automatically when `@Public()` decorator is present.
 - **`RolesGuard`**:
+  - Registered globally as an `APP_GUARD` after `JwtAuthGuard`.
   - Compares authenticated user's `role` against roles declared via `@Roles(...)`.
   - Throws `403 Forbidden` (`FORBIDDEN`) if the user lacks the required role.
 - **`OwnershipGuard`**:
-  - Validates tenant resource ownership against organizer's `organizerTenantId`.
+  - Validates tenant resource ownership against organizer's `organizerTenantId` (including venue/event lookup checks). `ADMIN` bypasses.
 - **`@Public()`**:
   - Marks an endpoint as public, skipping JWT bearer validation.
 - **`@Roles(...)`**:

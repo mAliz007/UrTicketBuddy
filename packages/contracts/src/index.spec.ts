@@ -3,10 +3,14 @@ import {
   SeatState,
   SeatStateColors,
   ErrorCode,
+  UserRole,
   PaginationQuerySchema,
   SeatStateEventSchema,
   HoldRequestSchema,
   HoldResponseSchema,
+  CheckoutRequestSchema,
+  RegisterRequestSchema,
+  JwtClaimsSchema,
   SeatNodeSchema,
   VenueLayoutSchema,
   degToRad,
@@ -275,5 +279,44 @@ describe("packages/contracts", () => {
     expect(SearchBackendSchema.parse("postgres-fallback")).toBe(
       "postgres-fallback",
     );
+  });
+
+  it("should enforce security constraints on RegisterRequest, HoldRequest, CheckoutRequest, and JwtClaims", () => {
+    expect(
+      RegisterRequestSchema.safeParse({
+        email: "user@example.com",
+        password: "Password123!",
+        firstName: "Jane",
+        lastName: "Doe",
+        role: UserRole.ADMIN,
+      }).success,
+    ).toBe(false);
+
+    expect(
+      HoldRequestSchema.safeParse({
+        eventId: "123e4567-e89b-12d3-a456-426614174000",
+        seatIds: ["A-1-1"],
+        userId: "123e4567-e89b-12d3-a456-426614174001",
+      }).success,
+    ).toBe(false);
+
+    expect(
+      CheckoutRequestSchema.safeParse({
+        eventId: "123e4567-e89b-12d3-a456-426614174000",
+        seatIds: ["A-1-1"],
+        paymentMethodToken: "tok_visa",
+        userId: "123e4567-e89b-12d3-a456-426614174001",
+      }).success,
+    ).toBe(false);
+
+    expect(
+      JwtClaimsSchema.safeParse({
+        sub: "123e4567-e89b-12d3-a456-426614174001",
+        email: "org@example.com",
+        role: UserRole.ORGANIZER,
+        organizerTenantId: "123e4567-e89b-12d3-a456-426614174002",
+        type: "access",
+      }).success,
+    ).toBe(true);
   });
 });

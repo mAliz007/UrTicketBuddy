@@ -1,3 +1,4 @@
+import { ForbiddenException, UnauthorizedException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { UserRole } from "@urticketbuddy/contracts";
 import type { Request, Response } from "express";
@@ -42,16 +43,15 @@ describe("AuthController", () => {
   });
 
   describe("register", () => {
-    it("should call authService.register and return the response", async () => {
+    it("should call authService.register and strip refreshToken from JSON body", async () => {
       const dto = {
         email: "test@example.com",
         password: "Password123!",
         firstName: "Test",
         lastName: "User",
-        role: UserRole.CUSTOMER,
       };
 
-      const expectedResponse = {
+      const serviceResponse = {
         user: {
           id: "uuid-1",
           email: "test@example.com",
@@ -64,22 +64,26 @@ describe("AuthController", () => {
         refreshToken: "mock-refresh-token",
       };
 
-      mockAuthService.register.mockResolvedValue(expectedResponse);
+      mockAuthService.register.mockResolvedValue(serviceResponse);
 
       const result = await controller.register(dto, mockResponse);
       expect(service.register).toHaveBeenCalledWith(dto, mockResponse);
-      expect(result).toEqual(expectedResponse);
+      expect(result).toEqual({
+        user: serviceResponse.user,
+        accessToken: "mock-access-token",
+      });
+      expect((result as Record<string, unknown>).refreshToken).toBeUndefined();
     });
   });
 
   describe("login", () => {
-    it("should call authService.login and return the response", async () => {
+    it("should call authService.login and strip refreshToken from JSON body", async () => {
       const dto = {
         email: "test@example.com",
         password: "Password123!",
       };
 
-      const expectedResponse = {
+      const serviceResponse = {
         user: {
           id: "uuid-1",
           email: "test@example.com",
@@ -92,62 +96,73 @@ describe("AuthController", () => {
         refreshToken: "mock-refresh-token",
       };
 
-      mockAuthService.login.mockResolvedValue(expectedResponse);
+      mockAuthService.login.mockResolvedValue(serviceResponse);
 
       const result = await controller.login(dto, mockResponse);
       expect(service.login).toHaveBeenCalledWith(dto, mockResponse);
-      expect(result).toEqual(expectedResponse);
+      expect(result).toEqual({
+        user: serviceResponse.user,
+        accessToken: "mock-access-token",
+      });
+      expect((result as Record<string, unknown>).refreshToken).toBeUndefined();
     });
   });
 
   describe("refresh", () => {
-    it("should extract token from cookies and call authService.refresh", async () => {
+    it("should extract token from cookies, call authService.refresh, and strip refreshToken from JSON body", async () => {
       const req = {
         cookies: { refreshToken: "cookie-refresh-token" },
+        headers: {},
       } as unknown as Request;
 
-      const expectedResponse = {
+      const serviceResponse = {
         accessToken: "new-access-token",
         refreshToken: "new-refresh-token",
       };
 
-      mockAuthService.refresh.mockResolvedValue(expectedResponse);
+      mockAuthService.refresh.mockResolvedValue(serviceResponse);
 
       const result = await controller.refresh(req, undefined, mockResponse);
       expect(service.refresh).toHaveBeenCalledWith(
         "cookie-refresh-token",
         mockResponse,
       );
-      expect(result).toEqual(expectedResponse);
+      expect(result).toEqual({ accessToken: "new-access-token" });
+      expect((result as Record<string, unknown>).refreshToken).toBeUndefined();
     });
 
-    it("should extract token from body if not in cookies", async () => {
+    it("should reject refresh token passed in JSON request body (F-7)", async () => {
       const req = {
         cookies: {},
+        headers: {},
       } as unknown as Request;
 
-      const expectedResponse = {
-        accessToken: "new-access-token",
-        refreshToken: "new-refresh-token",
-      };
+      await expect(
+        controller.refresh(req, "body-refresh-token", mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(service.refresh).not.toHaveBeenCalled();
+    });
 
-      mockAuthService.refresh.mockResolvedValue(expectedResponse);
+    it("should reject CSRF mismatches on refresh endpoint (F-7)", async () => {
+      const req = {
+        cookies: {
+          refreshToken: "cookie-refresh-token",
+          "XSRF-TOKEN": "csrf-secret-1",
+        },
+        headers: {
+          "x-csrf-token": "wrong-csrf-token",
+        },
+      } as unknown as Request;
 
-      const result = await controller.refresh(
-        req,
-        "body-refresh-token",
-        mockResponse,
-      );
-      expect(service.refresh).toHaveBeenCalledWith(
-        "body-refresh-token",
-        mockResponse,
-      );
-      expect(result).toEqual(expectedResponse);
+      await expect(
+        controller.refresh(req, undefined, mockResponse),
+      ).rejects.toThrow(ForbiddenException);
+      expect(service.refresh).not.toHaveBeenCalled();
     });
   });
 
   describe("logout", () => {
-    it("should call authService.logout with token and clear cookies", async () => {
+    it("should call authService.logout with cookie token and clear cookies", async () => {
       const req = {
         cookies: { refreshToken: "logout-token" },
       } as unknown as Request;

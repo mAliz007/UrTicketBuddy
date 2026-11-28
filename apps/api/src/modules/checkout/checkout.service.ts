@@ -16,7 +16,7 @@ import {
 export interface SeatUpdatePubSubPayload {
   eventId: string;
   seatIds: string[];
-  state: "HELD" | "SOLD" | "RELEASED";
+  state: "HELD" | "SOLD" | "RELEASED" | "AVAILABLE";
   userId: string;
   expiresAt?: number;
 }
@@ -58,7 +58,6 @@ export class CheckoutService {
       );
     }
 
-    const channel = `seat-updates:${request.eventId}`;
     const payload: SeatUpdatePubSubPayload = {
       eventId: request.eventId,
       seatIds: result.seatIds,
@@ -67,7 +66,7 @@ export class CheckoutService {
       expiresAt: result.expiresAt,
     };
 
-    await this.redis.publish(channel, JSON.stringify(payload));
+    await this.redis.publish("seat.state", JSON.stringify(payload));
     this.logger.log(
       `Held ${result.seatIds.length} seat(s) for event=${request.eventId} user=${userId}`,
     );
@@ -77,6 +76,116 @@ export class CheckoutService {
       userId,
       seatIds: result.seatIds,
       expiresAt: result.expiresAt,
+    };
+  }
+
+  async releaseSeats(
+    userId: string,
+    eventId: string,
+    seatIds: string[],
+  ): Promise<{
+    eventId: string;
+    userId: string;
+    seatIds: string[];
+    state: "AVAILABLE";
+  }> {
+    let releasedSeats = seatIds;
+    if (typeof this.redisScripts.releaseSeats === "function") {
+      const result = await this.redisScripts.releaseSeats(
+        eventId,
+        userId,
+        seatIds,
+      );
+      const resObj = result as {
+        success?: boolean;
+        ok?: boolean;
+        code?: string;
+        releasedSeats?: string[];
+        seatIds?: string[];
+        failedSeats?: string[];
+      };
+
+      if (resObj && resObj.success === false && resObj.ok === false) {
+        const code = resObj.code || ErrorCode.SEAT_NOT_HELD_BY_YOU;
+        throw new HttpException(
+          {
+            code,
+            message: `Unable to release seats: ${code}`,
+            details: {
+              failedSeats: resObj.failedSeats || [],
+            },
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
+      releasedSeats = resObj.releasedSeats || resObj.seatIds || seatIds;
+    }
+
+    const payload: SeatUpdatePubSubPayload = {
+      eventId,
+      seatIds: releasedSeats,
+      state: "AVAILABLE",
+      userId,
+    };
+
+    await this.redis.publish("seat.state", JSON.stringify(payload));
+    this.logger.log(
+      `Released ${releasedSeats.length} seat(s) for event=${eventId} user=${userId}`,
+    );
+
+    return {
+      eventId,
+      userId,
+      seatIds: releasedSeats,
+      state: "AVAILABLE",
+    };
+  }
+
+  async getSeatsState(eventId: string): Promise<{
+    eventId: string;
+    holds: Record<string, unknown>;
+    sold: string[];
+    counts: { held: number; sold: number };
+  }> {
+    let holds: Record<string, unknown> = {};
+    let sold: string[] = [];
+    if (typeof this.redisScripts.getSnapshot === "function") {
+      const snapshot = (await this.redisScripts.getSnapshot(
+        eventId,
+      )) as unknown as {
+        holds?: Record<string, unknown>;
+        held?: Record<string, unknown>;
+        sold?: string[];
+        soldSeats?: string[];
+      };
+      holds = snapshot?.holds || snapshot?.held || {};
+      sold = snapshot?.sold || snapshot?.soldSeats || [];
+    }
+
+    let counts = {
+      held: Object.keys(holds).length,
+      sold: sold.length,
+    };
+    if (typeof this.redisScripts.getCounts === "function") {
+      const rawCounts = (await this.redisScripts.getCounts(eventId)) as {
+        held?: number;
+        heldCount?: number;
+        sold?: number;
+        soldCount?: number;
+      };
+      if (rawCounts) {
+        counts = {
+          held: rawCounts.held ?? rawCounts.heldCount ?? counts.held,
+          sold: rawCounts.sold ?? rawCounts.soldCount ?? counts.sold,
+        };
+      }
+    }
+
+    return {
+      eventId,
+      holds,
+      sold,
+      counts,
     };
   }
 }

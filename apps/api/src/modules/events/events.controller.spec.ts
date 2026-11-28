@@ -1,9 +1,20 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { AuthUser, UserRole } from "@urticketbuddy/contracts";
 import { EventsController } from "./events.controller";
 import { EventsService } from "./events.service";
 
 describe("EventsController", () => {
   let controller: EventsController;
+
+  const mockUser: AuthUser = {
+    id: "org-1",
+    email: "org@example.com",
+    firstName: "Org",
+    lastName: "Owner",
+    role: UserRole.ORGANIZER,
+    organizerTenantId: "org-1",
+    createdAt: new Date(),
+  };
 
   const mockEventsService = {
     createEvent: jest.fn(),
@@ -37,8 +48,8 @@ describe("EventsController", () => {
     };
     mockEventsService.createEvent.mockResolvedValue({ id: "e-1", ...dto });
 
-    const result = await controller.createEvent(dto);
-    expect(mockEventsService.createEvent).toHaveBeenCalledWith(dto);
+    const result = await controller.createEvent(dto, mockUser);
+    expect(mockEventsService.createEvent).toHaveBeenCalledWith(dto, mockUser);
     expect(result.id).toBe("e-1");
   });
 
@@ -60,8 +71,11 @@ describe("EventsController", () => {
       status: "COMPLETED",
     });
 
-    const result = await controller.generateSeats("e-1");
-    expect(mockEventsService.generateSeats).toHaveBeenCalledWith("e-1");
+    const result = await controller.generateSeats("e-1", mockUser);
+    expect(mockEventsService.generateSeats).toHaveBeenCalledWith(
+      "e-1",
+      mockUser,
+    );
     expect(result.totalSeatsGenerated).toBe(200);
   });
 });

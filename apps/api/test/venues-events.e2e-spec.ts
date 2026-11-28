@@ -3,7 +3,7 @@ import { INestApplication } from "@nestjs/common";
 import request from "supertest";
 import { JwtService } from "@nestjs/jwt";
 import { loadEnv } from "@urticketbuddy/config";
-import { UserRole } from "@urticketbuddy/contracts";
+import { ErrorCode, UserRole } from "@urticketbuddy/contracts";
 import { AppModule } from "../src/app.module";
 import { GlobalHttpExceptionFilter } from "../src/common/filters/http-exception.filter";
 import {
@@ -22,6 +22,8 @@ jest.setTimeout(30000);
 describe("Venues & Events API (e2e - Supertest)", () => {
   let app: INestApplication;
   let organizerToken: string;
+  let organizer2Token: string;
+  let adminToken: string;
 
   // In-memory relational storage
   const venuesStore = new Map<string, any>();
@@ -63,6 +65,16 @@ describe("Venues & Events API (e2e - Supertest)", () => {
         ...event,
         venue: venuesStore.get(event.venueId) || null,
       };
+    }),
+    find: jest.fn(async (opts?: any) => {
+      const all = Array.from(eventsStore.values()).map((ev) => ({
+        ...ev,
+        venue: venuesStore.get(ev.venueId) || null,
+      }));
+      if (opts?.where?.venueId) {
+        return all.filter((e) => e.venueId === opts.where.venueId);
+      }
+      return all;
     }),
   };
 
@@ -152,6 +164,19 @@ describe("Venues & Events API (e2e - Supertest)", () => {
       role: UserRole.ORGANIZER,
       organizerTenantId: "10000000-0000-4000-a000-000000000001",
     });
+    organizer2Token = jwtService.sign({
+      sub: "20000000-0000-4000-a000-000000000002",
+      id: "20000000-0000-4000-a000-000000000002",
+      email: "organizer2@example.com",
+      role: UserRole.ORGANIZER,
+      organizerTenantId: "20000000-0000-4000-a000-000000000002",
+    });
+    adminToken = jwtService.sign({
+      sub: "a0000000-0000-4000-a000-000000000001",
+      id: "a0000000-0000-4000-a000-000000000001",
+      email: "admin@example.com",
+      role: UserRole.ADMIN,
+    });
   });
 
   afterAll(async () => {
@@ -200,7 +225,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
     seats: [],
   };
 
-  it("POST /api/v1/venues - should return 400 Bad Request when layout schema is invalid", async () => {
+  it("POST /api/v1/venues - should return 422 Unprocessable Entity when layout schema is invalid", async () => {
     const invalidPayload = {
       name: "Invalid Arena",
       location: "Gotham City",
@@ -215,7 +240,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
       .post("/api/v1/venues")
       .set("Authorization", `Bearer ${organizerToken}`)
       .send(invalidPayload)
-      .expect(400);
+      .expect(422);
 
     expect(res.body).toBeDefined();
     expect(res.body.error).toBeDefined();
@@ -236,6 +261,7 @@ describe("Venues & Events API (e2e - Supertest)", () => {
       .expect(201);
 
     expect(res.body.id).toBeDefined();
+    expect(res.body.organizerId).toBe("10000000-0000-4000-a000-000000000001");
     expect(res.body.name).toBe("Metropolis Arena");
     expect(res.body.location).toBe("Metropolis City Center");
     expect(res.body.layoutMongoId).toBeDefined();
@@ -314,5 +340,189 @@ describe("Venues & Events API (e2e - Supertest)", () => {
     expect(firstSeat.status).toBe("AVAILABLE");
     expect(firstSeat.x).toBeDefined();
     expect(firstSeat.y).toBeDefined();
+  });
+
+  it("enforces tenant isolation across venues and events (403 for other organizer, allowed for ADMIN)", async () => {
+    const venueRes = await request(app.getHttpServer())
+      .post("/api/v1/venues")
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({
+        name: "Org 1 Arena",
+        location: "City A",
+        layout: validLayout,
+      })
+      .expect(201);
+    const venueId = venueRes.body.id;
+
+    // Organizer 2 cannot spoof Organizer 1's tenant on POST /venues
+    const spoofRes = await request(app.getHttpServer())
+      .post("/api/v1/venues")
+      .set("Authorization", `Bearer ${organizer2Token}`)
+      .send({
+        name: "Spoofed Arena",
+        location: "City B",
+        organizerId: "10000000-0000-4000-a000-000000000001",
+        layout: validLayout,
+      })
+      .expect(403);
+    expect(spoofRes.body.error.code).toBe(ErrorCode.FORBIDDEN);
+
+    // Organizer 2 cannot create an event on Organizer 1's venue
+    await request(app.getHttpServer())
+      .post("/api/v1/events")
+      .set("Authorization", `Bearer ${organizer2Token}`)
+      .send({
+        venueId,
+        name: "Unauthorized Event",
+        startTime: new Date("2026-10-10T20:00:00Z").toISOString(),
+      })
+      .expect(403);
+
+    // Organizer 1 creates event on their own venue
+    const eventRes = await request(app.getHttpServer())
+      .post("/api/v1/events")
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({
+        venueId,
+        name: "Authorized Event",
+        startTime: new Date("2026-10-10T20:00:00Z").toISOString(),
+      })
+      .expect(201);
+    const eventId = eventRes.body.id;
+
+    // Organizer 2 cannot generate seats on Organizer 1's event
+    await request(app.getHttpServer())
+      .post(`/api/v1/events/${eventId}/generate-seats`)
+      .set("Authorization", `Bearer ${organizer2Token}`)
+      .expect(403);
+
+    // ADMIN can bypass and act on any organizer's venue/event
+    await request(app.getHttpServer())
+      .post("/api/v1/events")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({
+        venueId,
+        name: "Admin Event",
+        startTime: new Date("2026-10-11T20:00:00Z").toISOString(),
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/events/${eventId}/generate-seats`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
+  });
+
+  it("F-4: PUT /api/v1/organizer/venues/:id/layout versions Mongo layout, GET/PATCH /events filters & paginates, publish locks structure (409 STRUCTURE_LOCKED), and enforces tenant ownership (403)", async () => {
+    const env = loadEnv();
+    const jwtService = new JwtService({ secret: env.JWT_SECRET });
+    const otherOrganizerToken = jwtService.sign({
+      sub: "20000000-0000-4000-a000-000000000002",
+      id: "20000000-0000-4000-a000-000000000002",
+      email: "other-org@example.com",
+      role: UserRole.ORGANIZER,
+      organizerTenantId: "20000000-0000-4000-a000-000000000002",
+    });
+
+    // 1. Create Venue (version 1)
+    const venueRes = await request(app.getHttpServer())
+      .post("/api/v1/venues")
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({
+        name: "Versioned Arena",
+        location: "Lahore",
+        layout: validLayout,
+      })
+      .expect(201);
+
+    const venueId = venueRes.body.id;
+    expect(venueRes.body.version).toBe(1);
+
+    // 2. PUT /api/v1/organizer/venues/:id/layout updates layout to version 2
+    const updateLayoutRes = await request(app.getHttpServer())
+      .put(`/api/v1/organizer/venues/${venueId}/layout`)
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({
+        layout: {
+          ...validLayout,
+          name: "Versioned Arena Layout v2",
+        },
+      })
+      .expect(200);
+
+    expect(updateLayoutRes.body.version).toBe(2);
+    expect(updateLayoutRes.body.previousLayoutId).toBe(
+      venueRes.body.layoutMongoId,
+    );
+
+    // 3. Cross-tenant organizer rejected with 403
+    await request(app.getHttpServer())
+      .put(`/api/v1/organizer/venues/${venueId}/layout`)
+      .set("Authorization", `Bearer ${otherOrganizerToken}`)
+      .send({ layout: validLayout })
+      .expect(403);
+
+    // 4. Create event with ticketTiers
+    const eventRes = await request(app.getHttpServer())
+      .post("/api/v1/events")
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({
+        venueId,
+        name: "Sufi Night Live",
+        startTime: new Date("2026-12-01T18:00:00Z").toISOString(),
+        ticketTiers: [
+          { name: "VIP", priceMinor: 500000, currency: "PKR", capacity: 50 },
+          { name: "General", priceMinor: 150000, currency: "PKR" },
+        ],
+      })
+      .expect(201);
+
+    const eventId = eventRes.body.id;
+    expect(eventRes.body.ticketTiers).toHaveLength(2);
+
+    // 5. GET /api/v1/events with search filter & pagination
+    const listRes = await request(app.getHttpServer())
+      .get("/api/v1/events?search=Sufi&page=1&pageSize=10")
+      .expect(200);
+
+    expect(listRes.body.total).toBe(1);
+    expect(listRes.body.items[0].name).toBe("Sufi Night Live");
+
+    // 6. PATCH /api/v1/events/:id by non-owner organizer -> 403
+    await request(app.getHttpServer())
+      .patch(`/api/v1/events/${eventId}`)
+      .set("Authorization", `Bearer ${otherOrganizerToken}`)
+      .send({ name: "Hijacked Event" })
+      .expect(403);
+
+    // 7. PATCH /api/v1/events/:id by owner -> 200
+    const patchRes = await request(app.getHttpServer())
+      .patch(`/api/v1/events/${eventId}`)
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({ name: "Sufi Night Grand Finale" })
+      .expect(200);
+    expect(patchRes.body.name).toBe("Sufi Night Grand Finale");
+
+    // 8. Real publish step (POST /api/v1/events/:id/publish) locks structure
+    const pubRes = await request(app.getHttpServer())
+      .post(`/api/v1/events/${eventId}/publish`)
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .expect(200);
+    expect(pubRes.body.status).toBe("PUBLISHED");
+    expect(pubRes.body.structureLocked).toBe(true);
+
+    // 9. Attempting to re-publish, regenerate seats, or mutate venue layout after publish -> 409 STRUCTURE_LOCKED
+    const repubRes = await request(app.getHttpServer())
+      .post(`/api/v1/events/${eventId}/publish`)
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .expect(409);
+    expect(repubRes.body.error.code).toBe("STRUCTURE_LOCKED");
+
+    const lockedLayoutRes = await request(app.getHttpServer())
+      .put(`/api/v1/organizer/venues/${venueId}/layout`)
+      .set("Authorization", `Bearer ${organizerToken}`)
+      .send({ layout: validLayout })
+      .expect(409);
+    expect(lockedLayoutRes.body.error.code).toBe("STRUCTURE_LOCKED");
   });
 });

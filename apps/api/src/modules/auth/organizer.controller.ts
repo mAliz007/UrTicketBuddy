@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   UseGuards,
+  UseInterceptors,
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
@@ -11,6 +12,7 @@ import {
   AuthUser,
   CreateGateStaffRequest,
 } from "@urticketbuddy/contracts";
+import { AuditLogInterceptor } from "../admin/audit-log.interceptor";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { RolesGuard } from "./guards/roles.guard";
@@ -19,6 +21,7 @@ import { CurrentUser } from "./decorators/current-user.decorator";
 
 @Controller("organizer")
 @UseGuards(JwtAuthGuard, RolesGuard)
+@UseInterceptors(AuditLogInterceptor)
 export class OrganizerController {
   constructor(private readonly authService: AuthService) {}
 

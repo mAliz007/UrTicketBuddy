@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const HoldExpiryJobSchema = z.object({
-  eventId: z.string().uuid(),
+  eventId: z.guid(),
   seatId: z.string(),
-  userId: z.string().uuid(),
+  userId: z.guid(),
 });
 
 export type HoldExpiryJob = z.infer<typeof HoldExpiryJobSchema>;
@@ -22,8 +22,8 @@ export type EventSearchGeoPoint = z.infer<typeof EventSearchGeoPointSchema>;
 export const SearchIndexJobSchema = z
   .object({
     entity: z.enum(["event", "venue"]).default("event"),
-    id: z.string().uuid().optional(),
-    eventId: z.string().uuid().optional(),
+    id: z.guid().optional(),
+    eventId: z.guid().optional(),
     action: SearchIndexJobActionSchema,
     title: z.string().optional(),
     description: z.string().optional(),
@@ -31,7 +31,7 @@ export const SearchIndexJobSchema = z
     category: z.string().optional(),
     startsAt: z.union([z.string(), z.date()]).optional(),
     status: z.string().optional(),
-    venueId: z.string().uuid().optional(),
+    venueId: z.guid().optional(),
     venueName: z.string().optional(),
     location: EventSearchGeoPointSchema.nullable().optional(),
     minPrice: z.number().nonnegative().optional(),
@@ -45,15 +45,15 @@ export type SearchIndexJob = z.infer<typeof SearchIndexJobSchema>;
 export type SearchIndexJobInput = z.input<typeof SearchIndexJobSchema>;
 
 export const OrderNotificationJobSchema = z.object({
-  orderId: z.string().uuid(),
-  userId: z.string().uuid(),
+  orderId: z.guid(),
+  userId: z.guid(),
   type: z.enum(["CONFIRMATION", "CANCELLATION"]),
 });
 
 export type OrderNotificationJob = z.infer<typeof OrderNotificationJobSchema>;
 
 export const TicketSeedRotationJobSchema = z.object({
-  ticketId: z.string().uuid(),
+  ticketId: z.guid(),
   currentSeedVersion: z.number().int(),
 });
 

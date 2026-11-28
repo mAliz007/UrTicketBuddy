@@ -11,6 +11,7 @@ import {
   BadRequestException,
   ParseUUIDPipe,
 } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { UserRole, ErrorCode } from "@urticketbuddy/contracts";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
@@ -33,6 +34,7 @@ export class GateController {
    */
   @Post("scan")
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 50, ttl: 60000 } })
   @Roles(UserRole.GATE_STAFF, UserRole.ORGANIZER, UserRole.ADMIN)
   async scanTicket(
     @Body() dto: ScanTicketDto,
@@ -42,7 +44,7 @@ export class GateController {
       userId?: string;
       email?: string;
       role?: string;
-      organizerTenantId?: string;
+      organizerTenantId?: string | null;
     },
   ) {
     const scannedBy = user?.id || user?.userId || user?.email || "gate-staff";
@@ -64,7 +66,7 @@ export class GateController {
       userId?: string;
       email?: string;
       role?: string;
-      organizerTenantId?: string;
+      organizerTenantId?: string | null;
     },
   ) {
     if (!eventId) {

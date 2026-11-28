@@ -15,16 +15,16 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - REST prefix: `/api/v1`
 - Health check: `GET /api/v1/health` (reports dependency status for Postgres, Mongo, Redis, and Elasticsearch including `search.eventsAliasExists`)
 - Event Search & Suggest: `GET /api/v1/search/events`, `GET /api/v1/search/suggest` (see [Search Module](src/modules/search/README.md))
-- Auth & RBAC: `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `GET /api/v1/auth/me` (see [Auth Module](src/modules/auth/README.md))
-- Venues: `POST /api/v1/venues`, `GET /api/v1/venues/:id` (see [Venues Module](src/modules/venues/README.md))
-- Events: `POST /api/v1/events`, `GET /api/v1/events/:id`, `POST /api/v1/events/:id/generate-seats` (see [Events Module](src/modules/events/README.md))
-- Checkout: `POST /api/v1/checkout/hold` — atomic Redis seat hold via `@urticketbuddy/redis-scripts` and Pub/Sub broadcast on `seat-updates:{eventId}` (see [Checkout Module](src/modules/checkout/README.md))
+- Auth & RBAC: `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/refresh` (HttpOnly cookie + CSRF double-submit & Origin check), `GET /api/v1/auth/me` (see [Auth Module](src/modules/auth/README.md))
+- Venues: `POST /api/v1/venues`, `PUT /api/v1/organizer/venues/:id/layout` (Mongo layout versioning + 422 on invalid layouts + 409 `STRUCTURE_LOCKED`), `GET /api/v1/venues/:id` (see [Venues Module](src/modules/venues/README.md))
+- Events: `POST /api/v1/events` (with `ticketTiers`), `GET /api/v1/events` (filters & pagination), `GET /api/v1/events/:id`, `PATCH /api/v1/events/:id`, `POST /api/v1/events/:id/publish` (locks structure + enqueues `search-index`), `POST /api/v1/events/:id/generate-seats` (see [Events Module](src/modules/events/README.md))
+- Seat Holds & State: `POST /api/v1/events/:eventId/seats/hold` (`CUSTOMER` only), `DELETE /api/v1/events/:eventId/seats/hold` (`CUSTOMER` only), `GET /api/v1/events/:eventId/seats/state`, and `POST /api/v1/checkout/hold` — atomic Redis seat hold via `@urticketbuddy/redis-scripts` and Pub/Sub broadcast on `seat.state` (see [Checkout Module](src/modules/checkout/README.md))
 - Orders: `POST /api/v1/orders/checkout`, `GET /api/v1/orders/:id` (see [Orders Module](src/modules/orders/README.md))
 - Dynamic QR Tickets: `GET /api/v1/tickets/:ticketId/dynamic-qr`, `PATCH /api/v1/tickets/:ticketId/rotate-key`, `GET /api/v1/users/me/tickets` (see [Tickets Module](src/modules/tickets/README.md))
 - Gate Scanner: `POST /api/v1/gate/scan`, `GET /api/v1/gate/metrics` (see [Gate Module](src/modules/gate/README.md))
-- Resale Marketplace: `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings`, `POST /api/v1/resale/listings/:listingId/purchase` (see [Resale Module](src/modules/resale/README.md))
-- Admin Suite & Audit Log: `PATCH /api/v1/admin/orders/:id/flag`, `DELETE /api/v1/admin/tickets/:id`, `GET|PUT /api/v1/admin/settings/commission`, `PATCH /api/v1/admin/users/:id/suspend`, `PATCH /api/v1/admin/organizers/:id/approve`, `GET /api/v1/admin/audit-logs` (see [Admin Module](src/modules/admin/README.md))
-- Organizer Analytics: `GET /api/v1/organizer/analytics/:eventId` (see [Analytics Module](src/modules/analytics/README.md))
+- Resale Marketplace: `POST /api/v1/resale/listings`, `PATCH /api/v1/resale/listings/:listingId`, `GET /api/v1/resale/listings`, `POST /api/v1/resale/listings/:listingId/purchase` (wired to DB-backed `PlatformSettingsService` commission rate; see [Resale Module](src/modules/resale/README.md))
+- Admin Suite & Audit Log: `PATCH /api/v1/admin/orders/:id/flag`, `DELETE /api/v1/admin/tickets/:id`, `GET|PUT /api/v1/admin/settings/commission`, `PATCH /api/v1/admin/users/:id/suspend`, `PATCH /api/v1/admin/organizers/:id/approve`, `PATCH /api/v1/admin/organizers/:id/reject`, `GET /api/v1/admin/audit-logs` (see [Admin Module](src/modules/admin/README.md))
+- Organizer Analytics: `GET /api/v1/organizer/analytics/:eventId` (with real `resaleStats`; see [Analytics Module](src/modules/analytics/README.md))
 
 ## Persistence Model (Polyglot)
 
@@ -45,8 +45,8 @@ Core backend REST API for UrTicketBuddy built as a NestJS modular monolith.
 - **Request Body Size Limits**: JSON and URL-encoded body limits restricted to `100kb` to thwart body-parser DoS attacks.
 - **RFC 6585 Rate Limiting & 429 Handling**: `GlobalHttpExceptionFilter` intercepts NestJS `ThrottlerException` and maps it to the standard error envelope `{ error: { code: ErrorCode.TOO_MANY_REQUESTS, message, requestId } }` with an HTTP `Retry-After: 60` header.
 - **Zero-Trust Log Redaction**: `LogRedactionInterceptor` recursively scrubs sensitive tokens and credentials (`password`, `passwordHash`, `accessToken`, `refreshToken`, `Authorization`, `Cookie`, `token`, `qrPayload`, `totpSecret`) from log payloads before output.
-- **Tenant Isolation**: `OwnershipGuard` verifies organizer resource tenancy (`event.organizerId === user.organizerTenantId || event.organizerId === user.id`) across multi-tenant administrative and analytics operations.
-- **Route Authorization Verification**: Automated route metadata scanner and persona matrix in `test/security-audit.e2e-spec.ts` guaranteeing zero unprotected or misconfigured endpoints.
+- **Tenant Isolation**: `OwnershipGuard` verifies organizer resource tenancy (`organizerId === user.organizerTenantId || organizerId === user.id`) across venues, events, analytics, and gate operations (`ADMIN` bypasses).
+- **Route Authorization Verification**: Global `JwtAuthGuard` and `RolesGuard` (`APP_GUARD` in `AuthModule`) protect all routes by default unless `@Public()` is explicitly declared; automated route metadata scanner and persona matrix in `test/security-audit.e2e-spec.ts` guarantee compliance.
 
 ## Testing & Concurrency Verification
 

@@ -9,8 +9,11 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { UserRole } from "@urticketbuddy/contracts";
+import { AuditLogInterceptor } from "../admin/audit-log.interceptor";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Public } from "../auth/decorators/public.decorator";
 import { Roles } from "../auth/decorators/roles.decorator";
@@ -27,11 +30,13 @@ interface AuthenticatedUser {
 
 @Controller("resale")
 @UseGuards(JwtAuthGuard, RolesGuard)
+@UseInterceptors(AuditLogInterceptor)
 export class ResaleController {
   constructor(private readonly resaleService: ResaleService) {}
 
   @Post("listings")
   @Roles(UserRole.CUSTOMER, UserRole.ADMIN)
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   async createListing(
     @CurrentUser() user: AuthenticatedUser,
     @Body() body: unknown,
@@ -42,6 +47,7 @@ export class ResaleController {
 
   @Patch("listings/:listingId")
   @Roles(UserRole.CUSTOMER, UserRole.ADMIN)
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   async updateListing(
     @Param("listingId", new ParseUUIDPipe()) listingId: string,
     @CurrentUser() user: AuthenticatedUser,
@@ -63,6 +69,7 @@ export class ResaleController {
 
   @Post("listings/:listingId/purchase")
   @Roles(UserRole.CUSTOMER, UserRole.ORGANIZER, UserRole.ADMIN)
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   async purchaseListing(
     @Param("listingId", new ParseUUIDPipe()) listingId: string,
     @CurrentUser() user: AuthenticatedUser,
